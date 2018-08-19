@@ -1,21 +1,10 @@
-package graphql
+package schema
 
-import (
-	"strings"
-
-	"github.com/jinzhu/inflection"
-	"github.com/vektah/gqlparser/ast"
-)
+import "github.com/vektah/gqlparser/ast"
 
 type Schema struct {
 	*ast.Schema
 	types []*Definition
-}
-
-func NewSchema(schema *ast.Schema) *Schema {
-	return &Schema{
-		types: toDefinitions(schema.Types),
-	}
 }
 
 func (s *Schema) Types() []*Definition {
@@ -110,43 +99,4 @@ type Mutation struct {
 type Query struct {
 	Item string
 	List string
-}
-
-func toDefinitions(list map[string]*ast.Definition) []*Definition {
-	definitions := make([]*Definition, 0, len(list))
-	for _, def := range list {
-		if def.IsCompositeType() && !strings.HasPrefix(def.Name, "__") {
-			definition := &Definition{
-				Definition: def,
-				fields:     toFields(def.Fields),
-				Input: Input{
-					Create:      &CreateInput{def},
-					Update:      &UpdateInput{def},
-					WhereUnique: &WhereUniqueInput{def},
-					Where:       &WhereInput{def},
-				},
-				Mutation: Mutation{
-					Create: "create" + def.Name,
-					Update: "update" + def.Name,
-					Delete: "delete" + def.Name,
-				},
-				Query: Query{
-					Item: strings.ToLower(def.Name),
-					List: inflection.Plural(strings.ToLower(def.Name)),
-				},
-			}
-			definitions = append(definitions, definition)
-		}
-	}
-	return definitions
-}
-
-func toFields(list ast.FieldList) []*Field {
-	fields := make([]*Field, len(list))
-	for i, def := range list {
-		fields[i] = &Field{
-			FieldDefinition: def,
-		}
-	}
-	return fields
 }

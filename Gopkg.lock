@@ -2,9 +2,13 @@
 
 
 [[projects]]
-  digest = "1:6f74e34a6c6368403b7ee304c41c8f1369c9170909f8320f1062d94a650dc97b"
+  digest = "1:8ff51c8e567e46e67fddbb20a846cc2875eb2fbb010965eb6d523b874b2181ae"
   name = "github.com/99designs/gqlgen"
   packages = [
+    ".",
+    "cmd",
+    "codegen",
+    "codegen/templates",
     "graphql",
     "graphql/introspection",
     "handler",
@@ -60,6 +64,19 @@
   pruneopts = "UT"
   revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
   version = "v1.4.7"
+
+[[projects]]
+  digest = "1:a902020025215e4106f858933085145dd49a4bcb974525b72bed8abdf116dd4c"
+  name = "github.com/gobuffalo/packr"
+  packages = [
+    ".",
+    "builder",
+    "packr",
+    "packr/cmd",
+  ]
+  pruneopts = "UT"
+  revision = "1aab5672bd385f2a7da18bffa961912e7642ea79"
+  version = "v1.13.2"
 
 [[projects]]
   digest = "1:8f8811f9be822914c3a25c6a071e93beb4c805d7b026cbf298bc577bc1cc945b"
@@ -161,6 +178,14 @@
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
   digest = "1:bd1ae00087d17c5a748660b8e89e1043e1e5479d0fea743352cda2f8dd8c4f84"
   name = "github.com/spf13/afero"
   packages = [
@@ -213,7 +238,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a5edbe378a5fdc4d445cdd859c8362037923dabdc49d5e09a210a1f0951271e2"
+  digest = "1:b6e9876e0935b7252ef00a6cb3bdd4c3c26d76a53223a5de8c37487dcdf50225"
   name = "github.com/vektah/gqlparser"
   packages = [
     ".",
@@ -225,7 +250,7 @@
     "validator/rules",
   ]
   pruneopts = "UT"
-  revision = "c063da4fdb845f11bd524096452558e8759103b6"
+  revision = "04021c23cb3810632117e34c3e0e3d415a202c63"
 
 [[projects]]
   digest = "1:3c1a69cdae3501bf75e76d0d86dc6f2b0a7421bc205c0cb7b96b19eed464a34d"
@@ -271,6 +296,22 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:76ee51c3f468493aff39dbacc401e8831fbb765104cbf613b89bef01cf4bad70"
+  name = "golang.org/x/net"
+  packages = ["context"]
+  pruneopts = "UT"
+  revision = "aaf60122140d3fcf75376d319f0554393160eb50"
+
+[[projects]]
+  branch = "master"
+  digest = "1:39ebcc2b11457b703ae9ee2e8cca0f68df21969c6102cb3b705f76cca0ea0239"
+  name = "golang.org/x/sync"
+  packages = ["errgroup"]
+  pruneopts = "UT"
+  revision = "1d60e4601c6fd243af51cc01ddf169918a5407ca"
+
+[[projects]]
+  branch = "master"
   digest = "1:05662433b3a13c921587a6e622b5722072edff83211efd1cd79eeaeedfd83f07"
   name = "golang.org/x/sys"
   packages = ["unix"]
@@ -293,6 +334,21 @@
   version = "v0.3.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:d22891f2d4a24a531ae01994abae377ec9d8a45ec8849aa95c27dc36014b8c24"
+  name = "golang.org/x/tools"
+  packages = [
+    "go/ast/astutil",
+    "go/buildutil",
+    "go/internal/cgo",
+    "go/loader",
+    "imports",
+    "internal/fastwalk",
+  ]
+  pruneopts = "UT"
+  revision = "7d1dc997617fb662918b6ea95efc19faa87e1cf8"
+
+[[projects]]
   digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -304,11 +360,13 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/99designs/gqlgen",
     "github.com/99designs/gqlgen/graphql",
     "github.com/99designs/gqlgen/graphql/introspection",
     "github.com/99designs/gqlgen/handler",
     "github.com/Masterminds/sprig",
     "github.com/fatih/structs",
+    "github.com/gobuffalo/packr/packr",
     "github.com/jinzhu/inflection",
     "github.com/mitchellh/go-homedir",
     "github.com/spf13/cobra",

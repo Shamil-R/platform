@@ -18,8 +18,9 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "auction",
-	Short: "auction server",
+	Use:   "platform",
+	Short: "platform",
+	Long:  `platform`,
 	Run: func(cmd *cobra.Command, args []string) {
 	},
 }
@@ -60,7 +61,7 @@ func initConfig() {
 
 		viper.AddConfigPath(home)
 		viper.AddConfigPath(work)
-		viper.SetConfigName(".platform.yml")
+		viper.SetConfigName(".platform")
 	}
 
 	viper.SetEnvPrefix("platform")

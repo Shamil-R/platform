@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"gitlab/nefco/platform/tools/codegen"
+	"gitlab/nefco/platform/codegen"
 
 	"github.com/fatih/structs"
 )

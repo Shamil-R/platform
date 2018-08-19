@@ -1,7 +1,10 @@
 package codegen
 
 var DefaultConfig = Config{
-	Schema: "schema.graphql",
+	Schema: ConfigSchema{
+		Source:    "schema.graphql",
+		Transform: "schema.gen.graphql",
+	},
 	Model: ConfigModel{
 		Package: "model",
 	},
@@ -12,9 +15,14 @@ var DefaultConfig = Config{
 }
 
 type Config struct {
-	Schema  string        `mapstructure:"schema"`
+	Schema  ConfigSchema  `mapstructure:"schema"`
 	Model   ConfigModel   `mapstructure:"model"`
 	Service ConfigService `mapstructure:"service"`
+}
+
+type ConfigSchema struct {
+	Source    string `mapstructure:"source"`
+	Transform string `mapstructure:"transform"`
 }
 
 type ConfigModel struct {

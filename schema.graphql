@@ -4,7 +4,7 @@ interface Node {
   id: ID!
 }
 
-type User implements Node @model(name: user) {
+type User implements Node @model(name: "user") {
   id: ID!
   name: String!
 }

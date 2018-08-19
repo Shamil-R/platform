@@ -24,6 +24,11 @@
 #   go-tests = true
 #   unused-packages = true
 
+required = ["github.com/99designs/gqlgen", "github.com/gobuffalo/packr/packr"]
+
+[prune]
+  go-tests = true
+  unused-packages = true
 
 [[constraint]]
   name = "github.com/99designs/gqlgen"
@@ -32,10 +37,6 @@
 [[constraint]]
   branch = "master"
   name = "github.com/vektah/gqlparser"
-
-[prune]
-  go-tests = true
-  unused-packages = true
 
 [[constraint]]
   name = "github.com/spf13/cobra"

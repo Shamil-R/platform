@@ -1533,7 +1533,6 @@ var parsedSchema = gqlparser.MustLoadSchema(
 
 interface Node {
   id: ID!
-  flag: String
 }
 
 type User implements Node @model(name: user) {
