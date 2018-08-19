@@ -1,0 +1,7 @@
+{{- define "object" -}}
+type {{ .Name }} {
+{{- range $_, $field := .Fields }}
+    {{ template "field" $field }}
+{{- end }}
+}
+{{- end -}}

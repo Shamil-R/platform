@@ -1,0 +1,40 @@
+directive @model(name: String!) on OBJECT | FIELD_DEFINITION
+
+interface Node {
+  id: ID!
+}
+
+type User implements Node @model(name: user) {
+  id: ID!
+  name: String!
+}
+
+input UserCreateInput {
+  name: String!
+}
+
+input UserUpdateInput {
+  name: String
+}
+
+input UserWhereUniqueInput {
+  id: ID
+}
+
+input UserWhereInput {
+  id: ID
+  idNot: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+}
+
+type Mutation {
+  createUser(data: UserCreateInput!): User!
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  deleteUser(where: UserWhereUniqueInput!): User
+}
+
+type Query {
+  users(where: UserWhereInput): [User]!
+  user(where: UserWhereUniqueInput!): User
+}

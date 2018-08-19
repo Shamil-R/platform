@@ -1,0 +1,10 @@
+{{- define "query" -}}
+type Query {
+{{- range $_, $def := . }}
+{{- with $def.Name }}
+    {{ template "query_item" . }}
+    {{ template "query_list" . }}
+{{- end }}
+{{- end }}
+}
+{{- end -}}

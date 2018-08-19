@@ -1,0 +1,68 @@
+# types
+type User {
+    id: ID!
+    name: String!
+    posts: [Post!]!
+}
+
+type Post {
+    id: ID!
+    text: String
+}
+
+# User inputs
+input UserCreateInput {
+    name: String!
+}
+
+input UserUpdateInput {
+    name: String!
+}
+
+input UserWhereUniqueInput {
+    id: ID!
+}
+
+input UserWhereInput {
+    id: ID!
+}
+
+# Post inputs
+input PostCreateInput {
+    text: String
+}
+
+input PostUpdateInput {
+    text: String
+}
+
+input PostWhereUniqueInput {
+    id: ID!
+}
+
+input PostWhereInput {
+    id: ID!
+}
+
+
+# mutations
+type Mutation {
+    # User mutations
+    createUser(data: UserCreateInput): User
+    updateUser(data: UserUpdateInput, where: UserWhereUniqueInput): User
+    deleteUser(where: UserWhereUniqueInput): User
+    # Post mutations
+    createPost(data: PostCreateInput): Post
+    updatePost(data: PostUpdateInput, where: PostWhereUniqueInput): Post
+    deletePost(where: PostWhereUniqueInput): Post
+}
+
+# queries
+type Query {
+    # User queries
+    user(where: UserWhereUniqueInput!): User
+    users(where: UserWhereInput): [User]!
+    # Post queries
+    post(where: PostWhereUniqueInput!): Post
+    posts(where: PostWhereInput): [Post]!
+}

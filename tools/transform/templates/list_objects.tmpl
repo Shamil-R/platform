@@ -1,0 +1,5 @@
+{{- define "list_objects" -}}
+{{- range $_, $def := . }}
+{{ template "object" $def }}
+{{- end }}
+{{- end -}}

@@ -1,0 +1,7 @@
+codegen:
+  schema: schema.graphql
+  model: 
+    package: model
+  service:
+    package: service
+    filename: service.gen.go

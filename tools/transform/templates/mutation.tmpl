@@ -1,0 +1,11 @@
+{{- define "mutation" -}}
+type Mutation {
+{{- range $_, $def := . }}
+{{- with $def.Name }}
+    {{ template "mutation_create" . }}
+    {{ template "mutation_update" . }}
+    {{ template "mutation_delete" . }}
+{{- end }}
+{{- end }}
+}
+{{- end -}}
