@@ -3,9 +3,12 @@
 package schema
 
 import (
+	"fmt"
+	"gitlab/nefco/platform/codegen/build"
 	"gitlab/nefco/platform/codegen/template"
 	"io/ioutil"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/gobuffalo/packr"
@@ -14,6 +17,86 @@ import (
 
 	"github.com/vektah/gqlparser/ast"
 )
+
+func Generate(cfg Config) error {
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	src := path.Join(wd, cfg.Source)
+	dest := path.Join(wd, cfg.Generate)
+
+	if err := os.MkdirAll(dest, os.ModePerm); err != nil {
+		return err
+	}
+
+	box := packr.NewBox("./templates")
+
+	tmpl, err := template.Parse(box.String("model.tpl"))
+	if err != nil {
+		return err
+	}
+
+	file, err := ioutil.ReadFile(src)
+	if err != nil {
+		return err
+	}
+
+	source := &ast.Source{
+		Name:  "schema",
+		Input: string(file),
+	}
+
+	gqlSchema, gqlErr := gqlparser.LoadSchema(source)
+	if gqlErr != nil {
+		return gqlErr
+	}
+
+	schema := build.NewSchema(gqlSchema)
+
+	for _, def := range schema.Types() {
+		file, err := os.Create(path.Join(dest, def.Name+".graphql"))
+		if err != nil {
+			return err
+		}
+
+		err = tmpl.Execute(file, def)
+
+		file.Close()
+
+		if err != nil {
+			return err
+		}
+	}
+
+	f, err := ioutil.ReadFile(path.Join(dest, "User.graphql"))
+	if err != nil {
+		return err
+	}
+
+	sourceUser := &ast.Source{
+		Name:  "User",
+		Input: string(f),
+	}
+
+	sources := make([]*ast.Source, 0, 2)
+	sources = append(sources, source, sourceUser)
+
+	gqlSchema, gqlErr = gqlparser.LoadSchema(sources...)
+	if gqlErr != nil {
+		return gqlErr
+	}
+
+	for _, f := range gqlSchema.Mutation.Fields {
+		fmt.Println("!", f.Name, f.Type)
+		for _, a := range f.Arguments {
+			fmt.Println("#", a.Name, a.Type)
+		}
+	}
+
+	return nil
+}
 
 func NewSchema(schema *ast.Schema) *Schema {
 	return &Schema{

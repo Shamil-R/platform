@@ -1,7 +1,7 @@
 codegen:
   schema:
     source: schema.graphql
-    transform: schema.gen.graphql
+    generate: schema_gen
   model: 
     package: model
   service:

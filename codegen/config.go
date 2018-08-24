@@ -1,10 +1,9 @@
 package codegen
 
+import "gitlab/nefco/platform/codegen/schema"
+
 var DefaultConfig = Config{
-	Schema: ConfigSchema{
-		Source:    "schema.graphql",
-		Transform: "schema.gen.graphql",
-	},
+	Schema: schema.DefaultConfig,
 	Model: ConfigModel{
 		Package: "model",
 	},
@@ -15,14 +14,9 @@ var DefaultConfig = Config{
 }
 
 type Config struct {
-	Schema  ConfigSchema  `mapstructure:"schema"`
+	Schema  schema.Config `mapstructure:"schema"`
 	Model   ConfigModel   `mapstructure:"model"`
 	Service ConfigService `mapstructure:"service"`
-}
-
-type ConfigSchema struct {
-	Source    string `mapstructure:"source"`
-	Transform string `mapstructure:"transform"`
 }
 
 type ConfigModel struct {
