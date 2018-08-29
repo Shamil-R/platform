@@ -5,6 +5,10 @@ PROJECTPATH=$(shell pwd)
 CMDPATH=$(PROJECTPATH)/platform
 CMDMAIN=$(CMDPATH)/main.go
 
+go-generate:
+	@echo "  >  Generate..."
+	go generate ../...
+
 go-run:
 	@echo "  >  Run project..."
-	@cd $(CMDPATH) && go run ./main.go codegen
+	go run $(CMDMAIN) codegen
