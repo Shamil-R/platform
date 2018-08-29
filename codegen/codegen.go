@@ -5,7 +5,7 @@ import (
 )
 
 func Generate(cfg Config) error {
-	if err := schema.Generate(cfg.Schema); err != nil {
+	if err := schema.Generate(cfg.Schema()); err != nil {
 		return err
 	}
 

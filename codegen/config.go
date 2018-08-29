@@ -1,22 +1,39 @@
 package codegen
 
-import "gitlab/nefco/platform/codegen/schema"
+import (
+	"gitlab/nefco/platform/codegen/schema"
+)
 
 var DefaultConfig = Config{
-	Schema: schema.DefaultConfig,
-	Model: ConfigModel{
+	SchemaConfig: SchemaConfig{
+		Source:   "schema.graphql",
+		Generate: "schema_gen.graphql",
+	},
+	ModelConfig: ConfigModel{
 		Package: "model",
 	},
-	Service: ConfigService{
+	ServiceConfig: ConfigService{
 		Package:  "service",
-		Filename: "service.gen.go",
+		Filename: "service_gen.go",
 	},
 }
 
 type Config struct {
-	Schema  schema.Config `mapstructure:"schema"`
-	Model   ConfigModel   `mapstructure:"model"`
-	Service ConfigService `mapstructure:"service"`
+	SchemaConfig  SchemaConfig  `mapstructure:"schema"`
+	ModelConfig   ConfigModel   `mapstructure:"model"`
+	ServiceConfig ConfigService `mapstructure:"service"`
+}
+
+func (c Config) Schema() schema.Config {
+	return schema.Config{
+		Source:   c.SchemaConfig.Source,
+		Generate: c.SchemaConfig.Generate,
+	}
+}
+
+type SchemaConfig struct {
+	Source   string `mapstructure:"source"`
+	Generate string `mapstructure:"generate"`
 }
 
 type ConfigModel struct {

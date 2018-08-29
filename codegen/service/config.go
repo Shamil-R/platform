@@ -2,10 +2,12 @@ package service
 
 var DefaultConfig = Config{
 	Package:  "service",
-	Filename: "service.gen.go",
+	Filename: "service_gen.go",
 }
 
 type Config struct {
-	Package  string `mapstructure:"package"`
-	Filename string `mapstructure:"filename"`
+	Package  string
+	Filename string
+	Schema   string
+	Includes string
 }

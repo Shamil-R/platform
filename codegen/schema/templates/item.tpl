@@ -1,15 +1,13 @@
-# Code generated, DO NOT EDIT.
-
 {{- $createInput := cat .Name "CreateInput" | nospace -}}
 {{- $updateInput := cat .Name "UpdateInput" | nospace -}}
 {{- $whereUniqueInput := cat .Name "WhereUniqueInput" | nospace -}}
 {{- $whereInput := cat .Name "WhereInput" | nospace }}
 
-#type {{ .Name }} {
-#    {{- range $, $field := .Fields }}
-#    {{ .Name }}: {{ .Type }}
-#    {{- end }}
-#}
+type {{ .Name }} {
+    {{- range $, $field := .Fields }}
+    {{ .Name }}: {{ .Type }}
+    {{- end }}
+}
 
 input {{ $createInput }} {
     {{- range $, $field := .Fields }}
