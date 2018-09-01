@@ -9,5 +9,9 @@ func Generate(cfg Config) error {
 		return err
 	}
 
+	// if err := service.Generate(cfg.Service()); err != nil {
+	// 	return err
+	// }
+
 	return nil
 }

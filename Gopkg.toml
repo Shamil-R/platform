@@ -32,7 +32,7 @@ required = ["github.com/99designs/gqlgen", "github.com/gobuffalo/packr/packr"]
 
 [[constraint]]
   name = "github.com/99designs/gqlgen"
-  version = "0.4.3"
+  version = "0.5.0"
 
 [[constraint]]
   branch = "master"

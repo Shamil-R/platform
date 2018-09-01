@@ -2,6 +2,7 @@ package codegen
 
 import (
 	"gitlab/nefco/platform/codegen/schema"
+	"gitlab/nefco/platform/codegen/service"
 )
 
 var DefaultConfig = Config{
@@ -28,6 +29,13 @@ func (c Config) Schema() schema.Config {
 	return schema.Config{
 		Source:   c.SchemaConfig.Source,
 		Generate: c.SchemaConfig.Generate,
+	}
+}
+
+func (c Config) Service() service.Config {
+	return service.Config{
+		Filename: c.ServiceConfig.Filename,
+		Schema:   c.SchemaConfig.Generate,
 	}
 }
 

@@ -10,10 +10,10 @@ import (
 func Template() (*template.Template, error) {
 	box := packr.NewBox("./")
 
-	schema, err := tools.ParseTemplate("schema", box.String("schema.tpl"))
+	service, err := tools.ParseTemplate("service", box.String("service.tpl"))
 	if err != nil {
 		return nil, err
 	}
 
-	return schema, nil
+	return service, nil
 }

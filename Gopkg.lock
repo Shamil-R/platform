@@ -2,20 +2,22 @@
 
 
 [[projects]]
-  digest = "1:8ff51c8e567e46e67fddbb20a846cc2875eb2fbb010965eb6d523b874b2181ae"
+  digest = "1:51f8e6ff37a65ecb41c2a69849182bc25b6e224e0eb80e99a78b8afb4ac11342"
   name = "github.com/99designs/gqlgen"
   packages = [
     ".",
     "cmd",
     "codegen",
     "codegen/templates",
+    "complexity",
     "graphql",
     "graphql/introspection",
     "handler",
+    "internal/gopath",
   ]
   pruneopts = "UT"
-  revision = "3575c289486fce174c941b63749b9bbb88c3ca90"
-  version = "0.4.3"
+  revision = "5bc4665fab378aa7fe6b81bef968ed608aad1477"
+  version = "v0.5.0"
 
 [[projects]]
   digest = "1:55388fd080150b9a072912f97b1f5891eb0b50df43401f8b75fb4273d3fec9fc"
@@ -34,12 +36,12 @@
   version = "v2.15.0"
 
 [[projects]]
-  branch = "master"
   digest = "1:897d91c431ce469d35a5e6030e60e617dccd9a0e95bdffa6a80594f5c5800d29"
   name = "github.com/agnivade/levenshtein"
   packages = ["."]
   pruneopts = "UT"
   revision = "3d21ba515fe27b856f230847e856431ae1724adc"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:8f5416c7f59da8600725ae1ff00a99af1da8b04c211ae6f3c8f8bcab0164f650"
@@ -66,7 +68,7 @@
   version = "v1.4.7"
 
 [[projects]]
-  digest = "1:a902020025215e4106f858933085145dd49a4bcb974525b72bed8abdf116dd4c"
+  digest = "1:5124e6ff690ac44c7c3bb07dba724dcb3b56285dd6706a4f60dd661182734a50"
   name = "github.com/gobuffalo/packr"
   packages = [
     ".",
@@ -75,28 +77,38 @@
     "packr/cmd",
   ]
   pruneopts = "UT"
-  revision = "1aab5672bd385f2a7da18bffa961912e7642ea79"
-  version = "v1.13.2"
+  revision = "ee1318b82b25993be2f7161d48315e1f14697528"
+  version = "v1.13.3"
 
 [[projects]]
-  digest = "1:8f8811f9be822914c3a25c6a071e93beb4c805d7b026cbf298bc577bc1cc945b"
+  digest = "1:3a26588bc48b96825977c1b3df964f8fd842cd6860cc26370588d3563433cf11"
   name = "github.com/google/uuid"
   packages = ["."]
   pruneopts = "UT"
-  revision = "064e2069ce9c359c118179501254f67d7d37ba24"
-  version = "0.2"
+  revision = "d460ce9f8df2e77fb1ba55ca87fafed96c607494"
+  version = "v1.0.0"
 
 [[projects]]
-  digest = "1:43dd08a10854b2056e615d1b1d22ac94559d822e1f8b6fcc92c1a1057e85188e"
+  digest = "1:cee8e8ac80df6373e7daa11baf1f98c1b6f7242c49ccae7e1ec34a971dc408d9"
   name = "github.com/gorilla/websocket"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ea4d1f681babbce9545c9c5f3d5194a789c89f5b"
-  version = "v1.2.0"
+  revision = "3ff3320c2a1756a3691521efc290b4701575147c"
+  version = "v1.3.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:a361611b8c8c75a1091f00027767f7779b29cb37c456a71b8f2604c88057ab40"
+  digest = "1:8ec8d88c248041a6df5f6574b87bc00e7e0b493881dad2e7ef47b11dc69093b5"
+  name = "github.com/hashicorp/golang-lru"
+  packages = [
+    ".",
+    "simplelru",
+  ]
+  pruneopts = "UT"
+  revision = "20f1fb78b0740ba8c3cb143a61e86ba5c8669768"
+  version = "v0.5.0"
+
+[[projects]]
+  digest = "1:c0d19ab64b32ce9fe5cf4ddceba78d5bc9807f0016db6b1183599da3dcc24d10"
   name = "github.com/hashicorp/hcl"
   packages = [
     ".",
@@ -111,15 +123,16 @@
     "json/token",
   ]
   pruneopts = "UT"
-  revision = "ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
+  revision = "8cb6e5b959231cc1119e43259c4a608f9c51a241"
+  version = "v1.0.0"
 
 [[projects]]
-  digest = "1:6b1e7618931d0ed9a17fec1c1d84271907aa61172c50b8272327f6cd4fafb650"
+  digest = "1:4e0aa2a8f7c5d6e125af6ed331f5389003429e4fb0747f6d4be9715f246800f0"
   name = "github.com/huandu/xstrings"
   packages = ["."]
   pruneopts = "UT"
-  revision = "2bf18b218c51864a87384c06996e40ff9dcff8e1"
-  version = "v1.0.0"
+  revision = "55ae428c2ac4f74d7430952ef528631e656ac92c"
+  version = "v1.1.0"
 
 [[projects]]
   digest = "1:8eb1de8112c9924d59bf1d3e5c26f5eaa2bfc2a5fcbb92dc1c2e4546d695f277"
@@ -155,19 +168,19 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:c7354463195544b1ab3c1f1fadb41430947f5d28dfbf2cdbd38268c5717a5a03"
+  digest = "1:78bbb1ba5b7c3f2ed0ea1eab57bdd3859aec7e177811563edc41198a760b06af"
   name = "github.com/mitchellh/go-homedir"
   packages = ["."]
   pruneopts = "UT"
-  revision = "58046073cbffe2f25d425fe1331102f55cf719de"
+  revision = "ae18d6b8b3205b561c79e8e5f69bff09736185f4"
 
 [[projects]]
-  branch = "master"
-  digest = "1:5ab79470a1d0fb19b041a624415612f8236b3c06070161a910562f2b2d064355"
+  digest = "1:645110e089152bd0f4a011a2648fbb0e4df5977be73ca605781157ac297f50c4"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
   pruneopts = "UT"
-  revision = "f15292f7a699fcc1a38a80977f80a046874ba8ac"
+  revision = "fa473d140ef3c6adf42d6b391fe76707f1f243c8"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:95741de3af260a92cc5c7f3f3061e85273f5a81b5db20d4bd68da74bd521675e"
@@ -237,8 +250,16 @@
   version = "v1.1.0"
 
 [[projects]]
+  digest = "1:b24d38b282bacf9791408a080f606370efa3d364e4b5fd9ba0f7b87786d3b679"
+  name = "github.com/urfave/cli"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
+  version = "v1.20.0"
+
+[[projects]]
   branch = "master"
-  digest = "1:b6e9876e0935b7252ef00a6cb3bdd4c3c26d76a53223a5de8c37487dcdf50225"
+  digest = "1:8150271279cc160a41e9aabfee8118c20a0e88894a25b2577f93e7c868e5259c"
   name = "github.com/vektah/gqlparser"
   packages = [
     ".",
@@ -250,7 +271,7 @@
     "validator/rules",
   ]
   pruneopts = "UT"
-  revision = "04021c23cb3810632117e34c3e0e3d415a202c63"
+  revision = "14e83ae06ec152e6d0afb9766a00e0c0918aa8fc"
 
 [[projects]]
   digest = "1:3c1a69cdae3501bf75e76d0d86dc6f2b0a7421bc205c0cb7b96b19eed464a34d"
@@ -292,7 +313,7 @@
     "scrypt",
   ]
   pruneopts = "UT"
-  revision = "aabede6cba87e37f413b3e60ebfc214f8eeca1b0"
+  revision = "182538f80094b6a8efaade63a8fd8e0d9d5843dd"
 
 [[projects]]
   branch = "master"
@@ -300,7 +321,7 @@
   name = "golang.org/x/net"
   packages = ["context"]
   pruneopts = "UT"
-  revision = "aaf60122140d3fcf75376d319f0554393160eb50"
+  revision = "8a410e7b638dca158bf9e766925842f6651ff828"
 
 [[projects]]
   branch = "master"
@@ -312,11 +333,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:05662433b3a13c921587a6e622b5722072edff83211efd1cd79eeaeedfd83f07"
+  digest = "1:4b487c782bc804d994e91adbd3d2a8a77a482671efd87b2fde0805adb01a39c0"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "1c9583448a9c3aa0f9a6a5241bf73c0bd8aafded"
+  revision = "fa5fdf94c78965f1aa8423f0cc50b8b8d728b05a"
 
 [[projects]]
   digest = "1:8029e9743749d4be5bc9f7d42ea1659471767860f0cdc34d37c3111bd308a295"
@@ -346,7 +367,7 @@
     "internal/fastwalk",
   ]
   pruneopts = "UT"
-  revision = "7d1dc997617fb662918b6ea95efc19faa87e1cf8"
+  revision = "7ca132754999accbaa5c1735eda29e7ce0f3bf03"
 
 [[projects]]
   digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
@@ -366,6 +387,7 @@
     "github.com/99designs/gqlgen/handler",
     "github.com/Masterminds/sprig",
     "github.com/fatih/structs",
+    "github.com/gobuffalo/packr",
     "github.com/gobuffalo/packr/packr",
     "github.com/jinzhu/inflection",
     "github.com/mitchellh/go-homedir",

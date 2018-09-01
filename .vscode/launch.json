@@ -12,7 +12,8 @@
             "remotePath": "",
             "port": 2345,
             "host": "127.0.0.1",
-            "program": "${workspaceRoot}/platform",
+            "program": "${workspaceFolder}/platform",
+            "cwd": "${workspaceFolder}",
             "env": {},
             "args": ["codegen"],
             "showLog": false

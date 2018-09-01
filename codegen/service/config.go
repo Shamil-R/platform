@@ -1,13 +1,13 @@
 package service
 
-var DefaultConfig = Config{
-	Package:  "service",
-	Filename: "service_gen.go",
-}
+import "path"
 
 type Config struct {
-	Package  string
-	Filename string
-	Schema   string
-	Includes string
+	Filename      string
+	Schema        string
+	ModelFilename string
+}
+
+func (c Config) Package() string {
+	return path.Base(path.Dir(c.Filename))
 }

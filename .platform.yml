@@ -3,7 +3,7 @@ codegen:
     source: server/schema/schema.graphql
     generate: server/schema/schema_gen.graphql
   model: 
-    package: model
+    package: server/model
   service:
-    package: service
-    filename: service_gen.go
+    package: server/service
+    filename: server/service/service_gen.go
