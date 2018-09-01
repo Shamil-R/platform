@@ -7,15 +7,14 @@ import (
 
 var DefaultConfig = Config{
 	SchemaConfig: SchemaConfig{
-		Source:   "schema.graphql",
-		Generate: "schema_gen.graphql",
+		Source:   "server/schema/schema.graphql",
+		Generate: "server/schema/schema_gen.graphql",
 	},
 	ModelConfig: ConfigModel{
-		Package: "model",
+		Filename: "server/model/model_gen.go",
 	},
 	ServiceConfig: ConfigService{
-		Package:  "service",
-		Filename: "service_gen.go",
+		Filename: "server/service/service_gen.go",
 	},
 }
 
@@ -34,8 +33,9 @@ func (c Config) Schema() schema.Config {
 
 func (c Config) Service() service.Config {
 	return service.Config{
-		Filename: c.ServiceConfig.Filename,
-		Schema:   c.SchemaConfig.Generate,
+		Filename:      c.ServiceConfig.Filename,
+		Schema:        c.SchemaConfig.Generate,
+		ModelFilename: c.ModelConfig.Filename,
 	}
 }
 
@@ -45,10 +45,9 @@ type SchemaConfig struct {
 }
 
 type ConfigModel struct {
-	Package string `mapstructure:"package"`
+	Filename string `mapstructure:"filename"`
 }
 
 type ConfigService struct {
-	Package  string `mapstructure:"package"`
 	Filename string `mapstructure:"filename"`
 }

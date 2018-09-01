@@ -18,15 +18,14 @@
 
 package {{ .PackageName }}
 
-/* import (
+import (
 {{- range $import := .Imports }}
-	{{- $import.Write }}
-{{ end }}
-) */
-
+	{{ $import.Alias }} "{{ $import.Path }}"
+{{- end }}
+)
 
 type Service interface {
 {{- range $i, $def := .Schema.Mutation.Fields }}
-	{{ .Name }}({{ template "args" $def }}) ({{ template "type" $def.Type }}, error)
+	{{ title .Name }}({{ template "args" $def }}) ({{ template "type" $def.Type }}, error)
 {{- end }}
 }

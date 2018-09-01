@@ -1,9 +1,8 @@
 codegen:
   schema:
-    source: schema.graphql
-    generate: schema_gen.graphql
+    source: server/schema/schema.graphql
+    generate: server/schema/schema_gen.graphql
   model: 
-    package: model
+    filename: server/model/model_gen.go
   service:
-    package: service
-    filename: service_gen.go
+    filename: server/service/service_gen.go

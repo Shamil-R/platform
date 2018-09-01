@@ -19,7 +19,13 @@ func Generate(cfg Config) error {
 
 	code := &build.Code{
 		PackageName: cfg.Package(),
-		Schema:      schema,
+		Imports: []*build.Import{
+			&build.Import{
+				Path:  "gitlab/nefco/platform/" + cfg.ModelPath(),
+				Alias: "model",
+			},
+		},
+		Schema: schema,
 	}
 
 	if err := tools.ExecuteTemplate(tmpl, code, cfg.Filename); err != nil {

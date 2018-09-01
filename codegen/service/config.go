@@ -11,3 +11,7 @@ type Config struct {
 func (c Config) Package() string {
 	return path.Base(path.Dir(c.Filename))
 }
+
+func (c Config) ModelPath() string {
+	return path.Dir(c.ModelFilename)
+}
