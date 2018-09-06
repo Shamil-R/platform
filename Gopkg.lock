@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  digest = "1:b62a3c5b37db602bf1158e921da1a762315a4c37855fd418a14498aa87a342d5"
+  name = "cloud.google.com/go"
+  packages = ["civil"]
+  pruneopts = "UT"
+  revision = "c728a003b238b26cef9ab6753a5dc424b331c3ad"
+  version = "v0.27.0"
+
+[[projects]]
   digest = "1:51f8e6ff37a65ecb41c2a69849182bc25b6e224e0eb80e99a78b8afb4ac11342"
   name = "github.com/99designs/gqlgen"
   packages = [
@@ -52,6 +60,25 @@
   version = "v1.0.1"
 
 [[projects]]
+  digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  pruneopts = "UT"
+  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
+  version = "v1.1.1"
+
+[[projects]]
+  branch = "master"
+  digest = "1:6f120164f62e62991d0f85562abe2002d438abb2ca80b7717a2f4ae2af1c6829"
+  name = "github.com/denisenkom/go-mssqldb"
+  packages = [
+    ".",
+    "internal/cp",
+  ]
+  pruneopts = "UT"
+  revision = "1eb28afdf9b6e56cf673badd47545f844fe81103"
+
+[[projects]]
   digest = "1:ca82a3b99694824c627573c2a76d0e49719b4a9c02d1d85a2ac91f1c1f52ab9b"
   name = "github.com/fatih/structs"
   packages = ["."]
@@ -66,6 +93,14 @@
   pruneopts = "UT"
   revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
   version = "v1.4.7"
+
+[[projects]]
+  digest = "1:b9914f85d95a0968bafd1be1908ba29e2eafafd88d6fd13696be42bf5368c380"
+  name = "github.com/go-chi/chi"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "b5294d10673813fac8558e7f47242bc9e61b4c25"
+  version = "v3.3.3"
 
 [[projects]]
   digest = "1:5124e6ff690ac44c7c3bb07dba724dcb3b56285dd6706a4f60dd661182734a50"
@@ -157,6 +192,17 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "04140366298a54a039076d798123ffa108fff46c"
+
+[[projects]]
+  branch = "master"
+  digest = "1:7654989089e5bd5b6734ec3be8b695e87d3f1f8d95620b343fd7d3995a5b60d7"
+  name = "github.com/jmoiron/sqlx"
+  packages = [
+    ".",
+    "reflectx",
+  ]
+  pruneopts = "UT"
+  revision = "0dae4fefe7c0e190f7b5a78dac28a1c82cc8d849"
 
 [[projects]]
   digest = "1:c568d7727aa262c32bdf8a3f7db83614f7af0ed661474b24588de635c20024c7"
@@ -306,9 +352,10 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:29672ea8ec3ef342d345f668d47666e45366b7691080ee4c07bf4851f4fa8864"
+  digest = "1:325ce41aa70506f8bd266ee86004376e8014b4d89fec3553fc2dbf0c05f554d1"
   name = "golang.org/x/crypto"
   packages = [
+    "md4",
     "pbkdf2",
     "scrypt",
   ]
@@ -386,10 +433,14 @@
     "github.com/99designs/gqlgen/graphql/introspection",
     "github.com/99designs/gqlgen/handler",
     "github.com/Masterminds/sprig",
+    "github.com/davecgh/go-spew/spew",
+    "github.com/denisenkom/go-mssqldb",
     "github.com/fatih/structs",
+    "github.com/go-chi/chi",
     "github.com/gobuffalo/packr",
     "github.com/gobuffalo/packr/packr",
     "github.com/jinzhu/inflection",
+    "github.com/jmoiron/sqlx",
     "github.com/mitchellh/go-homedir",
     "github.com/spf13/cobra",
     "github.com/spf13/viper",

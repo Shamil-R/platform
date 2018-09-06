@@ -7,31 +7,15 @@ import (
 	"fmt"
 	graph "gitlab/nefco/platform/server/graph"
 	model "gitlab/nefco/platform/server/model"
-	"log"
 
-	_ "github.com/denisenkom/go-mssqldb"
-	"github.com/jmoiron/sqlx"
+	"github.com/99designs/gqlgen/graphql"
 )
 
 type Resolver struct {
-	db *sqlx.DB
 }
 
 func NewResolver() *Resolver {
-	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s",
-		"sa",
-		"p@sSw0rd",
-		"127.0.0.1",
-		"1433",
-		"platform",
-	)
-	db, err := sqlx.Connect("mssql", dsn)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return &Resolver{
-		db: db,
-	}
+	return &Resolver{}
 }
 
 func (r *Resolver) Mutation() graph.MutationResolver {
@@ -71,6 +55,15 @@ func (r *queryResolver) Posts(ctx context.Context, where *model.PostWhereInput) 
 	panic("not implemented")
 }
 func (r *queryResolver) User(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error) {
+	rctx := graphql.GetResolverContext(ctx)
+
+	fmt.Println(rctx.Object)
+	fmt.Println(rctx.Field.Name)
+	for _, arg := range rctx.Field.Arguments {
+		fmt.Println(arg.Name)
+	}
+	fmt.Println(rctx.Field.Definition.Name)
+
 	user := &model.User{
 		ID:   "1",
 		Name: "Test",
