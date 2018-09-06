@@ -4,11 +4,8 @@ package platform
 
 import (
 	context "context"
-	"fmt"
 	graph "gitlab/nefco/platform/server/graph"
 	model "gitlab/nefco/platform/server/model"
-
-	"github.com/99designs/gqlgen/graphql"
 )
 
 type Resolver struct {
@@ -55,14 +52,25 @@ func (r *queryResolver) Posts(ctx context.Context, where *model.PostWhereInput) 
 	panic("not implemented")
 }
 func (r *queryResolver) User(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error) {
-	rctx := graphql.GetResolverContext(ctx)
 
-	fmt.Println(rctx.Object)
-	fmt.Println(rctx.Field.Name)
-	for _, arg := range rctx.Field.Arguments {
-		fmt.Println(arg.Name)
-	}
-	fmt.Println(rctx.Field.Definition.Name)
+	// fmt.Println(rctx.Object)
+	// fmt.Println(rctx.Field.Name)
+	// for _, arg := range rctx.Field.Arguments {
+	// 	fmt.Println(arg.Name)
+	// }
+	// fmt.Println(rctx.Field.Definition.Name)
+	// for k, arg := range rctx.Args {
+	// 	fmt.Println(k, arg)
+	// }
+	// rctx.Field.SelectionSet[0]
+	// for _, s := range rctx.Field.Selections {
+	// 	fmt.Println(s.GetPosition())
+	// }
+
+	// fmt.Println(rctx.Field.ObjectDefinition.Name)
+	// for _, field := range rctx.Field.ObjectDefinition.Fields {
+	// 	fmt.Println(field.Name, field.Type)
+	// }
 
 	user := &model.User{
 		ID:   "1",

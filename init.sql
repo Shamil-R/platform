@@ -23,5 +23,5 @@ CREATE TABLE users (
 )
 GO
 
-INSERT INTO users (id, name) VALUES(1, '1', 'Test')
+INSERT INTO users (id, uid, name) VALUES(1, '1', 'Test')
 GO
