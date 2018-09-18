@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"gitlab/nefco/platform"
 	"gitlab/nefco/platform/server/graph"
+	"gitlab/nefco/platform/service"
 	"log"
 	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
-	"github.com/vektah/gqlparser/ast"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
@@ -52,7 +52,7 @@ var runCmd = &cobra.Command{
 		router.Handle("/query",
 			handler.GraphQL(
 				graph.NewExecutableSchema(conf),
-				handler.ResolverMiddleware(ResolverMiddleware()),
+				handler.ResolverMiddleware(ResolverMiddleware(service.NewRoleService())),
 				// handler.RecoverFunc(func(ctx context.Context, err interface{}) error {
 				// 	// send this panic somewhere
 				// 	log.Print(err)
@@ -80,27 +80,30 @@ func Middleware(db *sqlx.DB) func(http.Handler) http.Handler {
 	}
 }
 
-func ResolverMiddleware() graphql.FieldMiddleware {
+func ResolverMiddleware(roleService service.RoleService) graphql.FieldMiddleware {
 	return func(ctx context.Context, next graphql.Resolver) (interface{}, error) {
-		var sels []string
+		// var sels []string
 
-		reqCtx := graphql.GetRequestContext(ctx)
+		// reqCtx := graphql.GetRequestContext(ctx)
 		resCtx := graphql.GetResolverContext(ctx)
-		fieldSelections := resCtx.Field.Selections
 
-		for _, sel := range fieldSelections {
-			switch sel := sel.(type) {
-			case *ast.Field:
-				sels = append(sels, fmt.Sprintf("%s as %s in %s", sel.Name, sel.Alias, sel.ObjectDefinition.Name))
-			case *ast.InlineFragment:
-				sels = append(sels, fmt.Sprintf("inline fragment on %s", sel.TypeCondition))
-			case *ast.FragmentSpread:
-				fragment := reqCtx.Doc.Fragments.ForName(sel.Name)
-				sels = append(sels, fmt.Sprintf("named fragment %s on %s", sel.Name, fragment.TypeCondition))
-			}
-		}
+		roleService.CheckRole(resCtx)
 
-		fmt.Println(sels)
+		// fieldSelections := resCtx.Field.Selections
+
+		// for _, sel := range fieldSelections {
+		// 	switch sel := sel.(type) {
+		// 	case *ast.Field:
+		// 		sels = append(sels, fmt.Sprintf("%s as %s in %s", sel.Name, sel.Alias, sel.ObjectDefinition.Name))
+		// 	case *ast.InlineFragment:
+		// 		sels = append(sels, fmt.Sprintf("inline fragment on %s", sel.TypeCondition))
+		// 	case *ast.FragmentSpread:
+		// 		fragment := reqCtx.Doc.Fragments.ForName(sel.Name)
+		// 		sels = append(sels, fmt.Sprintf("named fragment %s on %s", sel.Name, fragment.TypeCondition))
+		// 	}
+		// }
+
+		// fmt.Println(sels)
 
 		return next(ctx)
 	}
