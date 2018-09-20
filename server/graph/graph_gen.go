@@ -39,47 +39,376 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	Mutation struct {
-		CreatePost func(childComplexity int, data model.PostCreateInput) int
-		UpdatePost func(childComplexity int, data model.PostUpdateInput, where model.PostWhereUniqueInput) int
-		DeletePost func(childComplexity int, where model.PostWhereUniqueInput) int
-		CreateUser func(childComplexity int, data model.UserCreateInput) int
-		UpdateUser func(childComplexity int, data model.UserUpdateInput, where model.UserWhereUniqueInput) int
-		DeleteUser func(childComplexity int, where model.UserWhereUniqueInput) int
+	Material struct {
+		Id   func(childComplexity int) int
+		Name func(childComplexity int) int
 	}
 
-	Post struct {
-		Id   func(childComplexity int) int
-		Text func(childComplexity int) int
+	Mutation struct {
+		CreateMaterial   func(childComplexity int, data model.MaterialCreateInput) int
+		UpdateMaterial   func(childComplexity int, data model.MaterialUpdateInput, where model.MaterialWhereUniqueInput) int
+		DeleteMaterial   func(childComplexity int, where model.MaterialWhereUniqueInput) int
+		CreateRoleObject func(childComplexity int, data model.RoleObjectCreateInput) int
+		UpdateRoleObject func(childComplexity int, data model.RoleObjectUpdateInput, where model.RoleObjectWhereUniqueInput) int
+		DeleteRoleObject func(childComplexity int, where model.RoleObjectWhereUniqueInput) int
+		CreateUser       func(childComplexity int, data model.UserCreateInput) int
+		UpdateUser       func(childComplexity int, data model.UserUpdateInput, where model.UserWhereUniqueInput) int
+		DeleteUser       func(childComplexity int, where model.UserWhereUniqueInput) int
 	}
 
 	Query struct {
-		Post  func(childComplexity int, where model.PostWhereUniqueInput) int
-		Posts func(childComplexity int, where *model.PostWhereInput) int
-		User  func(childComplexity int, where model.UserWhereUniqueInput) int
-		Users func(childComplexity int, where *model.UserWhereInput) int
+		Material    func(childComplexity int, where model.MaterialWhereUniqueInput) int
+		Materials   func(childComplexity int, where *model.MaterialWhereInput) int
+		Roleobject  func(childComplexity int, where model.RoleObjectWhereUniqueInput) int
+		Roleobjects func(childComplexity int, where *model.RoleObjectWhereInput) int
+		User        func(childComplexity int, where model.UserWhereUniqueInput) int
+		Users       func(childComplexity int, where *model.UserWhereInput) int
+	}
+
+	RoleObject struct {
+		Id     func(childComplexity int) int
+		Object func(childComplexity int) int
+		Access func(childComplexity int) int
 	}
 
 	User struct {
-		Id    func(childComplexity int) int
-		Name  func(childComplexity int) int
-		Posts func(childComplexity int) int
+		Id        func(childComplexity int) int
+		Name      func(childComplexity int) int
+		Roles     func(childComplexity int) int
+		Materials func(childComplexity int) int
 	}
 }
 
 type MutationResolver interface {
-	CreatePost(ctx context.Context, data model.PostCreateInput) (model.Post, error)
-	UpdatePost(ctx context.Context, data model.PostUpdateInput, where model.PostWhereUniqueInput) (*model.Post, error)
-	DeletePost(ctx context.Context, where model.PostWhereUniqueInput) (*model.Post, error)
+	CreateMaterial(ctx context.Context, data model.MaterialCreateInput) (model.Material, error)
+	UpdateMaterial(ctx context.Context, data model.MaterialUpdateInput, where model.MaterialWhereUniqueInput) (*model.Material, error)
+	DeleteMaterial(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error)
+	CreateRoleObject(ctx context.Context, data model.RoleObjectCreateInput) (model.RoleObject, error)
+	UpdateRoleObject(ctx context.Context, data model.RoleObjectUpdateInput, where model.RoleObjectWhereUniqueInput) (*model.RoleObject, error)
+	DeleteRoleObject(ctx context.Context, where model.RoleObjectWhereUniqueInput) (*model.RoleObject, error)
 	CreateUser(ctx context.Context, data model.UserCreateInput) (model.User, error)
 	UpdateUser(ctx context.Context, data model.UserUpdateInput, where model.UserWhereUniqueInput) (*model.User, error)
 	DeleteUser(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error)
 }
 type QueryResolver interface {
-	Post(ctx context.Context, where model.PostWhereUniqueInput) (*model.Post, error)
-	Posts(ctx context.Context, where *model.PostWhereInput) ([]*model.Post, error)
+	Material(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error)
+	Materials(ctx context.Context, where *model.MaterialWhereInput) ([]*model.Material, error)
+	Roleobject(ctx context.Context, where model.RoleObjectWhereUniqueInput) (*model.RoleObject, error)
+	Roleobjects(ctx context.Context, where *model.RoleObjectWhereInput) ([]*model.RoleObject, error)
 	User(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error)
 	Users(ctx context.Context, where *model.UserWhereInput) ([]*model.User, error)
+}
+
+func field_Mutation_createMaterial_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.MaterialCreateInput
+	if tmp, ok := rawArgs["data"]; ok {
+		var err error
+		arg0, err = UnmarshalMaterialCreateInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["data"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_updateMaterial_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.MaterialUpdateInput
+	if tmp, ok := rawArgs["data"]; ok {
+		var err error
+		arg0, err = UnmarshalMaterialUpdateInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["data"] = arg0
+	var arg1 model.MaterialWhereUniqueInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		arg1, err = UnmarshalMaterialWhereUniqueInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg1
+	return args, nil
+
+}
+
+func field_Mutation_deleteMaterial_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.MaterialWhereUniqueInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		arg0, err = UnmarshalMaterialWhereUniqueInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_createRoleObject_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.RoleObjectCreateInput
+	if tmp, ok := rawArgs["data"]; ok {
+		var err error
+		arg0, err = UnmarshalRoleObjectCreateInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["data"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_updateRoleObject_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.RoleObjectUpdateInput
+	if tmp, ok := rawArgs["data"]; ok {
+		var err error
+		arg0, err = UnmarshalRoleObjectUpdateInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["data"] = arg0
+	var arg1 model.RoleObjectWhereUniqueInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		arg1, err = UnmarshalRoleObjectWhereUniqueInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg1
+	return args, nil
+
+}
+
+func field_Mutation_deleteRoleObject_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.RoleObjectWhereUniqueInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		arg0, err = UnmarshalRoleObjectWhereUniqueInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_createUser_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.UserCreateInput
+	if tmp, ok := rawArgs["data"]; ok {
+		var err error
+		arg0, err = UnmarshalUserCreateInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["data"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_updateUser_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.UserUpdateInput
+	if tmp, ok := rawArgs["data"]; ok {
+		var err error
+		arg0, err = UnmarshalUserUpdateInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["data"] = arg0
+	var arg1 model.UserWhereUniqueInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		arg1, err = UnmarshalUserWhereUniqueInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg1
+	return args, nil
+
+}
+
+func field_Mutation_deleteUser_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.UserWhereUniqueInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		arg0, err = UnmarshalUserWhereUniqueInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg0
+	return args, nil
+
+}
+
+func field_Query_material_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.MaterialWhereUniqueInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		arg0, err = UnmarshalMaterialWhereUniqueInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg0
+	return args, nil
+
+}
+
+func field_Query_materials_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *model.MaterialWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		var ptr1 model.MaterialWhereInput
+		if tmp != nil {
+			ptr1, err = UnmarshalMaterialWhereInput(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg0
+	return args, nil
+
+}
+
+func field_Query_roleobject_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.RoleObjectWhereUniqueInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		arg0, err = UnmarshalRoleObjectWhereUniqueInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg0
+	return args, nil
+
+}
+
+func field_Query_roleobjects_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *model.RoleObjectWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		var ptr1 model.RoleObjectWhereInput
+		if tmp != nil {
+			ptr1, err = UnmarshalRoleObjectWhereInput(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg0
+	return args, nil
+
+}
+
+func field_Query_user_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.UserWhereUniqueInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		arg0, err = UnmarshalUserWhereUniqueInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg0
+	return args, nil
+
+}
+
+func field_Query_users_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *model.UserWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		var ptr1 model.UserWhereInput
+		if tmp != nil {
+			ptr1, err = UnmarshalUserWhereInput(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg0
+	return args, nil
+
+}
+
+func field_Query___type_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["name"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg0
+	return args, nil
+
+}
+
+func field___Type_fields_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 bool
+	if tmp, ok := rawArgs["includeDeprecated"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalBoolean(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["includeDeprecated"] = arg0
+	return args, nil
+
+}
+
+func field___Type_enumValues_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 bool
+	if tmp, ok := rawArgs["includeDeprecated"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalBoolean(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["includeDeprecated"] = arg0
+	return args, nil
+
 }
 
 type executableSchema struct {
@@ -95,85 +424,101 @@ func (e *executableSchema) Schema() *ast.Schema {
 func (e *executableSchema) Complexity(typeName, field string, childComplexity int, rawArgs map[string]interface{}) (int, bool) {
 	switch typeName + "." + field {
 
-	case "Mutation.createPost":
-		if e.complexity.Mutation.CreatePost == nil {
+	case "Material.id":
+		if e.complexity.Material.Id == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 model.PostCreateInput
-		if tmp, ok := rawArgs["data"]; ok {
-			var err error
-			arg0, err = UnmarshalPostCreateInput(tmp)
-			if err != nil {
-				return 0, false
-			}
-		}
-		args["data"] = arg0
+		return e.complexity.Material.Id(childComplexity), true
 
-		return e.complexity.Mutation.CreatePost(childComplexity, args["data"].(model.PostCreateInput)), true
-
-	case "Mutation.updatePost":
-		if e.complexity.Mutation.UpdatePost == nil {
+	case "Material.name":
+		if e.complexity.Material.Name == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 model.PostUpdateInput
-		if tmp, ok := rawArgs["data"]; ok {
-			var err error
-			arg0, err = UnmarshalPostUpdateInput(tmp)
-			if err != nil {
-				return 0, false
-			}
-		}
-		args["data"] = arg0
+		return e.complexity.Material.Name(childComplexity), true
 
-		var arg1 model.PostWhereUniqueInput
-		if tmp, ok := rawArgs["where"]; ok {
-			var err error
-			arg1, err = UnmarshalPostWhereUniqueInput(tmp)
-			if err != nil {
-				return 0, false
-			}
-		}
-		args["where"] = arg1
-
-		return e.complexity.Mutation.UpdatePost(childComplexity, args["data"].(model.PostUpdateInput), args["where"].(model.PostWhereUniqueInput)), true
-
-	case "Mutation.deletePost":
-		if e.complexity.Mutation.DeletePost == nil {
+	case "Mutation.createMaterial":
+		if e.complexity.Mutation.CreateMaterial == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 model.PostWhereUniqueInput
-		if tmp, ok := rawArgs["where"]; ok {
-			var err error
-			arg0, err = UnmarshalPostWhereUniqueInput(tmp)
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Mutation_createMaterial_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["where"] = arg0
 
-		return e.complexity.Mutation.DeletePost(childComplexity, args["where"].(model.PostWhereUniqueInput)), true
+		return e.complexity.Mutation.CreateMaterial(childComplexity, args["data"].(model.MaterialCreateInput)), true
+
+	case "Mutation.updateMaterial":
+		if e.complexity.Mutation.UpdateMaterial == nil {
+			break
+		}
+
+		args, err := field_Mutation_updateMaterial_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateMaterial(childComplexity, args["data"].(model.MaterialUpdateInput), args["where"].(model.MaterialWhereUniqueInput)), true
+
+	case "Mutation.deleteMaterial":
+		if e.complexity.Mutation.DeleteMaterial == nil {
+			break
+		}
+
+		args, err := field_Mutation_deleteMaterial_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteMaterial(childComplexity, args["where"].(model.MaterialWhereUniqueInput)), true
+
+	case "Mutation.createRoleObject":
+		if e.complexity.Mutation.CreateRoleObject == nil {
+			break
+		}
+
+		args, err := field_Mutation_createRoleObject_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateRoleObject(childComplexity, args["data"].(model.RoleObjectCreateInput)), true
+
+	case "Mutation.updateRoleObject":
+		if e.complexity.Mutation.UpdateRoleObject == nil {
+			break
+		}
+
+		args, err := field_Mutation_updateRoleObject_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateRoleObject(childComplexity, args["data"].(model.RoleObjectUpdateInput), args["where"].(model.RoleObjectWhereUniqueInput)), true
+
+	case "Mutation.deleteRoleObject":
+		if e.complexity.Mutation.DeleteRoleObject == nil {
+			break
+		}
+
+		args, err := field_Mutation_deleteRoleObject_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteRoleObject(childComplexity, args["where"].(model.RoleObjectWhereUniqueInput)), true
 
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 model.UserCreateInput
-		if tmp, ok := rawArgs["data"]; ok {
-			var err error
-			arg0, err = UnmarshalUserCreateInput(tmp)
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Mutation_createUser_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["data"] = arg0
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["data"].(model.UserCreateInput)), true
 
@@ -181,27 +526,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		if e.complexity.Mutation.UpdateUser == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 model.UserUpdateInput
-		if tmp, ok := rawArgs["data"]; ok {
-			var err error
-			arg0, err = UnmarshalUserUpdateInput(tmp)
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Mutation_updateUser_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["data"] = arg0
-
-		var arg1 model.UserWhereUniqueInput
-		if tmp, ok := rawArgs["where"]; ok {
-			var err error
-			arg1, err = UnmarshalUserWhereUniqueInput(tmp)
-			if err != nil {
-				return 0, false
-			}
-		}
-		args["where"] = arg1
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["data"].(model.UserUpdateInput), args["where"].(model.UserWhereUniqueInput)), true
 
@@ -209,90 +538,71 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		if e.complexity.Mutation.DeleteUser == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 model.UserWhereUniqueInput
-		if tmp, ok := rawArgs["where"]; ok {
-			var err error
-			arg0, err = UnmarshalUserWhereUniqueInput(tmp)
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Mutation_deleteUser_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["where"] = arg0
 
 		return e.complexity.Mutation.DeleteUser(childComplexity, args["where"].(model.UserWhereUniqueInput)), true
 
-	case "Post.id":
-		if e.complexity.Post.Id == nil {
+	case "Query.material":
+		if e.complexity.Query.Material == nil {
 			break
 		}
 
-		return e.complexity.Post.Id(childComplexity), true
+		args, err := field_Query_material_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
 
-	case "Post.text":
-		if e.complexity.Post.Text == nil {
+		return e.complexity.Query.Material(childComplexity, args["where"].(model.MaterialWhereUniqueInput)), true
+
+	case "Query.materials":
+		if e.complexity.Query.Materials == nil {
 			break
 		}
 
-		return e.complexity.Post.Text(childComplexity), true
+		args, err := field_Query_materials_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
 
-	case "Query.post":
-		if e.complexity.Query.Post == nil {
+		return e.complexity.Query.Materials(childComplexity, args["where"].(*model.MaterialWhereInput)), true
+
+	case "Query.roleobject":
+		if e.complexity.Query.Roleobject == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 model.PostWhereUniqueInput
-		if tmp, ok := rawArgs["where"]; ok {
-			var err error
-			arg0, err = UnmarshalPostWhereUniqueInput(tmp)
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Query_roleobject_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["where"] = arg0
 
-		return e.complexity.Query.Post(childComplexity, args["where"].(model.PostWhereUniqueInput)), true
+		return e.complexity.Query.Roleobject(childComplexity, args["where"].(model.RoleObjectWhereUniqueInput)), true
 
-	case "Query.posts":
-		if e.complexity.Query.Posts == nil {
+	case "Query.roleobjects":
+		if e.complexity.Query.Roleobjects == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 *model.PostWhereInput
-		if tmp, ok := rawArgs["where"]; ok {
-			var err error
-			var ptr1 model.PostWhereInput
-			if tmp != nil {
-				ptr1, err = UnmarshalPostWhereInput(tmp)
-				arg0 = &ptr1
-			}
-
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Query_roleobjects_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["where"] = arg0
 
-		return e.complexity.Query.Posts(childComplexity, args["where"].(*model.PostWhereInput)), true
+		return e.complexity.Query.Roleobjects(childComplexity, args["where"].(*model.RoleObjectWhereInput)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 model.UserWhereUniqueInput
-		if tmp, ok := rawArgs["where"]; ok {
-			var err error
-			arg0, err = UnmarshalUserWhereUniqueInput(tmp)
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Query_user_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["where"] = arg0
 
 		return e.complexity.Query.User(childComplexity, args["where"].(model.UserWhereUniqueInput)), true
 
@@ -300,24 +610,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		if e.complexity.Query.Users == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 *model.UserWhereInput
-		if tmp, ok := rawArgs["where"]; ok {
-			var err error
-			var ptr1 model.UserWhereInput
-			if tmp != nil {
-				ptr1, err = UnmarshalUserWhereInput(tmp)
-				arg0 = &ptr1
-			}
-
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Query_users_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["where"] = arg0
 
 		return e.complexity.Query.Users(childComplexity, args["where"].(*model.UserWhereInput)), true
+
+	case "RoleObject.id":
+		if e.complexity.RoleObject.Id == nil {
+			break
+		}
+
+		return e.complexity.RoleObject.Id(childComplexity), true
+
+	case "RoleObject.object":
+		if e.complexity.RoleObject.Object == nil {
+			break
+		}
+
+		return e.complexity.RoleObject.Object(childComplexity), true
+
+	case "RoleObject.access":
+		if e.complexity.RoleObject.Access == nil {
+			break
+		}
+
+		return e.complexity.RoleObject.Access(childComplexity), true
 
 	case "User.id":
 		if e.complexity.User.Id == nil {
@@ -333,12 +653,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Name(childComplexity), true
 
-	case "User.posts":
-		if e.complexity.User.Posts == nil {
+	case "User.roles":
+		if e.complexity.User.Roles == nil {
 			break
 		}
 
-		return e.complexity.User.Posts(childComplexity), true
+		return e.complexity.User.Roles(childComplexity), true
+
+	case "User.materials":
+		if e.complexity.User.Materials == nil {
+			break
+		}
+
+		return e.complexity.User.Materials(childComplexity), true
 
 	}
 	return 0, false
@@ -385,6 +712,85 @@ type executionContext struct {
 	*executableSchema
 }
 
+var materialImplementors = []string{"Material"}
+
+// nolint: gocyclo, errcheck, gas, goconst
+func (ec *executionContext) _Material(ctx context.Context, sel ast.SelectionSet, obj *model.Material) graphql.Marshaler {
+	fields := graphql.CollectFields(ctx, sel, materialImplementors)
+
+	out := graphql.NewOrderedMap(len(fields))
+	invalid := false
+	for i, field := range fields {
+		out.Keys[i] = field.Alias
+
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Material")
+		case "id":
+			out.Values[i] = ec._Material_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "name":
+			out.Values[i] = ec._Material_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+
+	if invalid {
+		return graphql.Null
+	}
+	return out
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Material_id(ctx context.Context, field graphql.CollectedField, obj *model.Material) graphql.Marshaler {
+	rctx := &graphql.ResolverContext{
+		Object: "Material",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+		return obj.ID, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	return graphql.MarshalInt(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Material_name(ctx context.Context, field graphql.CollectedField, obj *model.Material) graphql.Marshaler {
+	rctx := &graphql.ResolverContext{
+		Object: "Material",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+		return obj.Name, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	return graphql.MarshalString(res)
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 // nolint: gocyclo, errcheck, gas, goconst
@@ -403,15 +809,24 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "createPost":
-			out.Values[i] = ec._Mutation_createPost(ctx, field)
+		case "createMaterial":
+			out.Values[i] = ec._Mutation_createMaterial(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
-		case "updatePost":
-			out.Values[i] = ec._Mutation_updatePost(ctx, field)
-		case "deletePost":
-			out.Values[i] = ec._Mutation_deletePost(ctx, field)
+		case "updateMaterial":
+			out.Values[i] = ec._Mutation_updateMaterial(ctx, field)
+		case "deleteMaterial":
+			out.Values[i] = ec._Mutation_deleteMaterial(ctx, field)
+		case "createRoleObject":
+			out.Values[i] = ec._Mutation_createRoleObject(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "updateRoleObject":
+			out.Values[i] = ec._Mutation_updateRoleObject(ctx, field)
+		case "deleteRoleObject":
+			out.Values[i] = ec._Mutation_deleteRoleObject(ctx, field)
 		case "createUser":
 			out.Values[i] = ec._Mutation_createUser(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -433,19 +848,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _Mutation_createPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+func (ec *executionContext) _Mutation_createMaterial(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 model.PostCreateInput
-	if tmp, ok := rawArgs["data"]; ok {
-		var err error
-		arg0, err = UnmarshalPostCreateInput(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Mutation_createMaterial_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["data"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Mutation",
 		Args:   args,
@@ -453,7 +862,7 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Mutation().CreatePost(ctx, args["data"].(model.PostCreateInput))
+		return ec.resolvers.Mutation().CreateMaterial(ctx, args["data"].(model.MaterialCreateInput))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -461,36 +870,20 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(model.Post)
+	res := resTmp.(model.Material)
 	rctx.Result = res
 
-	return ec._Post(ctx, field.Selections, &res)
+	return ec._Material(ctx, field.Selections, &res)
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _Mutation_updatePost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+func (ec *executionContext) _Mutation_updateMaterial(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 model.PostUpdateInput
-	if tmp, ok := rawArgs["data"]; ok {
-		var err error
-		arg0, err = UnmarshalPostUpdateInput(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Mutation_updateMaterial_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["data"] = arg0
-	var arg1 model.PostWhereUniqueInput
-	if tmp, ok := rawArgs["where"]; ok {
-		var err error
-		arg1, err = UnmarshalPostWhereUniqueInput(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
-	}
-	args["where"] = arg1
 	rctx := &graphql.ResolverContext{
 		Object: "Mutation",
 		Args:   args,
@@ -498,35 +891,29 @@ func (ec *executionContext) _Mutation_updatePost(ctx context.Context, field grap
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Mutation().UpdatePost(ctx, args["data"].(model.PostUpdateInput), args["where"].(model.PostWhereUniqueInput))
+		return ec.resolvers.Mutation().UpdateMaterial(ctx, args["data"].(model.MaterialUpdateInput), args["where"].(model.MaterialWhereUniqueInput))
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Post)
+	res := resTmp.(*model.Material)
 	rctx.Result = res
 
 	if res == nil {
 		return graphql.Null
 	}
 
-	return ec._Post(ctx, field.Selections, res)
+	return ec._Material(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _Mutation_deletePost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+func (ec *executionContext) _Mutation_deleteMaterial(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 model.PostWhereUniqueInput
-	if tmp, ok := rawArgs["where"]; ok {
-		var err error
-		arg0, err = UnmarshalPostWhereUniqueInput(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Mutation_deleteMaterial_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["where"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Mutation",
 		Args:   args,
@@ -534,35 +921,118 @@ func (ec *executionContext) _Mutation_deletePost(ctx context.Context, field grap
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Mutation().DeletePost(ctx, args["where"].(model.PostWhereUniqueInput))
+		return ec.resolvers.Mutation().DeleteMaterial(ctx, args["where"].(model.MaterialWhereUniqueInput))
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Post)
+	res := resTmp.(*model.Material)
 	rctx.Result = res
 
 	if res == nil {
 		return graphql.Null
 	}
 
-	return ec._Post(ctx, field.Selections, res)
+	return ec._Material(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_createRoleObject(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_createRoleObject_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Mutation().CreateRoleObject(ctx, args["data"].(model.RoleObjectCreateInput))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.RoleObject)
+	rctx.Result = res
+
+	return ec._RoleObject(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_updateRoleObject(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_updateRoleObject_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Mutation().UpdateRoleObject(ctx, args["data"].(model.RoleObjectUpdateInput), args["where"].(model.RoleObjectWhereUniqueInput))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.RoleObject)
+	rctx.Result = res
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._RoleObject(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_deleteRoleObject(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_deleteRoleObject_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Mutation().DeleteRoleObject(ctx, args["where"].(model.RoleObjectWhereUniqueInput))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.RoleObject)
+	rctx.Result = res
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._RoleObject(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 model.UserCreateInput
-	if tmp, ok := rawArgs["data"]; ok {
-		var err error
-		arg0, err = UnmarshalUserCreateInput(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Mutation_createUser_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["data"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Mutation",
 		Args:   args,
@@ -587,27 +1057,11 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 // nolint: vetshadow
 func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 model.UserUpdateInput
-	if tmp, ok := rawArgs["data"]; ok {
-		var err error
-		arg0, err = UnmarshalUserUpdateInput(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Mutation_updateUser_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["data"] = arg0
-	var arg1 model.UserWhereUniqueInput
-	if tmp, ok := rawArgs["where"]; ok {
-		var err error
-		arg1, err = UnmarshalUserWhereUniqueInput(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
-	}
-	args["where"] = arg1
 	rctx := &graphql.ResolverContext{
 		Object: "Mutation",
 		Args:   args,
@@ -633,17 +1087,11 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 // nolint: vetshadow
 func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 model.UserWhereUniqueInput
-	if tmp, ok := rawArgs["where"]; ok {
-		var err error
-		arg0, err = UnmarshalUserWhereUniqueInput(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Mutation_deleteUser_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["where"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Mutation",
 		Args:   args,
@@ -666,83 +1114,6 @@ func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field grap
 	return ec._User(ctx, field.Selections, res)
 }
 
-var postImplementors = []string{"Post"}
-
-// nolint: gocyclo, errcheck, gas, goconst
-func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj *model.Post) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, postImplementors)
-
-	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
-	for i, field := range fields {
-		out.Keys[i] = field.Alias
-
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Post")
-		case "id":
-			out.Values[i] = ec._Post_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
-		case "text":
-			out.Values[i] = ec._Post_text(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-
-	if invalid {
-		return graphql.Null
-	}
-	return out
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Post_id(ctx context.Context, field graphql.CollectedField, obj *model.Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
-		return obj.ID, nil
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	rctx.Result = res
-	return graphql.MarshalID(res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Post_text(ctx context.Context, field graphql.CollectedField, obj *model.Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
-		return obj.Text, nil
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	rctx.Result = res
-
-	if res == nil {
-		return graphql.Null
-	}
-	return graphql.MarshalString(*res)
-}
-
 var queryImplementors = []string{"Query"}
 
 // nolint: gocyclo, errcheck, gas, goconst
@@ -762,16 +1133,31 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "post":
+		case "material":
 			wg.Add(1)
 			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_post(ctx, field)
+				out.Values[i] = ec._Query_material(ctx, field)
 				wg.Done()
 			}(i, field)
-		case "posts":
+		case "materials":
 			wg.Add(1)
 			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_posts(ctx, field)
+				out.Values[i] = ec._Query_materials(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
+		case "roleobject":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_roleobject(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "roleobjects":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_roleobjects(ctx, field)
 				if out.Values[i] == graphql.Null {
 					invalid = true
 				}
@@ -808,19 +1194,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _Query_post(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+func (ec *executionContext) _Query_material(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 model.PostWhereUniqueInput
-	if tmp, ok := rawArgs["where"]; ok {
-		var err error
-		arg0, err = UnmarshalPostWhereUniqueInput(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query_material_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["where"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -828,40 +1208,29 @@ func (ec *executionContext) _Query_post(ctx context.Context, field graphql.Colle
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().Post(ctx, args["where"].(model.PostWhereUniqueInput))
+		return ec.resolvers.Query().Material(ctx, args["where"].(model.MaterialWhereUniqueInput))
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Post)
+	res := resTmp.(*model.Material)
 	rctx.Result = res
 
 	if res == nil {
 		return graphql.Null
 	}
 
-	return ec._Post(ctx, field.Selections, res)
+	return ec._Material(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+func (ec *executionContext) _Query_materials(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 *model.PostWhereInput
-	if tmp, ok := rawArgs["where"]; ok {
-		var err error
-		var ptr1 model.PostWhereInput
-		if tmp != nil {
-			ptr1, err = UnmarshalPostWhereInput(tmp)
-			arg0 = &ptr1
-		}
-
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query_materials_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["where"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -869,7 +1238,7 @@ func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.Coll
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().Posts(ctx, args["where"].(*model.PostWhereInput))
+		return ec.resolvers.Query().Materials(ctx, args["where"].(*model.MaterialWhereInput))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -877,7 +1246,7 @@ func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Post)
+	res := resTmp.([]*model.Material)
 	rctx.Result = res
 
 	arr1 := make(graphql.Array, len(res))
@@ -905,7 +1274,102 @@ func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.Coll
 					return graphql.Null
 				}
 
-				return ec._Post(ctx, field.Selections, res[idx1])
+				return ec._Material(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_roleobject(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_roleobject_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Query().Roleobject(ctx, args["where"].(model.RoleObjectWhereUniqueInput))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.RoleObject)
+	rctx.Result = res
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._RoleObject(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_roleobjects(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_roleobjects_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Query().Roleobjects(ctx, args["where"].(*model.RoleObjectWhereInput))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.RoleObject)
+	rctx.Result = res
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._RoleObject(ctx, field.Selections, res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -922,17 +1386,11 @@ func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.Coll
 // nolint: vetshadow
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 model.UserWhereUniqueInput
-	if tmp, ok := rawArgs["where"]; ok {
-		var err error
-		arg0, err = UnmarshalUserWhereUniqueInput(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query_user_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["where"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -958,22 +1416,11 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 // nolint: vetshadow
 func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 *model.UserWhereInput
-	if tmp, ok := rawArgs["where"]; ok {
-		var err error
-		var ptr1 model.UserWhereInput
-		if tmp != nil {
-			ptr1, err = UnmarshalUserWhereInput(tmp)
-			arg0 = &ptr1
-		}
-
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query_users_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["where"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -1034,17 +1481,11 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 // nolint: vetshadow
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["name"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalString(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query___type_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["name"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -1091,6 +1532,112 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.___Schema(ctx, field.Selections, res)
 }
 
+var roleObjectImplementors = []string{"RoleObject"}
+
+// nolint: gocyclo, errcheck, gas, goconst
+func (ec *executionContext) _RoleObject(ctx context.Context, sel ast.SelectionSet, obj *model.RoleObject) graphql.Marshaler {
+	fields := graphql.CollectFields(ctx, sel, roleObjectImplementors)
+
+	out := graphql.NewOrderedMap(len(fields))
+	invalid := false
+	for i, field := range fields {
+		out.Keys[i] = field.Alias
+
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RoleObject")
+		case "id":
+			out.Values[i] = ec._RoleObject_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "object":
+			out.Values[i] = ec._RoleObject_object(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "access":
+			out.Values[i] = ec._RoleObject_access(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+
+	if invalid {
+		return graphql.Null
+	}
+	return out
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _RoleObject_id(ctx context.Context, field graphql.CollectedField, obj *model.RoleObject) graphql.Marshaler {
+	rctx := &graphql.ResolverContext{
+		Object: "RoleObject",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+		return obj.ID, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	return graphql.MarshalInt(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _RoleObject_object(ctx context.Context, field graphql.CollectedField, obj *model.RoleObject) graphql.Marshaler {
+	rctx := &graphql.ResolverContext{
+		Object: "RoleObject",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+		return obj.Object, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _RoleObject_access(ctx context.Context, field graphql.CollectedField, obj *model.RoleObject) graphql.Marshaler {
+	rctx := &graphql.ResolverContext{
+		Object: "RoleObject",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+		return obj.Access, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.RoleAccess)
+	rctx.Result = res
+	return res
+}
+
 var userImplementors = []string{"User"}
 
 // nolint: gocyclo, errcheck, gas, goconst
@@ -1115,8 +1662,13 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
-		case "posts":
-			out.Values[i] = ec._User_posts(ctx, field, obj)
+		case "roles":
+			out.Values[i] = ec._User_roles(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "materials":
+			out.Values[i] = ec._User_materials(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
@@ -1148,9 +1700,9 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	rctx.Result = res
-	return graphql.MarshalID(res)
+	return graphql.MarshalInt(res)
 }
 
 // nolint: vetshadow
@@ -1176,7 +1728,7 @@ func (ec *executionContext) _User_name(ctx context.Context, field graphql.Collec
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _User_posts(ctx context.Context, field graphql.CollectedField, obj *model.User) graphql.Marshaler {
+func (ec *executionContext) _User_roles(ctx context.Context, field graphql.CollectedField, obj *model.User) graphql.Marshaler {
 	rctx := &graphql.ResolverContext{
 		Object: "User",
 		Args:   nil,
@@ -1184,7 +1736,7 @@ func (ec *executionContext) _User_posts(ctx context.Context, field graphql.Colle
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
-		return obj.Posts, nil
+		return obj.Roles, nil
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -1192,7 +1744,7 @@ func (ec *executionContext) _User_posts(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]model.Post)
+	res := resTmp.([]model.RoleObject)
 	rctx.Result = res
 
 	arr1 := make(graphql.Array, len(res))
@@ -1216,7 +1768,62 @@ func (ec *executionContext) _User_posts(ctx context.Context, field graphql.Colle
 			}
 			arr1[idx1] = func() graphql.Marshaler {
 
-				return ec._Post(ctx, field.Selections, &res[idx1])
+				return ec._RoleObject(ctx, field.Selections, &res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _User_materials(ctx context.Context, field graphql.CollectedField, obj *model.User) graphql.Marshaler {
+	rctx := &graphql.ResolverContext{
+		Object: "User",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+		return obj.Materials, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]model.Material)
+	rctx.Result = res
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: &res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				return ec._Material(ctx, field.Selections, &res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -2214,17 +2821,11 @@ func (ec *executionContext) ___Type_description(ctx context.Context, field graph
 // nolint: vetshadow
 func (ec *executionContext) ___Type_fields(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 bool
-	if tmp, ok := rawArgs["includeDeprecated"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalBoolean(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field___Type_fields_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["includeDeprecated"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "__Type",
 		Args:   args,
@@ -2382,17 +2983,11 @@ func (ec *executionContext) ___Type_possibleTypes(ctx context.Context, field gra
 // nolint: vetshadow
 func (ec *executionContext) ___Type_enumValues(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 bool
-	if tmp, ok := rawArgs["includeDeprecated"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalBoolean(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field___Type_enumValues_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["includeDeprecated"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "__Type",
 		Args:   args,
@@ -2519,20 +3114,21 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 	return ec.___Type(ctx, field.Selections, res)
 }
 
-func UnmarshalPostCreateInput(v interface{}) (model.PostCreateInput, error) {
-	var it model.PostCreateInput
+func UnmarshalMaterialCreateInput(v interface{}) (model.MaterialCreateInput, error) {
+	var it model.MaterialCreateInput
 	var asMap = v.(map[string]interface{})
 
 	for k, v := range asMap {
 		switch k {
-		case "text":
+		case "id":
 			var err error
-			var ptr1 string
-			if v != nil {
-				ptr1, err = graphql.UnmarshalString(v)
-				it.Text = &ptr1
+			it.ID, err = graphql.UnmarshalInt(v)
+			if err != nil {
+				return it, err
 			}
-
+		case "name":
+			var err error
+			it.Name, err = graphql.UnmarshalString(v)
 			if err != nil {
 				return it, err
 			}
@@ -2542,20 +3138,21 @@ func UnmarshalPostCreateInput(v interface{}) (model.PostCreateInput, error) {
 	return it, nil
 }
 
-func UnmarshalPostUpdateInput(v interface{}) (model.PostUpdateInput, error) {
-	var it model.PostUpdateInput
+func UnmarshalMaterialUpdateInput(v interface{}) (model.MaterialUpdateInput, error) {
+	var it model.MaterialUpdateInput
 	var asMap = v.(map[string]interface{})
 
 	for k, v := range asMap {
 		switch k {
-		case "text":
+		case "id":
 			var err error
-			var ptr1 string
-			if v != nil {
-				ptr1, err = graphql.UnmarshalString(v)
-				it.Text = &ptr1
+			it.ID, err = graphql.UnmarshalInt(v)
+			if err != nil {
+				return it, err
 			}
-
+		case "name":
+			var err error
+			it.Name, err = graphql.UnmarshalString(v)
 			if err != nil {
 				return it, err
 			}
@@ -2565,8 +3162,8 @@ func UnmarshalPostUpdateInput(v interface{}) (model.PostUpdateInput, error) {
 	return it, nil
 }
 
-func UnmarshalPostWhereInput(v interface{}) (model.PostWhereInput, error) {
-	var it model.PostWhereInput
+func UnmarshalMaterialWhereInput(v interface{}) (model.MaterialWhereInput, error) {
+	var it model.MaterialWhereInput
 	var asMap = v.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -2588,8 +3185,114 @@ func UnmarshalPostWhereInput(v interface{}) (model.PostWhereInput, error) {
 	return it, nil
 }
 
-func UnmarshalPostWhereUniqueInput(v interface{}) (model.PostWhereUniqueInput, error) {
-	var it model.PostWhereUniqueInput
+func UnmarshalMaterialWhereUniqueInput(v interface{}) (model.MaterialWhereUniqueInput, error) {
+	var it model.MaterialWhereUniqueInput
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalID(v)
+				it.ID = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func UnmarshalRoleObjectCreateInput(v interface{}) (model.RoleObjectCreateInput, error) {
+	var it model.RoleObjectCreateInput
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			it.ID, err = graphql.UnmarshalInt(v)
+			if err != nil {
+				return it, err
+			}
+		case "object":
+			var err error
+			it.Object, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "access":
+			var err error
+			err = (&it.Access).UnmarshalGQL(v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func UnmarshalRoleObjectUpdateInput(v interface{}) (model.RoleObjectUpdateInput, error) {
+	var it model.RoleObjectUpdateInput
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			it.ID, err = graphql.UnmarshalInt(v)
+			if err != nil {
+				return it, err
+			}
+		case "object":
+			var err error
+			it.Object, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "access":
+			var err error
+			err = (&it.Access).UnmarshalGQL(v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func UnmarshalRoleObjectWhereInput(v interface{}) (model.RoleObjectWhereInput, error) {
+	var it model.RoleObjectWhereInput
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalID(v)
+				it.ID = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func UnmarshalRoleObjectWhereUniqueInput(v interface{}) (model.RoleObjectWhereUniqueInput, error) {
+	var it model.RoleObjectWhereUniqueInput
 	var asMap = v.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -2617,6 +3320,12 @@ func UnmarshalUserCreateInput(v interface{}) (model.UserCreateInput, error) {
 
 	for k, v := range asMap {
 		switch k {
+		case "id":
+			var err error
+			it.ID, err = graphql.UnmarshalInt(v)
+			if err != nil {
+				return it, err
+			}
 		case "name":
 			var err error
 			it.Name, err = graphql.UnmarshalString(v)
@@ -2635,6 +3344,12 @@ func UnmarshalUserUpdateInput(v interface{}) (model.UserUpdateInput, error) {
 
 	for k, v := range asMap {
 		switch k {
+		case "id":
+			var err error
+			it.ID, err = graphql.UnmarshalInt(v)
+			if err != nil {
+				return it, err
+			}
 		case "name":
 			var err error
 			it.Name, err = graphql.UnmarshalString(v)
@@ -2720,38 +3435,69 @@ var parsedSchema = gqlparser.MustLoadSchema(
 	&ast.Source{Name: "server/schema/schema_gen.graphql", Input: `## Code generated by platform, DO NOT EDIT.
 
 
-type Post {
-    id: ID!
-    text: String
+type Material {
+    id: Int!
+    name: String!
 }
 
-input PostCreateInput {
-    text: String
+input MaterialCreateInput {
+    id: Int!
+    name: String!
 }
 
-input PostUpdateInput {
-    text: String
+input MaterialUpdateInput {
+    id: Int!
+    name: String!
 }
 
-input PostWhereUniqueInput {
+input MaterialWhereUniqueInput {
     id: ID
 }
 
-input PostWhereInput {
+input MaterialWhereInput {
+    id: ID
+}
+
+type RoleObject {
+    id: Int!
+    object: String!
+    access: RoleAccess!
+}
+
+input RoleObjectCreateInput {
+    id: Int!
+    object: String!
+    access: RoleAccess!
+}
+
+input RoleObjectUpdateInput {
+    id: Int!
+    object: String!
+    access: RoleAccess!
+}
+
+input RoleObjectWhereUniqueInput {
+    id: ID
+}
+
+input RoleObjectWhereInput {
     id: ID
 }
 
 type User {
-    id: ID!
+    id: Int!
     name: String!
-    posts: [Post!]!
+    roles: [RoleObject!]!
+    materials: [Material!]!
 }
 
 input UserCreateInput {
+    id: Int!
     name: String!
 }
 
 input UserUpdateInput {
+    id: Int!
     name: String!
 }
 
@@ -2765,19 +3511,30 @@ input UserWhereInput {
 
 
 type Mutation {
-    createPost(data: PostCreateInput!): Post!
-    updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
-    deletePost(where: PostWhereUniqueInput!): Post
+    createMaterial(data: MaterialCreateInput!): Material!
+    updateMaterial(data: MaterialUpdateInput!, where: MaterialWhereUniqueInput!): Material
+    deleteMaterial(where: MaterialWhereUniqueInput!): Material
+    createRoleObject(data: RoleObjectCreateInput!): RoleObject!
+    updateRoleObject(data: RoleObjectUpdateInput!, where: RoleObjectWhereUniqueInput!): RoleObject
+    deleteRoleObject(where: RoleObjectWhereUniqueInput!): RoleObject
     createUser(data: UserCreateInput!): User!
     updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
     deleteUser(where: UserWhereUniqueInput!): User
 }
 
 type Query {
-    post(where: PostWhereUniqueInput!): Post
-    posts(where: PostWhereInput): [Post]!
+    material(where: MaterialWhereUniqueInput!): Material
+    materials(where: MaterialWhereInput): [Material]!
+    roleobject(where: RoleObjectWhereUniqueInput!): RoleObject
+    roleobjects(where: RoleObjectWhereInput): [RoleObject]!
     user(where: UserWhereUniqueInput!): User
     users(where: UserWhereInput): [User]!
 }
-`},
+
+enum RoleAccess {
+    CREATE
+    READ
+    UPDATE
+    DELETE
+}`},
 )

@@ -11,7 +11,9 @@ type RoleObject {
     access: RoleAccess!
 }
 
+"Уровни доступа"
 enum RoleAccess {
+    "Уровни доступа"
     CREATE
     READ
     UPDATE

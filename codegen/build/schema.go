@@ -17,7 +17,9 @@ func NewSchema(schema *ast.Schema) *Schema {
 func (s *Schema) Types() map[string]*ast.Definition {
 	types := make(map[string]*ast.Definition)
 	for key, def := range s.Schema.Types {
-		if def.IsCompositeType() && !strings.HasPrefix(def.Name, "__") {
+		isObject := def.Kind == ast.Object
+		isEnum := def.Kind == ast.Enum
+		if !strings.HasPrefix(def.Name, "__") && (isObject || isEnum) {
 			types[key] = def
 		}
 	}

@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"gitlab/nefco/platform"
 	"gitlab/nefco/platform/server/graph"
 	"gitlab/nefco/platform/service"
 	"log"
@@ -41,7 +40,7 @@ var runCmd = &cobra.Command{
 		}
 
 		conf := graph.Config{
-			Resolvers: &platform.Resolver{},
+			// Resolvers: &platform.Resolver{},
 		}
 
 		router := chi.NewRouter()
