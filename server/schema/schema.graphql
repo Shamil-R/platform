@@ -11,10 +11,17 @@ type RoleObject {
     access: RoleAccess!
 }
 
-"Уровни доступа"
+"""
+Уровни доступа
+"""
 enum RoleAccess {
-    "Уровни доступа"
+    """
+    Создание
+    """
     CREATE
+    """
+    Чтение
+    """
     READ
     UPDATE
     DELETE

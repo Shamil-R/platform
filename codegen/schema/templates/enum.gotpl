@@ -1,10 +1,14 @@
 {{- if ne (len .Description) 0 }}
-# {{ .Description }}
+"""
+{{ .Description }}
+"""
 {{- end }}
 enum {{ .Name }} {
     {{- range $i, $val := .EnumValues }}
     {{- if ne (len .Description) 0 }}
-    # {{ .Description }}
+    """
+    {{ .Description }}
+    """
     {{- end }}
     {{ .Name }}
     {{- end }}
