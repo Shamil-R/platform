@@ -1,3 +1,7 @@
+directive @default(
+  value: String
+) on FIELD_DEFINITION
+
 type User {
     id: Int!
     name: String!
@@ -9,6 +13,11 @@ type RoleObject {
     id: Int!
     object: String!
     access: RoleAccess!
+}
+
+type Material {
+    id: Int!
+    name: String! @validate(min: 0, max: 10)
 }
 
 """
@@ -25,9 +34,4 @@ enum RoleAccess {
     READ
     UPDATE
     DELETE
-}
-
-type Material {
-    id: Int!
-    name: String!
 }

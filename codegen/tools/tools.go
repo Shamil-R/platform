@@ -13,18 +13,22 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
-func LoadSchema(filename string) (*build.Schema, error) {
-	file, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
+func LoadSchema(files ...string) (*build.Schema, error) {
+	source := make([]*ast.Source, len(files))
+
+	for i, filename := range files {
+		file, err := ioutil.ReadFile(filename)
+		if err != nil {
+			return nil, err
+		}
+
+		source[i] = &ast.Source{
+			Name:  filename,
+			Input: string(file),
+		}
 	}
 
-	source := &ast.Source{
-		Name:  "schema",
-		Input: string(file),
-	}
-
-	schema, gqlErr := gqlparser.LoadSchema(source)
+	schema, gqlErr := gqlparser.LoadSchema(source...)
 	if gqlErr != nil {
 		return nil, gqlErr
 	}

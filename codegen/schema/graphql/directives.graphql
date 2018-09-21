@@ -1,0 +1,4 @@
+directive @validate(
+  min: Int
+  max: Int
+) on FIELD_DEFINITION

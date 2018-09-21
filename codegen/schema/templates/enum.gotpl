@@ -1,3 +1,5 @@
+{{ define "enum" }}
+
 {{- if ne (len .Description) 0 }}
 """
 {{ .Description }}
@@ -13,3 +15,5 @@ enum {{ .Name }} {
     {{ .Name }}
     {{- end }}
 }
+
+{{ end }}
