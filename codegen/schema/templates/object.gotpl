@@ -1,9 +1,10 @@
-{{ define "object" }}
-{{/*type {{ .Name }} {
+{{- define "object" -}}
+
+type {{ .Name }} {
     {{- range $, $field := .Fields }}
     {{ .Name }}: {{ .Type }}
     {{- end }}
-}*/}}
+}
 
 input {{ .Name }}CreateInput {
     {{- range $, $field := .Fields }}
@@ -29,4 +30,4 @@ input {{ .Name }}WhereInput {
     id: ID
 }
 
-{{ end }}
+{{- end -}}

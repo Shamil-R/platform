@@ -1,10 +1,9 @@
 package schema
 
 import (
-	"gitlab/nefco/platform/codegen/schema/graphql"
 	"gitlab/nefco/platform/codegen/template"
-	"gitlab/nefco/platform/codegen/tools"
 	"io/ioutil"
+	"strings"
 
 	"github.com/gobuffalo/packr"
 
@@ -12,28 +11,73 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
-func Generate(cfg Config) error {
-	tmpl, err := template.Read(packr.NewBox("./templates"))
-	if err != nil {
-		return err
-	}
+type Schema struct {
+	*ast.Schema
+}
 
-	file, err := ioutil.ReadFile(cfg.Source)
-	if err != nil {
-		return err
-	}
+func NewSchema(schema *ast.Schema) *Schema {
+	return &Schema{schema}
+}
 
-	source := []*ast.Source{
-		&ast.Source{Name: "directives", Input: graphql.Directives},
-		&ast.Source{Name: "schema", Input: string(file)},
+func (s *Schema) Types() map[string]*ast.Definition {
+	types := make(map[string]*ast.Definition)
+	for key, def := range s.Schema.Types {
+		isObject := def.Kind == ast.Object
+		isEnum := def.Kind == ast.Enum
+		if !strings.HasPrefix(def.Name, "__") && (isObject || isEnum) {
+			types[key] = def
+		}
+	}
+	return types
+}
+
+func Load(files ...string) (*Schema, error) {
+	box := packr.NewBox("./graphql")
+
+	source := make([]*ast.Source, 0, len(files)+1)
+	source = append(source,
+		&ast.Source{
+			Name:  "directives",
+			Input: box.String("directives.graphql"),
+		},
+	)
+
+	for _, filename := range files {
+		file, err := ioutil.ReadFile(filename)
+		if err != nil {
+			return nil, err
+		}
+
+		source = append(source,
+			&ast.Source{
+				Name:  filename,
+				Input: string(file),
+			},
+		)
 	}
 
 	schema, gqlErr := gqlparser.LoadSchema(source...)
 	if gqlErr != nil {
-		return gqlErr
+		return nil, gqlErr
 	}
 
-	if err := tools.ExecuteTemplate(tmpl, schema, cfg.Generate); err != nil {
+	return NewSchema(schema), nil
+}
+
+func Generate(cfg Config) error {
+	box := packr.NewBox("./templates")
+
+	tmpl, err := template.Read("schema", box)
+	if err != nil {
+		return err
+	}
+
+	schema, err := Load(cfg.Source)
+	if err != nil {
+		return err
+	}
+
+	if err := template.Execute(tmpl, schema, cfg.Generate); err != nil {
 		return err
 	}
 
