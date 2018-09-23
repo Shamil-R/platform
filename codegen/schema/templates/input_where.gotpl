@@ -1,5 +1,7 @@
 {{- define "input_where" }}
 input {{ .Name }}WhereInput {
-    id: ID
+    {{- range $i, $field := .Fields.ForWhereInput }}
+    {{ .Name }}: {{ .Type }}
+    {{- end }}
 }
 {{- end }}

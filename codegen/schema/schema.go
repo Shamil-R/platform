@@ -3,51 +3,12 @@ package schema
 import (
 	"gitlab/nefco/platform/codegen/template"
 	"io/ioutil"
-	"strings"
 
 	"github.com/gobuffalo/packr"
 
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
 )
-
-type Schema struct {
-	*ast.Schema
-}
-
-func NewSchema(schema *ast.Schema) *Schema {
-	return &Schema{schema}
-}
-
-func (s *Schema) ObjectTypes() []*ast.Definition {
-	return s.filterTypes(ast.Object)
-}
-
-func (s *Schema) EnumTypes() []*ast.Definition {
-	return s.filterTypes(ast.Enum)
-}
-
-func (s *Schema) InputTypes() []*ast.Definition {
-	return s.ObjectTypes()
-}
-
-func (s *Schema) MutationTypes() []*ast.Definition {
-	return s.ObjectTypes()
-}
-
-func (s *Schema) QueryTypes() []*ast.Definition {
-	return s.ObjectTypes()
-}
-
-func (s *Schema) filterTypes(kind ast.DefinitionKind) []*ast.Definition {
-	types := make([]*ast.Definition, 0)
-	for _, def := range s.Schema.Types {
-		if !strings.HasPrefix(def.Name, "__") && def.Kind == kind {
-			types = append(types, def)
-		}
-	}
-	return types
-}
 
 func Load(files ...string) (*Schema, error) {
 	box := packr.NewBox("./graphql")

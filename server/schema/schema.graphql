@@ -6,13 +6,13 @@ type User {
 }
 
 type RoleObject {
-    id: Int!
+    id: Int! @primary @identity
     object: String!
     access: RoleAccess!
 }
 
 type Material {
-    id: Int!
+    id: Int! @primary @identity
     name: String! @validate(min: 0, max: 10)
 }
 

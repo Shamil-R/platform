@@ -1,6 +1,6 @@
 {{- define "object_item" }}
 type {{ .Name }} {
-    {{- range $i, $field := .Fields }}
+    {{- range $i, $field := .Fields.ForObject }}
     {{ .Name }}: {{ .Type }}
     {{- end }}
 }

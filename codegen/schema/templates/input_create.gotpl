@@ -1,9 +1,7 @@
 {{- define "input_create" }}
 input {{ .Name }}CreateInput {
-    {{- range $i, $field := .Fields }}
-    {{- if and (ne .Type.Name "ID") (not .Type.Elem) }}
+    {{- range $i, $field := .Fields.ForCreateInput }}
     {{ .Name }}: {{ .Type }}
-    {{- end }}
     {{- end }}
 }
 {{- end }}

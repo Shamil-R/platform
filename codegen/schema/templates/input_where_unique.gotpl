@@ -1,5 +1,7 @@
 {{- define "input_where_unique" }}
 input {{ .Name }}WhereUniqueInput {
-    id: ID
+    {{- range $i, $field := .Fields.ForWhereUniqueInput }}
+    {{ .Name }}: {{ .Type }}
+    {{- end }}
 }
 {{- end }}
