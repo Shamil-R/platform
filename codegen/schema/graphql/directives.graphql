@@ -1,3 +1,9 @@
+directive @primary on FIELD_DEFINITION
+
+directive @unique on FIELD_DEFINITION
+
+directive @identity on FIELD_DEFINITION
+
 directive @validate(
   min: Int
   max: Int

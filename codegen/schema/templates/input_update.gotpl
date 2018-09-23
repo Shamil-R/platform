@@ -1,0 +1,9 @@
+{{- define "input_update" }}
+input {{ .Name }}UpdateInput {
+    {{- range $i, $field := .Fields }}
+    {{- if and (ne .Type.Name "ID") (not .Type.Elem) }}
+    {{ .Name }}: {{ .Type }}
+    {{- end }}
+    {{- end }}
+}
+{{- end }}

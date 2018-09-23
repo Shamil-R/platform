@@ -1,0 +1,8 @@
+{{- define "input" }}
+{{- range $i, $def := . }}
+{{ template "input_create" . }}
+{{ template "input_update" . }}
+{{ template "input_where_unique" . }}
+{{ template "input_where" . }}
+{{- end }}
+{{- end }}

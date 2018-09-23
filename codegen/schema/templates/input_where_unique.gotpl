@@ -1,0 +1,5 @@
+{{- define "input_where_unique" }}
+input {{ .Name }}WhereUniqueInput {
+    id: ID
+}
+{{- end }}

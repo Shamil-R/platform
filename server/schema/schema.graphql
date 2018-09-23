@@ -1,9 +1,5 @@
-directive @default(
-  value: String
-) on FIELD_DEFINITION
-
 type User {
-    id: Int!
+    id: Int! @primary @identity
     name: String!
     roles: [RoleObject!]!
     materials: [Material!]!

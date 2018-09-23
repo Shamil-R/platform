@@ -1,19 +1,5 @@
-{{- define "enum" -}}
-
-{{- if ne (len .Description) 0 }}
-"""
-{{ .Description }}
-"""
+{{- define "enum" }}
+{{- range $i, $def := . }}
+{{ template "enum_item" . }}
 {{- end }}
-enum {{ .Name }} {
-    {{- range $i, $val := .EnumValues }}
-    {{- if ne (len .Description) 0 }}
-    """
-    {{ .Description }}
-    """
-    {{- end }}
-    {{ .Name }}
-    {{- end }}
-}
-
-{{- end -}}
+{{- end }}

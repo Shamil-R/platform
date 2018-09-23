@@ -19,13 +19,31 @@ func NewSchema(schema *ast.Schema) *Schema {
 	return &Schema{schema}
 }
 
-func (s *Schema) Types() map[string]*ast.Definition {
-	types := make(map[string]*ast.Definition)
-	for key, def := range s.Schema.Types {
-		isObject := def.Kind == ast.Object
-		isEnum := def.Kind == ast.Enum
-		if !strings.HasPrefix(def.Name, "__") && (isObject || isEnum) {
-			types[key] = def
+func (s *Schema) ObjectTypes() []*ast.Definition {
+	return s.filterTypes(ast.Object)
+}
+
+func (s *Schema) EnumTypes() []*ast.Definition {
+	return s.filterTypes(ast.Enum)
+}
+
+func (s *Schema) InputTypes() []*ast.Definition {
+	return s.ObjectTypes()
+}
+
+func (s *Schema) MutationTypes() []*ast.Definition {
+	return s.ObjectTypes()
+}
+
+func (s *Schema) QueryTypes() []*ast.Definition {
+	return s.ObjectTypes()
+}
+
+func (s *Schema) filterTypes(kind ast.DefinitionKind) []*ast.Definition {
+	types := make([]*ast.Definition, 0)
+	for _, def := range s.Schema.Types {
+		if !strings.HasPrefix(def.Name, "__") && def.Kind == kind {
+			types = append(types, def)
 		}
 	}
 	return types

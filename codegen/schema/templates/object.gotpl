@@ -1,33 +1,5 @@
-{{- define "object" -}}
-
-type {{ .Name }} {
-    {{- range $, $field := .Fields }}
-    {{ .Name }}: {{ .Type }}
-    {{- end }}
-}
-
-input {{ .Name }}CreateInput {
-    {{- range $, $field := .Fields }}
-    {{- if and (ne .Type.Name "ID") (not .Type.Elem) }}
-    {{ .Name }}: {{ .Type }}
-    {{- end }}
-    {{- end }}
-}
-
-input {{ .Name }}UpdateInput {
-    {{- range $, $field := .Fields }}
-    {{- if and (ne .Type.Name "ID") (not .Type.Elem) }}
-    {{ .Name }}: {{ .Type }}
-    {{- end }}
-    {{- end }}
-}
-
-input {{ .Name }}WhereUniqueInput {
-    id: ID
-}
-
-input {{ .Name }}WhereInput {
-    id: ID
-}
-
-{{- end -}}
+{{- define "object" }}
+{{- range $i, $def := . }}
+{{ template "object_item" . }}
+{{- end }}
+{{- end }}

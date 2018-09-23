@@ -1,0 +1,5 @@
+{{- define "input_where" }}
+input {{ .Name }}WhereInput {
+    id: ID
+}
+{{- end }}

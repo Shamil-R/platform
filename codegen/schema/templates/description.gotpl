@@ -1,0 +1,15 @@
+{{- define "description" }}
+{{- if ne (len .) 0 }}
+"""
+{{ . }}
+"""
+{{- end }}
+{{- end }}
+
+{{- define "description_tab" }}
+{{- if ne (len .) 0 }}
+    """
+    {{ . }}
+    """
+{{- end }}
+{{- end }}
