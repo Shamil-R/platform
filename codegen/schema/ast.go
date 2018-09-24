@@ -60,29 +60,13 @@ type FieldDefinition struct {
 	*ast.FieldDefinition
 }
 
-func (f *FieldDefinition) hasDirective(name string) bool {
-	return f.FieldDefinition.Directives.ForName(name) != nil
-}
-
-func (f *FieldDefinition) HasPrimaryDirective() bool {
-	return f.hasDirective(DIRECTIVE_PRIMARY)
-}
-
-func (f *FieldDefinition) HasUniqueDirective() bool {
-	return f.hasDirective(DIRECTIVE_UNIQUE)
-}
-
-func (f *FieldDefinition) HasIndentityDirective() bool {
-	return f.hasDirective(DIRECTIVE_INDENTITY)
-}
-
-/* func (f *FieldDefinition) Directives() []*Directive {
+func (f *FieldDefinition) Directives() DirectiveList {
 	directives := make([]*Directive, len(f.FieldDefinition.Directives))
 	for i, directive := range f.FieldDefinition.Directives {
 		directives[i] = &Directive{directive}
 	}
 	return directives
-} */
+}
 
 type FieldList []*FieldDefinition
 
@@ -104,7 +88,7 @@ func (l FieldList) ForObject() FieldList {
 
 func (l FieldList) ForCreateInput() FieldList {
 	filter := func(field *FieldDefinition) bool {
-		return !field.HasIndentityDirective()
+		return !field.Directives().HasIndentity()
 	}
 	return l.filter(filter)
 }
@@ -115,7 +99,7 @@ func (l FieldList) ForUpdateInput() FieldList {
 
 func (l FieldList) ForWhereUniqueInput() FieldList {
 	filter := func(field *FieldDefinition) bool {
-		return field.HasIndentityDirective()
+		return field.Directives().HasIndentity()
 	}
 	return l.filter(filter)
 }
@@ -128,8 +112,81 @@ const (
 	DIRECTIVE_PRIMARY   = "primary"
 	DIRECTIVE_UNIQUE    = "unique"
 	DIRECTIVE_INDENTITY = "identity"
+	DIRECTIVE_VALIDATE  = "validate"
 )
 
-/* type Directive struct {
+type Directive struct {
 	*ast.Directive
-} */
+}
+
+func (d *Directive) IsPrimary() bool {
+	return d.Name == DIRECTIVE_PRIMARY
+}
+
+func (d *Directive) IsUnique() bool {
+	return d.Name == DIRECTIVE_UNIQUE
+}
+
+func (d *Directive) IsIndentity() bool {
+	return d.Name == DIRECTIVE_INDENTITY
+}
+
+func (d *Directive) IsValidate() bool {
+	return d.Name == DIRECTIVE_VALIDATE
+}
+
+func (d *Directive) HasArguments() bool {
+	return len(d.Arguments) > 0
+}
+
+type DirectiveList []*Directive
+
+type directiveListFilter func(field *Directive) bool
+
+func (l DirectiveList) filter(filter directiveListFilter) DirectiveList {
+	directives := make([]*Directive, 0, len(l))
+	for _, directive := range l {
+		if filter(directive) {
+			directives = append(directives, directive)
+		}
+	}
+	return directives
+}
+
+func (l DirectiveList) Size() int {
+	return len(l)
+}
+
+func (l DirectiveList) HasPrimary() bool {
+	return l.filter(func(directive *Directive) bool {
+		return directive.IsPrimary()
+	}).Size() > 0
+}
+
+func (l DirectiveList) HasUnique() bool {
+	return l.filter(func(directive *Directive) bool {
+		return directive.IsUnique()
+	}).Size() > 0
+}
+
+func (l DirectiveList) HasIndentity() bool {
+	return l.filter(func(directive *Directive) bool {
+		return directive.IsIndentity()
+	}).Size() > 0
+}
+
+func (l DirectiveList) HasValidate() bool {
+	return l.filter(func(directive *Directive) bool {
+		return directive.IsValidate()
+	}).Size() > 0
+}
+
+func (l DirectiveList) ForCreateInput() DirectiveList {
+	return l.filter(func(directive *Directive) bool {
+		return directive.IsValidate()
+	})
+}
+
+func (l DirectiveList) ForUpdateInput() DirectiveList {
+	return l.ForCreateInput()
+}

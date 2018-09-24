@@ -2,6 +2,7 @@
 input {{ .Name }}CreateInput {
     {{- range $i, $field := .Fields.ForCreateInput }}
     {{ .Name }}: {{ .Type }}
+    {{- template "directive_field" .Directives.ForCreateInput }}
     {{- end }}
 }
 {{- end }}

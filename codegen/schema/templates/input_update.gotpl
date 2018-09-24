@@ -2,6 +2,7 @@
 input {{ .Name }}UpdateInput {
     {{- range $i, $field := .Fields.ForUpdateInput }}
     {{ .Name }}: {{ .Type }}
+    {{- template "directive_field" .Directives.ForUpdateInput }}
     {{- end }}
 }
 {{- end }}

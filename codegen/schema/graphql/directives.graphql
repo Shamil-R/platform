@@ -7,4 +7,4 @@ directive @identity on FIELD_DEFINITION
 directive @validate(
   min: Int
   max: Int
-) on FIELD_DEFINITION
+) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
