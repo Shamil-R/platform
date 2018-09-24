@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"bytes"
+	"gitlab/nefco/platform/codegen/file"
 	"gitlab/nefco/platform/codegen/template"
 	"io/ioutil"
 
@@ -51,14 +53,64 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	schema, err := Load(cfg.Source)
+	buff, err := read(cfg.Source)
 	if err != nil {
 		return err
 	}
 
-	if err := template.Execute(tmpl, schema, cfg.Generate); err != nil {
+	schema, err := parse(buff.String())
+	if err != nil {
+		return err
+	}
+
+	if err := tmpl.Execute(buff, schema); err != nil {
+		return err
+	}
+
+	if err := file.Write(cfg.Generate, buff); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func read(src string) (*bytes.Buffer, error) {
+	box := packr.NewBox("./graphql")
+
+	buff := &bytes.Buffer{}
+
+	directivesFile := box.Bytes("directives.graphql")
+
+	if _, err := buff.Write(directivesFile); err != nil {
+		return nil, err
+	}
+
+	if _, err := buff.WriteRune('\n'); err != nil {
+		return nil, err
+	}
+
+	schemaFile, err := ioutil.ReadFile(src)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := buff.Write(schemaFile); err != nil {
+		return nil, err
+	}
+
+	return buff, nil
+}
+
+func parse(input string) (*Schema, error) {
+	source := &ast.Source{
+		Name:  "schema",
+		Input: input,
+	}
+
+	schema, gqlErr := gqlparser.LoadSchema(source)
+	if gqlErr != nil {
+		return nil, gqlErr
+	}
+
+	return NewSchema(schema), nil
 }

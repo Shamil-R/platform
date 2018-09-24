@@ -14,21 +14,20 @@ type Material struct {
 }
 
 type MaterialCreateInput struct {
-	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
 type MaterialUpdateInput struct {
-	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
 type MaterialWhereInput struct {
-	ID *string `json:"id"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type MaterialWhereUniqueInput struct {
-	ID *string `json:"id"`
+	ID int `json:"id"`
 }
 
 type RoleObject struct {
@@ -38,54 +37,54 @@ type RoleObject struct {
 }
 
 type RoleObjectCreateInput struct {
-	ID     int        `json:"id"`
 	Object string     `json:"object"`
 	Access RoleAccess `json:"access"`
 }
 
 type RoleObjectUpdateInput struct {
-	ID     int        `json:"id"`
 	Object string     `json:"object"`
 	Access RoleAccess `json:"access"`
 }
 
 type RoleObjectWhereInput struct {
-	ID *string `json:"id"`
+	ID     int        `json:"id"`
+	Object string     `json:"object"`
+	Access RoleAccess `json:"access"`
 }
 
 type RoleObjectWhereUniqueInput struct {
-	ID *string `json:"id"`
+	ID int `json:"id"`
 }
 
 type User struct {
-	ID        int          `json:"id"`
-	Name      string       `json:"name"`
-	Roles     []RoleObject `json:"roles"`
-	Materials []Material   `json:"materials"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type UserCreateInput struct {
-	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
 type UserUpdateInput struct {
-	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
 type UserWhereInput struct {
-	ID *string `json:"id"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type UserWhereUniqueInput struct {
-	ID *string `json:"id"`
+	ID int `json:"id"`
 }
 
+// Уровни доступа
 type RoleAccess string
 
 const (
+	// Создание
 	RoleAccessCreate RoleAccess = "CREATE"
+	// Чтение
 	RoleAccessRead   RoleAccess = "READ"
 	RoleAccessUpdate RoleAccess = "UPDATE"
 	RoleAccessDelete RoleAccess = "DELETE"

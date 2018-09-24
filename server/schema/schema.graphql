@@ -1,8 +1,8 @@
 type User {
     id: Int! @primary @identity
     name: String! @validate(min: 5) @validate(max: 30)
-    roles: [RoleObject!]!
-    materials: [Material!]!
+    # roles: [RoleObject!]!
+    # materials: [Material!]!
 }
 
 type RoleObject {

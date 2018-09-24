@@ -2,8 +2,6 @@ package template
 
 import (
 	"fmt"
-	"os"
-	"path"
 	"text/template"
 
 	"github.com/Masterminds/sprig"
@@ -38,22 +36,22 @@ func Read(name string, box packr.Box) (*template.Template, error) {
 	return tmpl, nil
 }
 
-func Execute(tmpl *template.Template, data interface{}, filename string) error {
-	dir := path.Dir(filename)
+// func Execute(tmpl *template.Template, data interface{}, filename string) error {
+// 	dir := path.Dir(filename)
 
-	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-		return err
-	}
+// 	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+// 		return err
+// 	}
 
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
+// 	file, err := os.Create(filename)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer file.Close()
 
-	if err := tmpl.Execute(file, data); err != nil {
-		return err
-	}
+// 	if err := tmpl.Execute(file, data); err != nil {
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }

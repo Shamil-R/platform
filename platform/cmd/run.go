@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"gitlab/nefco/platform/server/graph"
 	"gitlab/nefco/platform/service"
 	"log"
 	"net/http"
@@ -39,26 +38,26 @@ var runCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		conf := graph.Config{
-			// Resolvers: &platform.Resolver{},
-		}
+		// conf := graph.Config{
+		// 	// Resolvers: &platform.Resolver{},
+		// }
 
 		router := chi.NewRouter()
 
 		router.Use(Middleware(db))
 
 		router.Handle("/", handler.Playground("Platform", "/query"))
-		router.Handle("/query",
-			handler.GraphQL(
-				graph.NewExecutableSchema(conf),
-				handler.ResolverMiddleware(ResolverMiddleware(service.NewRoleService())),
-				// handler.RecoverFunc(func(ctx context.Context, err interface{}) error {
-				// 	// send this panic somewhere
-				// 	log.Print(err)
-				// 	debug.PrintStack()
-				// 	return errors.New("user message on panic")
-				// }),
-			))
+		// router.Handle("/query",
+		// 	handler.GraphQL(
+		// 		graph.NewExecutableSchema(conf),
+		// 		handler.ResolverMiddleware(ResolverMiddleware(service.NewRoleService())),
+		// 		// handler.RecoverFunc(func(ctx context.Context, err interface{}) error {
+		// 		// 	// send this panic somewhere
+		// 		// 	log.Print(err)
+		// 		// 	debug.PrintStack()
+		// 		// 	return errors.New("user message on panic")
+		// 		// }),
+		// 	))
 		if err := http.ListenAndServe(":8080", router); err != nil {
 			panic(err)
 		}
