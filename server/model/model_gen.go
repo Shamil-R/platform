@@ -2,12 +2,6 @@
 
 package model
 
-import (
-	fmt "fmt"
-	io "io"
-	strconv "strconv"
-)
-
 type Material struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -30,35 +24,10 @@ type MaterialWhereUniqueInput struct {
 	ID int `json:"id"`
 }
 
-type RoleObject struct {
-	ID     int        `json:"id"`
-	Object string     `json:"object"`
-	Access RoleAccess `json:"access"`
-}
-
-type RoleObjectCreateInput struct {
-	Object string     `json:"object"`
-	Access RoleAccess `json:"access"`
-}
-
-type RoleObjectUpdateInput struct {
-	Object string     `json:"object"`
-	Access RoleAccess `json:"access"`
-}
-
-type RoleObjectWhereInput struct {
-	ID     int        `json:"id"`
-	Object string     `json:"object"`
-	Access RoleAccess `json:"access"`
-}
-
-type RoleObjectWhereUniqueInput struct {
-	ID int `json:"id"`
-}
-
 type User struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID        int        `json:"id"`
+	Name      string     `json:"name"`
+	Materials []Material `json:"materials"`
 }
 
 type UserCreateInput struct {
@@ -76,45 +45,4 @@ type UserWhereInput struct {
 
 type UserWhereUniqueInput struct {
 	ID int `json:"id"`
-}
-
-// Уровни доступа
-type RoleAccess string
-
-const (
-	// Создание
-	RoleAccessCreate RoleAccess = "CREATE"
-	// Чтение
-	RoleAccessRead   RoleAccess = "READ"
-	RoleAccessUpdate RoleAccess = "UPDATE"
-	RoleAccessDelete RoleAccess = "DELETE"
-)
-
-func (e RoleAccess) IsValid() bool {
-	switch e {
-	case RoleAccessCreate, RoleAccessRead, RoleAccessUpdate, RoleAccessDelete:
-		return true
-	}
-	return false
-}
-
-func (e RoleAccess) String() string {
-	return string(e)
-}
-
-func (e *RoleAccess) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = RoleAccess(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid RoleAccess", str)
-	}
-	return nil
-}
-
-func (e RoleAccess) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
 }

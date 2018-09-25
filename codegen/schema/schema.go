@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"gitlab/nefco/platform/codegen/file"
 	"gitlab/nefco/platform/codegen/template"
+	"io"
 	"io/ioutil"
 
 	"github.com/gobuffalo/packr"
@@ -12,37 +13,24 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
-func Load(files ...string) (*Schema, error) {
-	box := packr.NewBox("./graphql")
+func Load(filename string) (*Schema, error) {
+	buff := &bytes.Buffer{}
 
-	source := make([]*ast.Source, 0, len(files)+1)
-	source = append(source,
-		&ast.Source{
-			Name:  "directives",
-			Input: box.String("directives.graphql"),
-		},
-	)
-
-	for _, filename := range files {
-		file, err := ioutil.ReadFile(filename)
-		if err != nil {
-			return nil, err
-		}
-
-		source = append(source,
-			&ast.Source{
-				Name:  filename,
-				Input: string(file),
-			},
-		)
+	file, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
 	}
 
-	schema, gqlErr := gqlparser.LoadSchema(source...)
-	if gqlErr != nil {
-		return nil, gqlErr
+	if _, err := buff.Write(file); err != nil {
+		return nil, err
 	}
 
-	return NewSchema(schema), nil
+	schema, err := parse(buff.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return schema, nil
 }
 
 func Generate(cfg Config) error {
@@ -53,8 +41,9 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	buff, err := read(cfg.Source)
-	if err != nil {
+	buff := &bytes.Buffer{}
+
+	if err := read(cfg.Source, buff); err != nil {
 		return err
 	}
 
@@ -74,31 +63,29 @@ func Generate(cfg Config) error {
 	return nil
 }
 
-func read(src string) (*bytes.Buffer, error) {
+func read(src string, wr io.Writer) error {
 	box := packr.NewBox("./graphql")
-
-	buff := &bytes.Buffer{}
 
 	directivesFile := box.Bytes("directives.graphql")
 
-	if _, err := buff.Write(directivesFile); err != nil {
-		return nil, err
+	if _, err := wr.Write(directivesFile); err != nil {
+		return err
 	}
 
-	if _, err := buff.WriteRune('\n'); err != nil {
-		return nil, err
+	if _, err := wr.Write([]byte("\n")); err != nil {
+		return err
 	}
 
 	schemaFile, err := ioutil.ReadFile(src)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	if _, err := buff.Write(schemaFile); err != nil {
-		return nil, err
+	if _, err := wr.Write(schemaFile); err != nil {
+		return err
 	}
 
-	return buff, nil
+	return nil
 }
 
 func parse(input string) (*Schema, error) {

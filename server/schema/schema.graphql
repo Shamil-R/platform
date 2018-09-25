@@ -5,11 +5,11 @@ type User {
     # materials: [Material!]!
 }
 
-type RoleObject {
-    id: Int! @primary @identity
-    object: String!
-    access: RoleAccess!
-}
+# type RoleObject {
+#     id: Int! @primary @identity
+#     object: String!
+#     access: RoleAccess!
+# }
 
 type Material {
     id: Int! @primary @identity
@@ -19,18 +19,18 @@ type Material {
     )
 }
 
-"""
-Уровни доступа
-"""
-enum RoleAccess {
-    """
-    Создание
-    """
-    CREATE
-    """
-    Чтение
-    """
-    READ
-    UPDATE
-    DELETE
-}
+# """
+# Уровни доступа
+# """
+# enum RoleAccess {
+#     """
+#     Создание
+#     """
+#     CREATE
+#     """
+#     Чтение
+#     """
+#     READ
+#     UPDATE
+#     DELETE
+# }

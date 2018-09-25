@@ -1,30 +1,38 @@
 package service
 
+import (
+	"bytes"
+	"gitlab/nefco/platform/codegen/file"
+	"gitlab/nefco/platform/codegen/schema"
+	"gitlab/nefco/platform/codegen/template"
+
+	"github.com/gobuffalo/packr"
+)
+
 func Generate(cfg Config) error {
-	// tmpl, err := templates.Template()
-	// if err != nil {
-	// 	return err
-	// }
+	box := packr.NewBox("./templates")
 
-	// schema, err := schema.Load(cfg.Schema)
-	// if err != nil {
-	// 	return err
-	// }
+	tmpl, err := template.Read("service", box)
+	if err != nil {
+		return err
+	}
 
-	// code := &build.Code{
-	// 	PackageName: cfg.Package(),
-	// 	Imports: []*build.Import{
-	// 		&build.Import{
-	// 			Path:  "gitlab/nefco/platform/" + cfg.ModelPath(),
-	// 			Alias: "model",
-	// 		},
-	// 	},
-	// 	Schema: schema,
-	// }
+	schema, err := schema.Load(cfg.Schema)
+	if err != nil {
+		return err
+	}
 
-	// if err := template.Execute(tmpl, code, cfg.Filename); err != nil {
-	// 	return err
-	// }
+	service := NewService(cfg, schema)
+
+	buff := &bytes.Buffer{}
+
+	if err := tmpl.Execute(buff, service); err != nil {
+		return err
+	}
+
+	if err := file.Write(cfg.Filename, buff); err != nil {
+		return err
+	}
 
 	return nil
 }

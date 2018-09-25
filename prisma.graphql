@@ -1,0 +1,692 @@
+# source: http://localhost:4466
+# timestamp: Tue Sep 25 2018 13:08:09 GMT+0300 (Moscow Standard Time)
+
+type AggregateMaterial {
+  count: Int!
+}
+
+type AggregateRoleObject {
+  count: Int!
+}
+
+type AggregateUser {
+  count: Int!
+}
+
+type BatchPayload {
+  """The number of nodes that have been affected by the Batch operation."""
+  count: Long!
+}
+
+"""
+The `Long` scalar type represents non-fractional signed whole numeric values.
+Long can represent values between -(2^63) and 2^63 - 1.
+"""
+scalar Long
+
+type Material implements Node {
+  id: ID!
+  name: String!
+  author(where: UserWhereInput): User!
+}
+
+"""A connection to a list of items."""
+type MaterialConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [MaterialEdge]!
+  aggregate: AggregateMaterial!
+}
+
+input MaterialCreateInput {
+  name: String!
+  author: UserCreateOneInput!
+}
+
+"""An edge in a connection."""
+type MaterialEdge {
+  """The item at the end of the edge."""
+  node: Material!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum MaterialOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type MaterialPreviousValues {
+  id: ID!
+  name: String!
+}
+
+type MaterialSubscriptionPayload {
+  mutation: MutationType!
+  node: Material
+  updatedFields: [String!]
+  previousValues: MaterialPreviousValues
+}
+
+input MaterialSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [MaterialSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [MaterialSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [MaterialSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: MaterialWhereInput
+}
+
+input MaterialUpdateInput {
+  name: String
+  author: UserUpdateOneInput
+}
+
+input MaterialWhereInput {
+  """Logical AND on all given filters."""
+  AND: [MaterialWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [MaterialWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [MaterialWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  author: UserWhereInput
+}
+
+input MaterialWhereUniqueInput {
+  id: ID
+}
+
+type Mutation {
+  createRoleObject(data: RoleObjectCreateInput!): RoleObject!
+  createMaterial(data: MaterialCreateInput!): Material!
+  createUser(data: UserCreateInput!): User!
+  updateRoleObject(data: RoleObjectUpdateInput!, where: RoleObjectWhereUniqueInput!): RoleObject
+  updateMaterial(data: MaterialUpdateInput!, where: MaterialWhereUniqueInput!): Material
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  deleteRoleObject(where: RoleObjectWhereUniqueInput!): RoleObject
+  deleteMaterial(where: MaterialWhereUniqueInput!): Material
+  deleteUser(where: UserWhereUniqueInput!): User
+  upsertRoleObject(where: RoleObjectWhereUniqueInput!, create: RoleObjectCreateInput!, update: RoleObjectUpdateInput!): RoleObject!
+  upsertMaterial(where: MaterialWhereUniqueInput!, create: MaterialCreateInput!, update: MaterialUpdateInput!): Material!
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  updateManyRoleObjects(data: RoleObjectUpdateInput!, where: RoleObjectWhereInput): BatchPayload!
+  updateManyMaterials(data: MaterialUpdateInput!, where: MaterialWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  deleteManyRoleObjects(where: RoleObjectWhereInput): BatchPayload!
+  deleteManyMaterials(where: MaterialWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
+  id: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+type Query {
+  roleObjects(where: RoleObjectWhereInput, orderBy: RoleObjectOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [RoleObject]!
+  materials(where: MaterialWhereInput, orderBy: MaterialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Material]!
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  roleObject(where: RoleObjectWhereUniqueInput!): RoleObject
+  material(where: MaterialWhereUniqueInput!): Material
+  user(where: UserWhereUniqueInput!): User
+  roleObjectsConnection(where: RoleObjectWhereInput, orderBy: RoleObjectOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RoleObjectConnection!
+  materialsConnection(where: MaterialWhereInput, orderBy: MaterialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MaterialConnection!
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+}
+
+enum RoleAccess {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+}
+
+type RoleObject implements Node {
+  id: ID!
+  object: String!
+  access: RoleAccess!
+}
+
+"""A connection to a list of items."""
+type RoleObjectConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [RoleObjectEdge]!
+  aggregate: AggregateRoleObject!
+}
+
+input RoleObjectCreateInput {
+  object: String!
+  access: RoleAccess!
+}
+
+"""An edge in a connection."""
+type RoleObjectEdge {
+  """The item at the end of the edge."""
+  node: RoleObject!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum RoleObjectOrderByInput {
+  id_ASC
+  id_DESC
+  object_ASC
+  object_DESC
+  access_ASC
+  access_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type RoleObjectPreviousValues {
+  id: ID!
+  object: String!
+  access: RoleAccess!
+}
+
+type RoleObjectSubscriptionPayload {
+  mutation: MutationType!
+  node: RoleObject
+  updatedFields: [String!]
+  previousValues: RoleObjectPreviousValues
+}
+
+input RoleObjectSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [RoleObjectSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [RoleObjectSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [RoleObjectSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: RoleObjectWhereInput
+}
+
+input RoleObjectUpdateInput {
+  object: String
+  access: RoleAccess
+}
+
+input RoleObjectWhereInput {
+  """Logical AND on all given filters."""
+  AND: [RoleObjectWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [RoleObjectWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [RoleObjectWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  object: String
+
+  """All values that are not equal to given value."""
+  object_not: String
+
+  """All values that are contained in given list."""
+  object_in: [String!]
+
+  """All values that are not contained in given list."""
+  object_not_in: [String!]
+
+  """All values less than the given value."""
+  object_lt: String
+
+  """All values less than or equal the given value."""
+  object_lte: String
+
+  """All values greater than the given value."""
+  object_gt: String
+
+  """All values greater than or equal the given value."""
+  object_gte: String
+
+  """All values containing the given string."""
+  object_contains: String
+
+  """All values not containing the given string."""
+  object_not_contains: String
+
+  """All values starting with the given string."""
+  object_starts_with: String
+
+  """All values not starting with the given string."""
+  object_not_starts_with: String
+
+  """All values ending with the given string."""
+  object_ends_with: String
+
+  """All values not ending with the given string."""
+  object_not_ends_with: String
+  access: RoleAccess
+
+  """All values that are not equal to given value."""
+  access_not: RoleAccess
+
+  """All values that are contained in given list."""
+  access_in: [RoleAccess!]
+
+  """All values that are not contained in given list."""
+  access_not_in: [RoleAccess!]
+}
+
+input RoleObjectWhereUniqueInput {
+  id: ID
+}
+
+type Subscription {
+  roleObject(where: RoleObjectSubscriptionWhereInput): RoleObjectSubscriptionPayload
+  material(where: MaterialSubscriptionWhereInput): MaterialSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+}
+
+type User implements Node {
+  id: ID!
+  name: String!
+}
+
+"""A connection to a list of items."""
+type UserConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [UserEdge]!
+  aggregate: AggregateUser!
+}
+
+input UserCreateInput {
+  name: String!
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type UserEdge {
+  """The item at the end of the edge."""
+  node: User!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum UserOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type UserPreviousValues {
+  id: ID!
+  name: String!
+}
+
+type UserSubscriptionPayload {
+  mutation: MutationType!
+  node: User
+  updatedFields: [String!]
+  previousValues: UserPreviousValues
+}
+
+input UserSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: UserWhereInput
+}
+
+input UserUpdateDataInput {
+  name: String
+}
+
+input UserUpdateInput {
+  name: String
+}
+
+input UserUpdateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
+}
+
+input UserWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+input UserWhereUniqueInput {
+  id: ID
+}

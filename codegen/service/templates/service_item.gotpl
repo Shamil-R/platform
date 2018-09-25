@@ -1,0 +1,9 @@
+{{- define "service_item" }}
+type {{ .Name }}Service interface {
+    Create{{ .Name }}(ctx context.Context, data model.{{ .Name }}CreateInput) (model.{{ .Name }}, error)
+    Update{{ .Name }}(ctx context.Context, data model.{{ .Name }}UpdateInput, where model.{{ .Name }}WhereUniqueInput) (*model.{{ .Name }}, error)
+    Delete{{ .Name }}(ctx context.Context, where model.{{ .Name }}WhereUniqueInput) (*model.{{ .Name }}, error)
+    {{ .Name }}(ctx context.Context, where model.{{ .Name }}WhereUniqueInput) (*model.{{ .Name }}, error)
+    {{ .Name }}s(ctx context.Context, where *model.{{ .Name }}WhereInput) ([]*model.{{ .Name }}, error)
+}
+{{- end }}

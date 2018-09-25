@@ -18,11 +18,11 @@ type User {
     # materials: [Material!]!
 }
 
-type RoleObject {
-    id: Int! @primary @identity
-    object: String!
-    access: RoleAccess!
-}
+# type RoleObject {
+#     id: Int! @primary @identity
+#     object: String!
+#     access: RoleAccess!
+# }
 
 type Material {
     id: Int! @primary @identity
@@ -32,21 +32,21 @@ type Material {
     )
 }
 
-"""
-Уровни доступа
-"""
-enum RoleAccess {
-    """
-    Создание
-    """
-    CREATE
-    """
-    Чтение
-    """
-    READ
-    UPDATE
-    DELETE
-}
+# """
+# Уровни доступа
+# """
+# enum RoleAccess {
+#     """
+#     Создание
+#     """
+#     CREATE
+#     """
+#     Чтение
+#     """
+#     READ
+#     UPDATE
+#     DELETE
+# }
 
 input MaterialCreateInput {
     name: String!
@@ -102,43 +102,18 @@ input UserWhereInput {
     name: String!
 }
 
-input RoleObjectCreateInput {
-    object: String!
-    access: RoleAccess!
-}
-
-input RoleObjectUpdateInput {
-    object: String!
-    access: RoleAccess!
-}
-
-input RoleObjectWhereUniqueInput {
-    id: Int!
-}
-
-input RoleObjectWhereInput {
-    id: Int!
-    object: String!
-    access: RoleAccess!
-}
-
 type Mutation {
     createUser(data: UserCreateInput!): User!
     updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
     deleteUser(where: UserWhereUniqueInput!): User
-    createRoleObject(data: RoleObjectCreateInput!): RoleObject!
-    updateRoleObject(data: RoleObjectUpdateInput!, where: RoleObjectWhereUniqueInput!): RoleObject
-    deleteRoleObject(where: RoleObjectWhereUniqueInput!): RoleObject
     createMaterial(data: MaterialCreateInput!): Material!
     updateMaterial(data: MaterialUpdateInput!, where: MaterialWhereUniqueInput!): Material
     deleteMaterial(where: MaterialWhereUniqueInput!): Material
 }
 
 type Query {
-    user(where: UserWhereUniqueInput!): User
-    users(where: UserWhereInput): [User]!
-    roleObject(where: RoleObjectWhereUniqueInput!): RoleObject
-    roleObjects(where: RoleObjectWhereInput): [RoleObject]!
     material(where: MaterialWhereUniqueInput!): Material
     materials(where: MaterialWhereInput): [Material]!
+    user(where: UserWhereUniqueInput!): User
+    users(where: UserWhereInput): [User]!
 }

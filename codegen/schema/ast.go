@@ -37,7 +37,11 @@ func (s *Schema) QueryTypes() []*Definition {
 func (s *Schema) definitions(kind ast.DefinitionKind) []*Definition {
 	definitions := make([]*Definition, 0)
 	for _, def := range s.Schema.Types {
-		if !strings.HasPrefix(def.Name, "__") && def.Kind == kind {
+		isGraphQL := strings.HasPrefix(def.Name, "__")
+		isMutation := strings.Contains(def.Name, "Mutation")
+		isQuery := strings.Contains(def.Name, "Query")
+		not := !isGraphQL && !isMutation && !isQuery
+		if not && def.Kind == kind {
 			definitions = append(definitions, &Definition{def})
 		}
 	}
