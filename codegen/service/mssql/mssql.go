@@ -20,10 +20,11 @@ type Config struct {
 
 type Code struct {
 	*code.Code
-	Type *schema.Definition
+	TypeName string
+	Schema   *schema.Schema
 }
 
-func Generate(cfg Config, schema *schema.Schema) error {
+func Generate(cfg Config, s *schema.Schema) error {
 	box := packr.NewBox("./templates")
 
 	tmpl, err := template.Read("service", box)
@@ -31,12 +32,13 @@ func Generate(cfg Config, schema *schema.Schema) error {
 		return err
 	}
 
-	for _, t := range schema.ObjectTypes() {
+	for _, def := range s.Types().ForMutation() {
 		code := &Code{
 			Code: &code.Code{
 				PackageName: cfg.ServicePackage,
 			},
-			Type: t,
+			TypeName: def.Name,
+			Schema:   s,
 		}
 		code.AddImport("context", "context")
 		code.AddImport(cfg.ModelImport, "model")
@@ -47,7 +49,7 @@ func Generate(cfg Config, schema *schema.Schema) error {
 			return err
 		}
 
-		serviceName := strings.ToLower(t.Name) + "_service_gen.go"
+		serviceName := strings.ToLower(def.Name) + "_service_gen.go"
 
 		filename := path.Join(cfg.ServiceDir, serviceName)
 

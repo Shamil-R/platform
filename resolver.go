@@ -45,7 +45,7 @@ func (r *queryResolver) User(ctx context.Context, where model.UserWhereUniqueInp
 func (r *queryResolver) Users(ctx context.Context, where *model.UserWhereInput) ([]*model.User, error) {
 	fmt.Println("resolver")
 	users := []*model.User{
-		// &model.User{ID: 1, Name: "user1"},
+		&model.User{ID: 1, Name: "user1"},
 		// &model.User{ID: 2, Name: "user2"},
 	}
 	return users, nil

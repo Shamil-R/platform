@@ -1,0 +1,4 @@
+{{- define "delete" }}
+func (s *{{ lower .TypeName }}Service) Delete{{ .TypeName }}(ctx context.Context) {
+}
+{{- end }}

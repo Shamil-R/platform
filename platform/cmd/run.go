@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"gitlab/nefco/platform"
 	"gitlab/nefco/platform/server/graph"
-	"gitlab/nefco/platform/service"
 	"log"
 	"net/http"
 
@@ -53,7 +52,7 @@ var runCmd = &cobra.Command{
 		router.Handle("/query",
 			handler.GraphQL(
 				graph.NewExecutableSchema(conf),
-				// handler.ResolverMiddleware(ResolverMiddleware(service.NewRoleService())),
+				handler.ResolverMiddleware(ResolverMiddleware()),
 				handler.RequestMiddleware(RequestMiddleware()),
 			))
 		if err := http.ListenAndServe(":8080", router); err != nil {
@@ -76,12 +75,23 @@ func Middleware(db *sqlx.DB) func(http.Handler) http.Handler {
 	}
 }
 
-func ResolverMiddleware(roleService service.RoleService) graphql.FieldMiddleware {
+func ResolverMiddleware() graphql.FieldMiddleware {
 	return func(ctx context.Context, next graphql.Resolver) (interface{}, error) {
+		fmt.Println("ResolverMiddleware")
+
 		// reqCtx := graphql.GetRequestContext(ctx)
+
+		// for _, op := range reqCtx.Doc.Operations {
+		// 	fmt.Println("op", op.Operation, op.Name)
+		// }
+
+		// if len(reqCtx.Errors) > 0 {
+		// 	return nil, fmt.Errorf("error pizdec")
+		// }
+
 		resCtx := graphql.GetResolverContext(ctx)
 
-		fmt.Println(resCtx.Object, "-", resCtx.Field.Name)
+		fmt.Println(resCtx.Object, "-", resCtx.Field.Name, "-", resCtx.Parent.Object)
 
 		// fmt.Println("name", resCtx.Field.Name)
 
@@ -99,23 +109,27 @@ func ResolverMiddleware(roleService service.RoleService) graphql.FieldMiddleware
 		// 	}
 		// }
 
-		fieldSelections := resCtx.Field.Selections
-		var sels []string
-		for _, sel := range fieldSelections {
-			switch sel := sel.(type) {
-			case *ast.Field:
-				sels = append(sels, fmt.Sprintf("%s as %s in %s", sel.Name, sel.Alias, sel.ObjectDefinition.Name))
-			case *ast.InlineFragment:
-				sels = append(sels, fmt.Sprintf("inline fragment on %s", sel.TypeCondition))
-			case *ast.FragmentSpread:
-				// fragment := reqCtx.Doc.Fragments.ForName(sel.Name)
-				// sels = append(sels, fmt.Sprintf("named fragment %s on %s", sel.Name, fragment.TypeCondition))
-			}
-		}
+		// fieldSelections := resCtx.Field.Selections
+		// var sels []string
+		// for _, sel := range fieldSelections {
+		// 	switch sel := sel.(type) {
+		// 	case *ast.Field:
+		// 		sels = append(sels, fmt.Sprintf("%s as %s in %s", sel.Name, sel.Alias, sel.ObjectDefinition.Name))
+		// 	case *ast.InlineFragment:
+		// 		sels = append(sels, fmt.Sprintf("inline fragment on %s", sel.TypeCondition))
+		// 	case *ast.FragmentSpread:
+		// 		// fragment := reqCtx.Doc.Fragments.ForName(sel.Name)
+		// 		// sels = append(sels, fmt.Sprintf("named fragment %s on %s", sel.Name, fragment.TypeCondition))
+		// 	}
+		// }
 
-		fmt.Println(sels)
+		// fmt.Println(sels)
 
-		return next(ctx)
+		res, err := next(ctx)
+
+		// fmt.Println("res", res)
+
+		return res, err
 	}
 }
 
@@ -123,12 +137,14 @@ func RequestMiddleware() graphql.RequestMiddleware {
 	return func(ctx context.Context, next func(ctx context.Context) []byte) []byte {
 		reqCtx := graphql.GetRequestContext(ctx)
 
-		fmt.Println("request")
+		fmt.Println("RequestMiddleware")
 
 		for _, op := range reqCtx.Doc.Operations {
 			fmt.Println("op", op.Operation, op.Name)
 			tr(op.SelectionSet)
 		}
+
+		reqCtx.Error(ctx, fmt.Errorf("ERROR"))
 
 		return next(ctx)
 	}

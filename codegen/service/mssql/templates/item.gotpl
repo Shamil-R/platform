@@ -1,0 +1,4 @@
+{{- define "item" }}
+func (s *{{ lower .TypeName }}Service) {{ .TypeName }}(ctx context.Context) {
+}
+{{- end }}

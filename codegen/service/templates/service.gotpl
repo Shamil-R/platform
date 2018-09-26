@@ -8,6 +8,6 @@ import (
 	{{- end }}
 )
 
-{{- range .Schema.ObjectTypes }}
+{{- range .Schema.Types.ForMutation }}
 {{ template "service_item" . }}
 {{- end }}

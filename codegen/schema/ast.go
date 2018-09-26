@@ -137,6 +137,18 @@ func (l FieldList) filter(filter fieldListFilter) FieldList {
 	return fields
 }
 
+func (l FieldList) first(filter fieldListFilter) *FieldDefinition {
+	r := l.filter(filter)
+	if r.Size() == 0 {
+		return nil
+	}
+	return r[0]
+}
+
+func (l FieldList) Size() int {
+	return len(l)
+}
+
 func (l FieldList) ForObject() FieldList {
 	return l
 }
@@ -161,6 +173,13 @@ func (l FieldList) ForWhereUniqueInput() FieldList {
 
 func (l FieldList) ForWhereInput() FieldList {
 	return l
+}
+
+func (l FieldList) ByName(name string) *FieldDefinition {
+	fn := func(field *FieldDefinition) bool {
+		return strings.ToLower(field.Name) == strings.ToLower(name)
+	}
+	return l.first(fn)
 }
 
 const (

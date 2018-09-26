@@ -1,0 +1,4 @@
+{{- define "collection" }}
+func (s *{{ lower .TypeName }}Service) {{ plural .TypeName }}(ctx context.Context) {
+}
+{{- end }}

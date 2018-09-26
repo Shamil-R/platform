@@ -1,0 +1,4 @@
+{{- define "create" }}
+func (s *{{ lower .TypeName }}Service) Create{{ .TypeName }}(ctx context.Context) {
+}
+{{- end }}
