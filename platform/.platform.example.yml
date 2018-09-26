@@ -3,6 +3,6 @@ codegen:
     source: server/schema/schema.graphql
     generate: server/schema/schema_gen.graphql
   model: 
-    filename: server/model/model_gen.go
+    dir: server/model/
   service:
-    filename: server/service/service_gen.go
+    dir: server/service/
