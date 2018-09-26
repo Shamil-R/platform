@@ -1,0 +1,6 @@
+{{- define "args" }}
+    ctx context.Context, 
+    {{- range . }}
+    {{ .Name }} model.{{ .Type.NamedType }}, 
+    {{- end }}
+{{- end }}

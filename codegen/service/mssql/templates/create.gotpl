@@ -1,4 +1,5 @@
 {{- define "create" }}
-func (s *{{ lower .TypeName }}Service) Create{{ .TypeName }}(ctx context.Context) {
+func (s *{{ lower .TypeName }}Service) Create{{ .TypeName }}(
+    {{ template "args" .Field.Arguments }}) {
 }
 {{- end }}

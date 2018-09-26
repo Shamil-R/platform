@@ -115,6 +115,14 @@ type FieldDefinition struct {
 	*ast.FieldDefinition
 }
 
+func (f *FieldDefinition) Arguments() ArgumentDefinitionList {
+	arguments := make(ArgumentDefinitionList, len(f.FieldDefinition.Arguments))
+	for i, arg := range f.FieldDefinition.Arguments {
+		arguments[i] = &ArgumentDefinition{arg}
+	}
+	return arguments
+}
+
 func (f *FieldDefinition) Directives() DirectiveList {
 	directives := make(DirectiveList, len(f.FieldDefinition.Directives))
 	for i, directive := range f.FieldDefinition.Directives {
@@ -188,6 +196,16 @@ const (
 	DIRECTIVE_INDENTITY = "identity"
 	DIRECTIVE_VALIDATE  = "validate"
 )
+
+type ArgumentDefinition struct {
+	*ast.ArgumentDefinition
+}
+
+func (a *ArgumentDefinition) IsSlice() bool {
+	return a.Type.NamedType == "" && a.Type.Elem != nil
+}
+
+type ArgumentDefinitionList []*ArgumentDefinition
 
 type Directive struct {
 	*ast.Directive
