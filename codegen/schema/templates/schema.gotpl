@@ -1,5 +1,3 @@
-{{- /*template "object" .ObjectTypes */}}
-{{- /*template "enum" .EnumTypes */}}
-{{- template "input" .InputTypes }}
-{{ template "mutation" .MutationTypes }}
-{{ template "query" .QueryTypes }}
+{{- template "input" .Types.ForInput }}
+{{ template "mutation" .Types.ForMutation }}
+{{ template "query" .Types.ForQuery }}

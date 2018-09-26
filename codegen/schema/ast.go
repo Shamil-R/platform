@@ -14,34 +14,10 @@ func NewSchema(schema *ast.Schema) *Schema {
 	return &Schema{schema}
 }
 
-func (s *Schema) ObjectTypes() []*Definition {
-	return s.definitions(ast.Object)
-}
-
-func (s *Schema) EnumTypes() []*Definition {
-	return s.definitions(ast.Enum)
-}
-
-func (s *Schema) InputTypes() []*Definition {
-	return s.ObjectTypes()
-}
-
-func (s *Schema) MutationTypes() []*Definition {
-	return s.ObjectTypes()
-}
-
-func (s *Schema) QueryTypes() []*Definition {
-	return s.ObjectTypes()
-}
-
-func (s *Schema) definitions(kind ast.DefinitionKind) []*Definition {
-	definitions := make([]*Definition, 0)
+func (s *Schema) Types() DefinitionList {
+	definitions := make(DefinitionList, 0, len(s.Schema.Types))
 	for _, def := range s.Schema.Types {
-		isGraphQL := strings.HasPrefix(def.Name, "__")
-		isMutation := strings.Contains(def.Name, "Mutation")
-		isQuery := strings.Contains(def.Name, "Query")
-		not := !isGraphQL && !isMutation && !isQuery
-		if not && def.Kind == kind {
+		if !strings.HasPrefix(def.Name, "__") {
 			definitions = append(definitions, &Definition{def})
 		}
 	}
@@ -52,12 +28,87 @@ type Definition struct {
 	*ast.Definition
 }
 
+func (d *Definition) IsMutation() bool {
+	return d.Name == "Mutation"
+}
+
+func (d *Definition) IsQuery() bool {
+	return d.Name == "Query"
+}
+
+func (d *Definition) IsObject() bool {
+	return !d.IsMutation() && !d.IsQuery() && d.Kind == ast.Object
+}
+
+func (d *Definition) IsEnum() bool {
+	return d.Kind == ast.Enum
+}
+
 func (d *Definition) Fields() FieldList {
-	fields := make([]*FieldDefinition, len(d.Definition.Fields))
+	fields := make(FieldList, len(d.Definition.Fields))
 	for i, field := range d.Definition.Fields {
 		fields[i] = &FieldDefinition{field}
 	}
 	return fields
+}
+
+type DefinitionList []*Definition
+
+type definitionListFilter func(def *Definition) bool
+
+func (l DefinitionList) filter(filter definitionListFilter) DefinitionList {
+	definitions := make(DefinitionList, 0, len(l))
+	for _, def := range l {
+		if filter(def) {
+			definitions = append(definitions, def)
+		}
+	}
+	return definitions
+}
+
+func (l DefinitionList) first(filter definitionListFilter) *Definition {
+	r := l.filter(filter)
+	if r.Size() == 0 {
+		return nil
+	}
+	return r[0]
+}
+
+func (l DefinitionList) objects() DefinitionList {
+	fn := func(def *Definition) bool {
+		return def.IsObject()
+	}
+	return l.filter(fn)
+}
+
+func (l DefinitionList) Size() int {
+	return len(l)
+}
+
+func (l DefinitionList) ForInput() DefinitionList {
+	return l.objects()
+}
+
+func (l DefinitionList) ForMutation() DefinitionList {
+	return l.objects()
+}
+
+func (l DefinitionList) ForQuery() DefinitionList {
+	return l.objects()
+}
+
+func (l DefinitionList) Mutation() *Definition {
+	fn := func(def *Definition) bool {
+		return def.IsMutation()
+	}
+	return l.first(fn)
+}
+
+func (l DefinitionList) Query() *Definition {
+	fn := func(def *Definition) bool {
+		return def.IsQuery()
+	}
+	return l.first(fn)
 }
 
 type FieldDefinition struct {
@@ -65,7 +116,7 @@ type FieldDefinition struct {
 }
 
 func (f *FieldDefinition) Directives() DirectiveList {
-	directives := make([]*Directive, len(f.FieldDefinition.Directives))
+	directives := make(DirectiveList, len(f.FieldDefinition.Directives))
 	for i, directive := range f.FieldDefinition.Directives {
 		directives[i] = &Directive{directive}
 	}
@@ -77,7 +128,7 @@ type FieldList []*FieldDefinition
 type fieldListFilter func(field *FieldDefinition) bool
 
 func (l FieldList) filter(filter fieldListFilter) FieldList {
-	fields := make([]*FieldDefinition, 0, len(l))
+	fields := make(FieldList, 0, len(l))
 	for _, field := range l {
 		if filter(field) {
 			fields = append(fields, field)
@@ -91,10 +142,10 @@ func (l FieldList) ForObject() FieldList {
 }
 
 func (l FieldList) ForCreateInput() FieldList {
-	filter := func(field *FieldDefinition) bool {
+	fn := func(field *FieldDefinition) bool {
 		return !field.Directives().HasIndentity()
 	}
-	return l.filter(filter)
+	return l.filter(fn)
 }
 
 func (l FieldList) ForUpdateInput() FieldList {
@@ -102,10 +153,10 @@ func (l FieldList) ForUpdateInput() FieldList {
 }
 
 func (l FieldList) ForWhereUniqueInput() FieldList {
-	filter := func(field *FieldDefinition) bool {
+	fn := func(field *FieldDefinition) bool {
 		return field.Directives().HasIndentity()
 	}
-	return l.filter(filter)
+	return l.filter(fn)
 }
 
 func (l FieldList) ForWhereInput() FieldList {
@@ -148,7 +199,7 @@ type DirectiveList []*Directive
 type directiveListFilter func(field *Directive) bool
 
 func (l DirectiveList) filter(filter directiveListFilter) DirectiveList {
-	directives := make([]*Directive, 0, len(l))
+	directives := make(DirectiveList, 0, len(l))
 	for _, directive := range l {
 		if filter(directive) {
 			directives = append(directives, directive)
@@ -162,33 +213,38 @@ func (l DirectiveList) Size() int {
 }
 
 func (l DirectiveList) HasPrimary() bool {
-	return l.filter(func(directive *Directive) bool {
+	fn := func(directive *Directive) bool {
 		return directive.IsPrimary()
-	}).Size() > 0
+	}
+	return l.filter(fn).Size() > 0
 }
 
 func (l DirectiveList) HasUnique() bool {
-	return l.filter(func(directive *Directive) bool {
+	fn := func(directive *Directive) bool {
 		return directive.IsUnique()
-	}).Size() > 0
+	}
+	return l.filter(fn).Size() > 0
 }
 
 func (l DirectiveList) HasIndentity() bool {
-	return l.filter(func(directive *Directive) bool {
+	fn := func(directive *Directive) bool {
 		return directive.IsIndentity()
-	}).Size() > 0
+	}
+	return l.filter(fn).Size() > 0
 }
 
 func (l DirectiveList) HasValidate() bool {
-	return l.filter(func(directive *Directive) bool {
+	fn := func(directive *Directive) bool {
 		return directive.IsValidate()
-	}).Size() > 0
+	}
+	return l.filter(fn).Size() > 0
 }
 
 func (l DirectiveList) ForCreateInput() DirectiveList {
-	return l.filter(func(directive *Directive) bool {
+	fn := func(directive *Directive) bool {
 		return directive.IsValidate()
-	})
+	}
+	return l.filter(fn)
 }
 
 func (l DirectiveList) ForUpdateInput() DirectiveList {
