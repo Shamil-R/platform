@@ -7,6 +7,7 @@ import (
 	"gitlab/nefco/platform/server/graph"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
@@ -53,7 +54,7 @@ var runCmd = &cobra.Command{
 			handler.GraphQL(
 				graph.NewExecutableSchema(conf),
 				handler.ResolverMiddleware(ResolverMiddleware()),
-				handler.RequestMiddleware(RequestMiddleware()),
+				// handler.RequestMiddleware(RequestMiddleware()),
 			))
 		if err := http.ListenAndServe(":8080", router); err != nil {
 			panic(err)
@@ -77,7 +78,7 @@ func Middleware(db *sqlx.DB) func(http.Handler) http.Handler {
 
 func ResolverMiddleware() graphql.FieldMiddleware {
 	return func(ctx context.Context, next graphql.Resolver) (interface{}, error) {
-		fmt.Println("ResolverMiddleware")
+		// fmt.Println("ResolverMiddleware")
 
 		// reqCtx := graphql.GetRequestContext(ctx)
 
@@ -91,7 +92,29 @@ func ResolverMiddleware() graphql.FieldMiddleware {
 
 		resCtx := graphql.GetResolverContext(ctx)
 
-		fmt.Println(resCtx.Object, "-", resCtx.Field.Name, "-", resCtx.Parent.Object)
+		if strings.HasPrefix(resCtx.Object, "__") {
+			return next(ctx)
+		}
+
+		if resCtx.Object == "Mutation" {
+			fmt.Println(resCtx.Object, "-", resCtx.Field.Name, "-", resCtx.Field.Alias)
+
+			for _, arg := range resCtx.Field.Arguments {
+				fmt.Println("arg", arg.Name, "=", arg.Value.Raw)
+
+				for _, child := range arg.Value.Children {
+					fmt.Println("child", child.Name, "=", child.Value.Raw)
+
+					if child.Value.Definition != nil {
+						for _, field := range child.Value.Definition.Fields {
+							fmt.Println("field", field.Name)
+						}
+					}
+				}
+			}
+
+			return next(ctx)
+		}
 
 		// fmt.Println("name", resCtx.Field.Name)
 
@@ -125,11 +148,7 @@ func ResolverMiddleware() graphql.FieldMiddleware {
 
 		// fmt.Println(sels)
 
-		res, err := next(ctx)
-
-		// fmt.Println("res", res)
-
-		return res, err
+		return next(ctx)
 	}
 }
 

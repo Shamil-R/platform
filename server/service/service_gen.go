@@ -7,18 +7,18 @@ import (
 	model "gitlab/nefco/platform/server/model"
 )
 
-type MaterialService interface {
-	CreateMaterial(ctx context.Context, data model.MaterialCreateInput) (model.Material, error)
-	UpdateMaterial(ctx context.Context, data model.MaterialUpdateInput, where model.MaterialWhereUniqueInput) (*model.Material, error)
-	DeleteMaterial(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error)
-	Material(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error)
-	Materials(ctx context.Context, where *model.MaterialWhereInput) ([]*model.Material, error)
-}
-
 type UserService interface {
 	CreateUser(ctx context.Context, data model.UserCreateInput) (model.User, error)
 	UpdateUser(ctx context.Context, data model.UserUpdateInput, where model.UserWhereUniqueInput) (*model.User, error)
 	DeleteUser(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error)
 	User(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error)
 	Users(ctx context.Context, where *model.UserWhereInput) ([]*model.User, error)
+}
+
+type MaterialService interface {
+	CreateMaterial(ctx context.Context, data model.MaterialCreateInput) (model.Material, error)
+	UpdateMaterial(ctx context.Context, data model.MaterialUpdateInput, where model.MaterialWhereUniqueInput) (*model.Material, error)
+	DeleteMaterial(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error)
+	Material(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error)
+	Materials(ctx context.Context, where *model.MaterialWhereInput) ([]*model.Material, error)
 }

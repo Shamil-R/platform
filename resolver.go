@@ -28,6 +28,8 @@ func (r *mutationResolver) DeleteMaterial(ctx context.Context, where model.Mater
 	panic("not implemented")
 }
 func (r *mutationResolver) CreateUser(ctx context.Context, data model.UserCreateInput) (model.User, error) {
+	fmt.Println("!!!CreateUser")
+	return model.User{ID: 1, Name: "user1"}, nil
 	panic("not implemented")
 }
 func (r *mutationResolver) UpdateUser(ctx context.Context, data model.UserUpdateInput, where model.UserWhereUniqueInput) (*model.User, error) {
