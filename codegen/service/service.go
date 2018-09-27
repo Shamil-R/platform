@@ -2,12 +2,17 @@ package service
 
 import (
 	"bytes"
+	"fmt"
 	"gitlab/nefco/platform/codegen/file"
 	"gitlab/nefco/platform/codegen/schema"
 	"gitlab/nefco/platform/codegen/service/code"
-	"gitlab/nefco/platform/codegen/service/mssql"
 	"gitlab/nefco/platform/codegen/template"
 	"path"
+	"strings"
+
+	"github.com/huandu/xstrings"
+
+	"github.com/jinzhu/inflection"
 
 	"github.com/gobuffalo/packr"
 )
@@ -23,6 +28,8 @@ type Code struct {
 	*code.Code
 	Schema *schema.Schema
 }
+
+type ServiceGenerator func() error
 
 func Generate(cfg Config) error {
 	box := packr.NewBox("./templates")
@@ -58,14 +65,77 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	mssqlCfg := mssql.Config{
-		ServiceDir:     cfg.ServiceDir,
-		ServicePackage: cfg.ServicePackage,
-		ModelImport:    cfg.ModelImport,
+	// mssqlCfg := mssql.Config{
+	// 	ServiceDir:     cfg.ServiceDir,
+	// 	ServicePackage: cfg.ServicePackage,
+	// 	ModelImport:    cfg.ModelImport,
+	// }
+
+	if err := generateObjectService(cfg, schema); err != nil {
+		return err
 	}
 
-	if err := mssql.Generate(mssqlCfg, schema); err != nil {
+	return nil
+}
+
+type Action struct {
+	Name  string
+	Field *schema.FieldDefinition
+}
+
+func generateObjectService(cfg Config, sch *schema.Schema) error {
+	box := packr.NewBox("./templates")
+
+	tmpl, err := template.Read("service_struct", box)
+	if err != nil {
 		return err
+	}
+
+	for _, def := range sch.Types().ForMutation() {
+		lname := xstrings.FirstRuneToLower(def.Name)
+		names := map[string]string{
+			"create":     fmt.Sprintf("create%s", def.Name),
+			"update":     fmt.Sprintf("update%s", def.Name),
+			"delete":     fmt.Sprintf("delete%s", def.Name),
+			"item":       lname,
+			"collection": inflection.Plural(lname),
+		}
+
+		actions := make([]*Action, 0, len(names))
+
+		for key, value := range names {
+			action := &Action{
+				Name:  key,
+				Field: sch.MutationAndQueryFields().ByName(value),
+			}
+			actions = append(actions, action)
+		}
+
+		data := &struct {
+			*code.Code
+			TypeName string
+			Actions  []*Action
+		}{
+			Code:     code.New(cfg.ServicePackage),
+			TypeName: def.Name,
+			Actions:  actions,
+		}
+		data.AddImport("context", "context")
+		data.AddImport(cfg.ModelImport, "model")
+
+		buff := &bytes.Buffer{}
+
+		if err := tmpl.Execute(buff, data); err != nil {
+			return err
+		}
+
+		serviceName := strings.ToLower(def.Name) + "_service_gen.go"
+
+		filename := path.Join(cfg.ServiceDir, serviceName)
+
+		if err := file.Write(filename, buff); err != nil {
+			return err
+		}
 	}
 
 	return nil

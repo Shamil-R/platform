@@ -73,3 +73,7 @@ required = ["github.com/99designs/gqlgen", "github.com/gobuffalo/packr/packr"]
 [[constraint]]
   name = "github.com/davecgh/go-spew"
   version = "1.1.1"
+
+[[constraint]]
+  name = "github.com/huandu/xstrings"
+  version = "1.2.0"

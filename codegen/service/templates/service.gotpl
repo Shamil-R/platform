@@ -3,7 +3,7 @@
 package {{ .PackageName }}
 
 import (
-	{{- range $i, $import := .Imports }}
+	{{- range .Imports }}
 	{{ .Alias }} "{{ .Path }}"
 	{{- end }}
 )

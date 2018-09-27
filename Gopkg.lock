@@ -430,6 +430,7 @@
     "github.com/go-chi/chi",
     "github.com/gobuffalo/packr",
     "github.com/gobuffalo/packr/packr",
+    "github.com/huandu/xstrings",
     "github.com/jinzhu/inflection",
     "github.com/jmoiron/sqlx",
     "github.com/mitchellh/go-homedir",

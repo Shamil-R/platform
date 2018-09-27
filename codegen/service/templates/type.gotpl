@@ -1,0 +1,7 @@
+{{- define "type" }}
+{{- if .IsSlice }}[]
+{{- template "type" .Elem }}
+{{- else }}
+{{- if not .NonNull }}*{{ end }}model.{{ .NamedType }}
+{{- end }}
+{{- end }}

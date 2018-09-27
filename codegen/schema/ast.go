@@ -24,6 +24,22 @@ func (s *Schema) Types() DefinitionList {
 	return definitions
 }
 
+func (s *Schema) MutationAndQueryFields() FieldList {
+	fields := make(FieldList, 0)
+
+	mutation := s.Types().Mutation()
+	if mutation != nil {
+		fields = append(fields, mutation.Fields()...)
+	}
+
+	query := s.Types().Query()
+	if query != nil {
+		fields = append(fields, query.Fields()...)
+	}
+
+	return fields
+}
+
 type Definition struct {
 	*ast.Definition
 }
@@ -115,6 +131,14 @@ type FieldDefinition struct {
 	*ast.FieldDefinition
 }
 
+func (f *FieldDefinition) Directives() DirectiveList {
+	directives := make(DirectiveList, len(f.FieldDefinition.Directives))
+	for i, directive := range f.FieldDefinition.Directives {
+		directives[i] = &Directive{directive}
+	}
+	return directives
+}
+
 func (f *FieldDefinition) Arguments() ArgumentDefinitionList {
 	arguments := make(ArgumentDefinitionList, len(f.FieldDefinition.Arguments))
 	for i, arg := range f.FieldDefinition.Arguments {
@@ -123,12 +147,8 @@ func (f *FieldDefinition) Arguments() ArgumentDefinitionList {
 	return arguments
 }
 
-func (f *FieldDefinition) Directives() DirectiveList {
-	directives := make(DirectiveList, len(f.FieldDefinition.Directives))
-	for i, directive := range f.FieldDefinition.Directives {
-		directives[i] = &Directive{directive}
-	}
-	return directives
+func (f *FieldDefinition) Type() *Type {
+	return &Type{f.FieldDefinition.Type}
 }
 
 type FieldList []*FieldDefinition
@@ -185,10 +205,35 @@ func (l FieldList) ForWhereInput() FieldList {
 
 func (l FieldList) ByName(name string) *FieldDefinition {
 	fn := func(field *FieldDefinition) bool {
-		return strings.ToLower(field.Name) == strings.ToLower(name)
+		return field.Name == name
 	}
 	return l.first(fn)
 }
+
+type Type struct {
+	*ast.Type
+}
+
+func (t *Type) IsSlice() bool {
+	return t.NamedType == "" && t.Elem() != nil
+}
+
+func (t *Type) Elem() *Type {
+	if t.Type.Elem == nil {
+		return nil
+	}
+	return &Type{t.Type.Elem}
+}
+
+type ArgumentDefinition struct {
+	*ast.ArgumentDefinition
+}
+
+func (a *ArgumentDefinition) Type() *Type {
+	return &Type{a.ArgumentDefinition.Type}
+}
+
+type ArgumentDefinitionList []*ArgumentDefinition
 
 const (
 	DIRECTIVE_PRIMARY   = "primary"
@@ -196,16 +241,6 @@ const (
 	DIRECTIVE_INDENTITY = "identity"
 	DIRECTIVE_VALIDATE  = "validate"
 )
-
-type ArgumentDefinition struct {
-	*ast.ArgumentDefinition
-}
-
-func (a *ArgumentDefinition) IsSlice() bool {
-	return a.Type.NamedType == "" && a.Type.Elem != nil
-}
-
-type ArgumentDefinitionList []*ArgumentDefinition
 
 type Directive struct {
 	*ast.Directive
