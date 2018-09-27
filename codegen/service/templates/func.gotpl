@@ -1,8 +1,8 @@
 {{- define "func" }}
-{{- title .Name }}(
-	ctx context.Context,
-	{{- range .Arguments }}
-	{{ .Name }} {{ template "type" .Type }},
-	{{- end }}
-) {{ template "type" .Type }}
+{{- title .Name }}(ctx context.Context{{ print ", " }}
+	{{- $argsLen := len .Arguments }}
+	{{- range $i, $arg := .Arguments }}
+	{{- .Name }} {{ template "type" .Type }}
+	{{- if gt (sub $argsLen $i) 1 }}{{ print ", " }}{{ end }}
+	{{- end }}) {{ template "type" .Type }}
 {{- end }}

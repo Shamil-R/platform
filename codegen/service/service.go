@@ -24,38 +24,99 @@ type Config struct {
 	ModelImport    string
 }
 
-type Code struct {
-	*code.Code
-	Schema *schema.Schema
-}
-
 type ServiceGenerator func() error
 
 func Generate(cfg Config) error {
-	box := packr.NewBox("./templates")
-
-	tmpl, err := template.Read("service", box)
-	if err != nil {
-		return err
-	}
-
 	schema, err := schema.Load(cfg.SchemaPath)
 	if err != nil {
 		return err
 	}
 
-	code := &Code{
-		Code: &code.Code{
-			PackageName: cfg.ServicePackage,
-		},
-		Schema: schema,
+	if err := generateServiceInterface(cfg, schema); err != nil {
+		return err
 	}
-	code.AddImport("context", "context")
-	code.AddImport(cfg.ModelImport, "model")
+
+	if err := generateServiceStruct(cfg, schema); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type Action struct {
+	ActionName string
+	FieldName  string
+	Field      *schema.FieldDefinition
+}
+
+func actions(name string, fields schema.FieldList) []*Action {
+	return []*Action{
+		&Action{
+			ActionName: "create",
+			FieldName:  fmt.Sprintf("create%s", name),
+			Field:      fields.ByName(fmt.Sprintf("create%s", name)),
+		},
+		&Action{
+			ActionName: "update",
+			FieldName:  fmt.Sprintf("update%s", name),
+			Field:      fields.ByName(fmt.Sprintf("update%s", name)),
+		},
+		&Action{
+			ActionName: "delete",
+			FieldName:  fmt.Sprintf("delete%s", name),
+			Field:      fields.ByName(fmt.Sprintf("delete%s", name)),
+		},
+		&Action{
+			ActionName: "item",
+			FieldName:  xstrings.FirstRuneToLower(name),
+			Field:      fields.ByName(xstrings.FirstRuneToLower(name)),
+		},
+		&Action{
+			ActionName: "collection",
+			FieldName:  inflection.Plural(xstrings.FirstRuneToLower(name)),
+			Field:      fields.ByName(inflection.Plural(xstrings.FirstRuneToLower(name))),
+		},
+	}
+}
+
+type Service struct {
+	Name    string
+	Actions []*Action
+}
+
+func generateServiceInterface(cfg Config, sch *schema.Schema) error {
+	box := packr.NewBox("./templates")
+
+	tmpl, err := template.Read("service_interface", box)
+	if err != nil {
+		return err
+	}
+
+	types := sch.Types().ForMutation()
+
+	services := make([]*Service, len(types))
+
+	for i, def := range types {
+		service := &Service{
+			Name:    def.Name,
+			Actions: actions(def.Name, sch.MutationAndQueryFields()),
+		}
+		services[i] = service
+	}
+
+	data := &struct {
+		*code.Code
+		Services []*Service
+	}{
+		Code:     code.New(cfg.ServicePackage),
+		Services: services,
+	}
+	data.AddImport("context", "context")
+	data.AddImport(cfg.ModelImport, "model")
 
 	buff := &bytes.Buffer{}
 
-	if err := tmpl.Execute(buff, code); err != nil {
+	if err := tmpl.Execute(buff, data); err != nil {
 		return err
 	}
 
@@ -65,25 +126,10 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	// mssqlCfg := mssql.Config{
-	// 	ServiceDir:     cfg.ServiceDir,
-	// 	ServicePackage: cfg.ServicePackage,
-	// 	ModelImport:    cfg.ModelImport,
-	// }
-
-	if err := generateObjectService(cfg, schema); err != nil {
-		return err
-	}
-
 	return nil
 }
 
-type Action struct {
-	Name  string
-	Field *schema.FieldDefinition
-}
-
-func generateObjectService(cfg Config, sch *schema.Schema) error {
+func generateServiceStruct(cfg Config, sch *schema.Schema) error {
 	box := packr.NewBox("./templates")
 
 	tmpl, err := template.Read("service_struct", box)
@@ -92,25 +138,6 @@ func generateObjectService(cfg Config, sch *schema.Schema) error {
 	}
 
 	for _, def := range sch.Types().ForMutation() {
-		lname := xstrings.FirstRuneToLower(def.Name)
-		names := map[string]string{
-			"create":     fmt.Sprintf("create%s", def.Name),
-			"update":     fmt.Sprintf("update%s", def.Name),
-			"delete":     fmt.Sprintf("delete%s", def.Name),
-			"item":       lname,
-			"collection": inflection.Plural(lname),
-		}
-
-		actions := make([]*Action, 0, len(names))
-
-		for key, value := range names {
-			action := &Action{
-				Name:  key,
-				Field: sch.MutationAndQueryFields().ByName(value),
-			}
-			actions = append(actions, action)
-		}
-
 		data := &struct {
 			*code.Code
 			TypeName string
@@ -118,7 +145,7 @@ func generateObjectService(cfg Config, sch *schema.Schema) error {
 		}{
 			Code:     code.New(cfg.ServicePackage),
 			TypeName: def.Name,
-			Actions:  actions,
+			Actions:  actions(def.Name, sch.MutationAndQueryFields()),
 		}
 		data.AddImport("context", "context")
 		data.AddImport(cfg.ModelImport, "model")

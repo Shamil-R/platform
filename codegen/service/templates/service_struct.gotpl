@@ -15,4 +15,4 @@ type {{ $serviceName }} struct {
 func (s *{{ $serviceName }}) {{ template "func" .Field }} {
 	panic("not implemented")
 }
-{{ end}}
+{{ end -}}
