@@ -4,5 +4,5 @@
 	{{- range $i, $arg := .Arguments }}
 	{{- .Name }} {{ template "type" .Type }}
 	{{- if gt (sub $argsLen $i) 1 }}{{ print ", " }}{{ end }}
-	{{- end }}) {{ template "type" .Type }}
+	{{- end }}) ({{ template "type" .Type }}, error)
 {{- end }}

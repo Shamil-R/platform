@@ -6,7 +6,8 @@ import (
 	"gitlab/nefco/platform/codegen/file"
 	"gitlab/nefco/platform/codegen/schema"
 	"gitlab/nefco/platform/codegen/service/code"
-	"gitlab/nefco/platform/codegen/template"
+	"gitlab/nefco/platform/codegen/service/mssql"
+	codegentemplate "gitlab/nefco/platform/codegen/template"
 	"path"
 	"strings"
 
@@ -24,7 +25,7 @@ type Config struct {
 	ModelImport    string
 }
 
-type ServiceGenerator func() error
+type ActionGenerate func(action string, field *schema.FieldDefinition) (string, error)
 
 func Generate(cfg Config) error {
 	schema, err := schema.Load(cfg.SchemaPath)
@@ -44,37 +45,31 @@ func Generate(cfg Config) error {
 }
 
 type Action struct {
-	ActionName string
-	FieldName  string
-	Field      *schema.FieldDefinition
+	Action string
+	Field  *schema.FieldDefinition
 }
 
 func actions(name string, fields schema.FieldList) []*Action {
 	return []*Action{
 		&Action{
-			ActionName: "create",
-			FieldName:  fmt.Sprintf("create%s", name),
-			Field:      fields.ByName(fmt.Sprintf("create%s", name)),
+			Action: "create",
+			Field:  fields.ByName(fmt.Sprintf("create%s", name)),
 		},
 		&Action{
-			ActionName: "update",
-			FieldName:  fmt.Sprintf("update%s", name),
-			Field:      fields.ByName(fmt.Sprintf("update%s", name)),
+			Action: "update",
+			Field:  fields.ByName(fmt.Sprintf("update%s", name)),
 		},
 		&Action{
-			ActionName: "delete",
-			FieldName:  fmt.Sprintf("delete%s", name),
-			Field:      fields.ByName(fmt.Sprintf("delete%s", name)),
+			Action: "delete",
+			Field:  fields.ByName(fmt.Sprintf("delete%s", name)),
 		},
 		&Action{
-			ActionName: "item",
-			FieldName:  xstrings.FirstRuneToLower(name),
-			Field:      fields.ByName(xstrings.FirstRuneToLower(name)),
+			Action: "item",
+			Field:  fields.ByName(xstrings.FirstRuneToLower(name)),
 		},
 		&Action{
-			ActionName: "collection",
-			FieldName:  inflection.Plural(xstrings.FirstRuneToLower(name)),
-			Field:      fields.ByName(inflection.Plural(xstrings.FirstRuneToLower(name))),
+			Action: "collection",
+			Field:  fields.ByName(inflection.Plural(xstrings.FirstRuneToLower(name))),
 		},
 	}
 }
@@ -87,7 +82,7 @@ type Service struct {
 func generateServiceInterface(cfg Config, sch *schema.Schema) error {
 	box := packr.NewBox("./templates")
 
-	tmpl, err := template.Read("service_interface", box)
+	tmpl, err := codegentemplate.Read("service_interface", box)
 	if err != nil {
 		return err
 	}
@@ -132,7 +127,9 @@ func generateServiceInterface(cfg Config, sch *schema.Schema) error {
 func generateServiceStruct(cfg Config, sch *schema.Schema) error {
 	box := packr.NewBox("./templates")
 
-	tmpl, err := template.Read("service_struct", box)
+	var actionGenerate ActionGenerate = mssql.Generate
+
+	tmpl, err := codegentemplate.Read("service_struct", box)
 	if err != nil {
 		return err
 	}
@@ -140,15 +137,18 @@ func generateServiceStruct(cfg Config, sch *schema.Schema) error {
 	for _, def := range sch.Types().ForMutation() {
 		data := &struct {
 			*code.Code
-			TypeName string
-			Actions  []*Action
+			TypeName       string
+			Actions        []*Action
+			ActionGenerate ActionGenerate
 		}{
-			Code:     code.New(cfg.ServicePackage),
-			TypeName: def.Name,
-			Actions:  actions(def.Name, sch.MutationAndQueryFields()),
+			Code:           code.New(cfg.ServicePackage),
+			TypeName:       def.Name,
+			Actions:        actions(def.Name, sch.MutationAndQueryFields()),
+			ActionGenerate: actionGenerate,
 		}
 		data.AddImport("context", "context")
 		data.AddImport(cfg.ModelImport, "model")
+		data.AddImport("github.com/jmoiron/sqlx", "sqlx")
 
 		buff := &bytes.Buffer{}
 

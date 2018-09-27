@@ -1,5 +1,9 @@
-{{- define "create" }}
-func (s *{{ lower .TypeName }}Service) Create{{ .TypeName }}(
-    {{ template "args" .Field.Arguments }}) {
-}
-{{- end }}
+	tx := ctx.Value("tx").(*sqlx.Tx)
+
+	query := `
+		INSERT INTO table (
+			field
+		) VALUES (
+			value
+		)
+	`

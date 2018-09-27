@@ -1,4 +1,1 @@
-{{- define "update" }}
-func (s *{{ lower .TypeName }}Service) Update{{ .TypeName }}(ctx context.Context) {
-}
-{{- end }}
+panic("not implemented update")

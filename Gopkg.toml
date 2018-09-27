@@ -24,7 +24,7 @@
 #   go-tests = true
 #   unused-packages = true
 
-required = ["github.com/99designs/gqlgen", "github.com/gobuffalo/packr/packr"]
+required = ["github.com/99designs/gqlgen", "github.com/gobuffalo/packr/packr", "github.com/jmoiron/sqlx"]
 
 [prune]
   go-tests = true
