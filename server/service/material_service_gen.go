@@ -11,35 +11,67 @@ import (
 type materialService struct {
 }
 
-func (s *materialService) CreateMaterial(ctx context.Context, data model.MaterialCreateInput) (model.Material, error) {
+func (s *materialService) CreateMaterial(ctx context.Context, data model.MaterialCreateInput) (*model.Material, error) {
 	tx := ctx.Value("tx").(*sqlx.Tx)
 
 	query := `
-		INSERT INTO table (
-			field
+		INSERT INTO material (
+			name
 		) VALUES (
-			value
+			:name
 		)
 	`
 
+	arg := map[string]interface{}{
+		"name": data.Name,
+	}
+
+	result, err := tx.NamedExec(query, arg)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	query = `
+		SELECT * FROM material
+		WHERE id = :id
+	`
+
+	arg = map[string]interface{}{
+		"id": id,
+	}
+
+	stmt, err := tx.PrepareNamed(query)
+	if err != nil {
+		return nil, err
+	}
+
+	r := &model.Material{}
+
+	if err := stmt.Get(r, arg); err != nil {
+		return nil, err
+	}
+
+	return r, nil
+
 }
 
-func (s *materialService) UpdateMaterial(ctx context.Context, data model.MaterialUpdateInput, where model.MaterialWhereUniqueInput) (*model.Material, error) {
-panic("not implemented update")
+func (s *materialService) UpdateMaterial(ctx context.Context, data model.MaterialUpdateInput, where model.MaterialWhereUniqueInput) (*model.Material, error) {panic("not implemented update")
 
 }
 
-func (s *materialService) DeleteMaterial(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error) {
-panic("not implemented delete")
+func (s *materialService) DeleteMaterial(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error) {panic("not implemented delete")
 
 }
 
-func (s *materialService) Material(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error) {
-panic("not implemented item")
+func (s *materialService) Material(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error) {panic("not implemented item")
 
 }
 
-func (s *materialService) Materials(ctx context.Context, where *model.MaterialWhereInput) ([]*model.Material, error) {
-panic("not implemented collection")
+func (s *materialService) Materials(ctx context.Context, where *model.MaterialWhereInput) ([]*model.Material, error) {panic("not implemented collection")
 
 }

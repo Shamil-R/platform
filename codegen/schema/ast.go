@@ -235,6 +235,15 @@ func (a *ArgumentDefinition) Type() *Type {
 
 type ArgumentDefinitionList []*ArgumentDefinition
 
+func (l ArgumentDefinitionList) ByName(name string) *ArgumentDefinition {
+	for _, arg := range l {
+		if arg.Name == name {
+			return arg
+		}
+	}
+	return nil
+}
+
 const (
 	DIRECTIVE_PRIMARY   = "primary"
 	DIRECTIVE_UNIQUE    = "unique"

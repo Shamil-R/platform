@@ -100,14 +100,33 @@ func ResolverMiddleware() graphql.FieldMiddleware {
 			fmt.Println(resCtx.Object, "-", resCtx.Field.Name, "-", resCtx.Field.Alias)
 
 			for _, arg := range resCtx.Field.Arguments {
-				fmt.Println("arg", arg.Name, "=", arg.Value.Raw)
+				fmt.Println("arg:", arg.Value.Definition.Name, arg.Name, "=", arg.Value.Raw)
+
+				// for _, field := range arg.Value.Definition.Fields {
+				// 	fmt.Println("arg_field:", field.Name)
+
+				// 	for _, dir := range field.Directives {
+				// 		fmt.Println("arg_field_dir:", dir.Name)
+
+				// 		for _, arg := range dir.Arguments {
+				// 			fmt.Println("arg_field_dir_arg:", arg.Name, arg.Value.Raw)
+				// 		}
+				// 	}
+				// }
+
+				defFields := arg.Value.Definition.Fields
 
 				for _, child := range arg.Value.Children {
-					fmt.Println("child", child.Name, "=", child.Value.Raw)
+					fmt.Println("arg_child:", child.Name, "=", child.Value.Raw)
 
-					if child.Value.Definition != nil {
-						for _, field := range child.Value.Definition.Fields {
-							fmt.Println("field", field.Name)
+					defField := defFields.ForName(child.Name)
+
+					if defField != nil {
+						for _, dir := range defField.Directives {
+							fmt.Println("directive:", dir.Name)
+							for _, arg := range dir.Arguments {
+								fmt.Println("directive_arg:", arg.Name, arg.Value.Raw)
+							}
 						}
 					}
 				}

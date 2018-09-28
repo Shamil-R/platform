@@ -1,9 +1,56 @@
+	{{- $table := lower .Name }}
+	{{- $fields := .Fields.ForCreateInput}}
+	{{- $fieldsLen := len $fields }}
 	tx := ctx.Value("tx").(*sqlx.Tx)
 
 	query := `
-		INSERT INTO table (
-			field
+		INSERT INTO {{ $table }} (
+			{{- range $i, $field := $fields }}
+			{{ .Name }}
+			{{- if gt (sub $fieldsLen $i) 1 }},{{ end }}
+			{{- end }}
 		) VALUES (
-			value
+			{{- range $i, $field := $fields }}
+			:{{ .Name }}
+			{{- if gt (sub $fieldsLen $i) 1 }},{{ end }}
+			{{- end }}
 		)
 	`
+
+	arg := map[string]interface{}{
+		{{- range $i, $field := $fields }}
+		"{{ .Name }}": data.{{ title .Name }},
+		{{- end }}
+	}
+
+	result, err := tx.NamedExec(query, arg)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	query = `
+		SELECT * FROM {{ $table }}
+		WHERE id = :id
+	`
+
+	arg = map[string]interface{}{
+		"id": id,
+	}
+
+	stmt, err := tx.PrepareNamed(query)
+	if err != nil {
+		return nil, err
+	}
+
+	r := &model.{{ .Name }}{}
+
+	if err := stmt.Get(r, arg); err != nil {
+		return nil, err
+	}
+
+	return r, nil

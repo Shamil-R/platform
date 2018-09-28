@@ -11,35 +11,67 @@ import (
 type userService struct {
 }
 
-func (s *userService) CreateUser(ctx context.Context, data model.UserCreateInput) (model.User, error) {
+func (s *userService) CreateUser(ctx context.Context, data model.UserCreateInput) (*model.User, error) {
 	tx := ctx.Value("tx").(*sqlx.Tx)
 
 	query := `
-		INSERT INTO table (
-			field
+		INSERT INTO user (
+			name
 		) VALUES (
-			value
+			:name
 		)
 	`
 
+	arg := map[string]interface{}{
+		"name": data.Name,
+	}
+
+	result, err := tx.NamedExec(query, arg)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	query = `
+		SELECT * FROM user
+		WHERE id = :id
+	`
+
+	arg = map[string]interface{}{
+		"id": id,
+	}
+
+	stmt, err := tx.PrepareNamed(query)
+	if err != nil {
+		return nil, err
+	}
+
+	r := &model.User{}
+
+	if err := stmt.Get(r, arg); err != nil {
+		return nil, err
+	}
+
+	return r, nil
+
 }
 
-func (s *userService) UpdateUser(ctx context.Context, data model.UserUpdateInput, where model.UserWhereUniqueInput) (*model.User, error) {
-panic("not implemented update")
+func (s *userService) UpdateUser(ctx context.Context, data model.UserUpdateInput, where model.UserWhereUniqueInput) (*model.User, error) {panic("not implemented update")
 
 }
 
-func (s *userService) DeleteUser(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error) {
-panic("not implemented delete")
+func (s *userService) DeleteUser(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error) {panic("not implemented delete")
 
 }
 
-func (s *userService) User(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error) {
-panic("not implemented item")
+func (s *userService) User(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error) {panic("not implemented item")
 
 }
 
-func (s *userService) Users(ctx context.Context, where *model.UserWhereInput) ([]*model.User, error) {
-panic("not implemented collection")
+func (s *userService) Users(ctx context.Context, where *model.UserWhereInput) ([]*model.User, error) {panic("not implemented collection")
 
 }

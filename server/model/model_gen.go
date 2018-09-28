@@ -25,9 +25,8 @@ type MaterialWhereUniqueInput struct {
 }
 
 type User struct {
-	ID        int        `json:"id"`
-	Name      string     `json:"name"`
-	Materials []Material `json:"materials"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type UserCreateInput struct {

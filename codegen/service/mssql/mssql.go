@@ -8,7 +8,7 @@ import (
 	"github.com/gobuffalo/packr"
 )
 
-func Generate(action string, field *schema.FieldDefinition) (string, error) {
+func Generate(action string, def *schema.Definition) (string, error) {
 	box := packr.NewBox("./templates")
 
 	tmpl, err := template.Read(action, box)
@@ -18,7 +18,7 @@ func Generate(action string, field *schema.FieldDefinition) (string, error) {
 
 	buff := &bytes.Buffer{}
 
-	if err := tmpl.Execute(buff, field); err != nil {
+	if err := tmpl.Execute(buff, def); err != nil {
 		return "", err
 	}
 

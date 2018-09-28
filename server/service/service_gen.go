@@ -8,7 +8,7 @@ import (
 )
 
 type UserService interface {
-	CreateUser(ctx context.Context, data model.UserCreateInput) (model.User, error)
+	CreateUser(ctx context.Context, data model.UserCreateInput) (*model.User, error)
 	UpdateUser(ctx context.Context, data model.UserUpdateInput, where model.UserWhereUniqueInput) (*model.User, error)
 	DeleteUser(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error)
 	User(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error)
@@ -16,7 +16,7 @@ type UserService interface {
 }
 
 type MaterialService interface {
-	CreateMaterial(ctx context.Context, data model.MaterialCreateInput) (model.Material, error)
+	CreateMaterial(ctx context.Context, data model.MaterialCreateInput) (*model.Material, error)
 	UpdateMaterial(ctx context.Context, data model.MaterialUpdateInput, where model.MaterialWhereUniqueInput) (*model.Material, error)
 	DeleteMaterial(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error)
 	Material(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error)

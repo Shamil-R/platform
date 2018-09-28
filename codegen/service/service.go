@@ -25,7 +25,7 @@ type Config struct {
 	ModelImport    string
 }
 
-type ActionGenerate func(action string, field *schema.FieldDefinition) (string, error)
+type ActionGenerate func(action string, def *schema.Definition) (string, error)
 
 func Generate(cfg Config) error {
 	schema, err := schema.Load(cfg.SchemaPath)
@@ -140,11 +140,13 @@ func generateServiceStruct(cfg Config, sch *schema.Schema) error {
 			TypeName       string
 			Actions        []*Action
 			ActionGenerate ActionGenerate
+			Def            *schema.Definition
 		}{
 			Code:           code.New(cfg.ServicePackage),
 			TypeName:       def.Name,
 			Actions:        actions(def.Name, sch.MutationAndQueryFields()),
 			ActionGenerate: actionGenerate,
+			Def:            def,
 		}
 		data.AddImport("context", "context")
 		data.AddImport(cfg.ModelImport, "model")

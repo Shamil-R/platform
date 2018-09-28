@@ -48,6 +48,31 @@ type Material {
 #     DELETE
 # }
 
+input MaterialCreateInput {
+    name: String!
+    @validate(
+        min: 10
+        max: 20
+    )
+}
+
+input MaterialUpdateInput {
+    name: String!
+    @validate(
+        min: 10
+        max: 20
+    )
+}
+
+input MaterialWhereUniqueInput {
+    id: Int!
+}
+
+input MaterialWhereInput {
+    id: Int!
+    name: String!
+}
+
 input UserCreateInput {
     name: String!
     @validate(
@@ -77,43 +102,18 @@ input UserWhereInput {
     name: String!
 }
 
-input MaterialCreateInput {
-    name: String!
-    @validate(
-        min: 10
-        max: 20
-    )
-}
-
-input MaterialUpdateInput {
-    name: String!
-    @validate(
-        min: 10
-        max: 20
-    )
-}
-
-input MaterialWhereUniqueInput {
-    id: Int!
-}
-
-input MaterialWhereInput {
-    id: Int!
-    name: String!
-}
-
 type Mutation {
-    createUser(data: UserCreateInput!): User!
+    createUser(data: UserCreateInput!): User
     updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
     deleteUser(where: UserWhereUniqueInput!): User
-    createMaterial(data: MaterialCreateInput!): Material!
+    createMaterial(data: MaterialCreateInput!): Material
     updateMaterial(data: MaterialUpdateInput!, where: MaterialWhereUniqueInput!): Material
     deleteMaterial(where: MaterialWhereUniqueInput!): Material
 }
 
 type Query {
-    user(where: UserWhereUniqueInput!): User
-    users(where: UserWhereInput): [User]!
     material(where: MaterialWhereUniqueInput!): Material
     materials(where: MaterialWhereInput): [Material]!
+    user(where: UserWhereUniqueInput!): User
+    users(where: UserWhereInput): [User]!
 }

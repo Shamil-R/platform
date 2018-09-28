@@ -68,9 +68,8 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		Id        func(childComplexity int) int
-		Name      func(childComplexity int) int
-		Materials func(childComplexity int) int
+		Id   func(childComplexity int) int
+		Name func(childComplexity int) int
 	}
 }
 
@@ -506,13 +505,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Name(childComplexity), true
-
-	case "User.materials":
-		if e.complexity.User.Materials == nil {
-			break
-		}
-
-		return e.complexity.User.Materials(childComplexity), true
 
 	}
 	return 0, false
@@ -1195,11 +1187,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
-		case "materials":
-			out.Values[i] = ec._User_materials(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1253,61 +1240,6 @@ func (ec *executionContext) _User_name(ctx context.Context, field graphql.Collec
 	res := resTmp.(string)
 	rctx.Result = res
 	return graphql.MarshalString(res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _User_materials(ctx context.Context, field graphql.CollectedField, obj *model.User) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "User",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
-		return obj.Materials, nil
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]model.Material)
-	rctx.Result = res
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				return ec._Material(ctx, field.Selections, &res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
 }
 
 var __DirectiveImplementors = []string{"__Directive"}
@@ -2823,7 +2755,7 @@ type User {
     id: Int! @primary @identity
     name: String! @validate(min: 5) @validate(max: 30)
     # roles: [RoleObject!]!
-    materials: [Material!]!
+    # materials: [Material!]!
 }
 
 # type RoleObject {
