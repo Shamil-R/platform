@@ -61,10 +61,10 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		User      func(childComplexity int, where model.UserWhereUniqueInput) int
-		Users     func(childComplexity int, where *model.UserWhereInput) int
 		Material  func(childComplexity int, where model.MaterialWhereUniqueInput) int
 		Materials func(childComplexity int, where *model.MaterialWhereInput) int
+		User      func(childComplexity int, where model.UserWhereUniqueInput) int
+		Users     func(childComplexity int, where *model.UserWhereInput) int
 	}
 
 	User struct {
@@ -74,18 +74,18 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateUser(ctx context.Context, data model.UserCreateInput) (model.User, error)
+	CreateUser(ctx context.Context, data model.UserCreateInput) (*model.User, error)
 	UpdateUser(ctx context.Context, data model.UserUpdateInput, where model.UserWhereUniqueInput) (*model.User, error)
 	DeleteUser(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error)
-	CreateMaterial(ctx context.Context, data model.MaterialCreateInput) (model.Material, error)
+	CreateMaterial(ctx context.Context, data model.MaterialCreateInput) (*model.Material, error)
 	UpdateMaterial(ctx context.Context, data model.MaterialUpdateInput, where model.MaterialWhereUniqueInput) (*model.Material, error)
 	DeleteMaterial(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error)
 }
 type QueryResolver interface {
-	User(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error)
-	Users(ctx context.Context, where *model.UserWhereInput) ([]*model.User, error)
 	Material(ctx context.Context, where model.MaterialWhereUniqueInput) (*model.Material, error)
 	Materials(ctx context.Context, where *model.MaterialWhereInput) ([]*model.Material, error)
+	User(ctx context.Context, where model.UserWhereUniqueInput) (*model.User, error)
+	Users(ctx context.Context, where *model.UserWhereInput) ([]*model.User, error)
 }
 
 func field_Mutation_createUser_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
@@ -196,41 +196,6 @@ func field_Mutation_deleteMaterial_args(rawArgs map[string]interface{}) (map[str
 
 }
 
-func field_Query_user_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 model.UserWhereUniqueInput
-	if tmp, ok := rawArgs["where"]; ok {
-		var err error
-		arg0, err = UnmarshalUserWhereUniqueInput(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["where"] = arg0
-	return args, nil
-
-}
-
-func field_Query_users_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 *model.UserWhereInput
-	if tmp, ok := rawArgs["where"]; ok {
-		var err error
-		var ptr1 model.UserWhereInput
-		if tmp != nil {
-			ptr1, err = UnmarshalUserWhereInput(tmp)
-			arg0 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["where"] = arg0
-	return args, nil
-
-}
-
 func field_Query_material_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
 	var arg0 model.MaterialWhereUniqueInput
@@ -254,6 +219,41 @@ func field_Query_materials_args(rawArgs map[string]interface{}) (map[string]inte
 		var ptr1 model.MaterialWhereInput
 		if tmp != nil {
 			ptr1, err = UnmarshalMaterialWhereInput(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg0
+	return args, nil
+
+}
+
+func field_Query_user_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 model.UserWhereUniqueInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		arg0, err = UnmarshalUserWhereUniqueInput(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg0
+	return args, nil
+
+}
+
+func field_Query_users_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *model.UserWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		var err error
+		var ptr1 model.UserWhereInput
+		if tmp != nil {
+			ptr1, err = UnmarshalUserWhereInput(tmp)
 			arg0 = &ptr1
 		}
 
@@ -444,30 +444,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteMaterial(childComplexity, args["where"].(model.MaterialWhereUniqueInput)), true
 
-	case "Query.user":
-		if e.complexity.Query.User == nil {
-			break
-		}
-
-		args, err := field_Query_user_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.User(childComplexity, args["where"].(model.UserWhereUniqueInput)), true
-
-	case "Query.users":
-		if e.complexity.Query.Users == nil {
-			break
-		}
-
-		args, err := field_Query_users_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Users(childComplexity, args["where"].(*model.UserWhereInput)), true
-
 	case "Query.material":
 		if e.complexity.Query.Material == nil {
 			break
@@ -491,6 +467,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Materials(childComplexity, args["where"].(*model.MaterialWhereInput)), true
+
+	case "Query.user":
+		if e.complexity.Query.User == nil {
+			break
+		}
+
+		args, err := field_Query_user_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.User(childComplexity, args["where"].(model.UserWhereUniqueInput)), true
+
+	case "Query.users":
+		if e.complexity.Query.Users == nil {
+			break
+		}
+
+		args, err := field_Query_users_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Users(childComplexity, args["where"].(*model.UserWhereInput)), true
 
 	case "User.id":
 		if e.complexity.User.Id == nil {
@@ -650,18 +650,12 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "createUser":
 			out.Values[i] = ec._Mutation_createUser(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "updateUser":
 			out.Values[i] = ec._Mutation_updateUser(ctx, field)
 		case "deleteUser":
 			out.Values[i] = ec._Mutation_deleteUser(ctx, field)
 		case "createMaterial":
 			out.Values[i] = ec._Mutation_createMaterial(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "updateMaterial":
 			out.Values[i] = ec._Mutation_updateMaterial(ctx, field)
 		case "deleteMaterial":
@@ -695,15 +689,16 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 		return ec.resolvers.Mutation().CreateUser(ctx, args["data"].(model.UserCreateInput))
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(model.User)
+	res := resTmp.(*model.User)
 	rctx.Result = res
 
-	return ec._User(ctx, field.Selections, &res)
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._User(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -784,15 +779,16 @@ func (ec *executionContext) _Mutation_createMaterial(ctx context.Context, field 
 		return ec.resolvers.Mutation().CreateMaterial(ctx, args["data"].(model.MaterialCreateInput))
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(model.Material)
+	res := resTmp.(*model.Material)
 	rctx.Result = res
 
-	return ec._Material(ctx, field.Selections, &res)
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Material(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -874,21 +870,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "user":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_user(ctx, field)
-				wg.Done()
-			}(i, field)
-		case "users":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_users(ctx, field)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
-				wg.Done()
-			}(i, field)
 		case "material":
 			wg.Add(1)
 			go func(i int, field graphql.CollectedField) {
@@ -899,6 +880,21 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			wg.Add(1)
 			go func(i int, field graphql.CollectedField) {
 				out.Values[i] = ec._Query_materials(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
+		case "user":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_user(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "users":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_users(ctx, field)
 				if out.Values[i] == graphql.Null {
 					invalid = true
 				}
@@ -917,101 +913,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		return graphql.Null
 	}
 	return out
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Query_user_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().User(ctx, args["where"].(model.UserWhereUniqueInput))
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.User)
-	rctx.Result = res
-
-	if res == nil {
-		return graphql.Null
-	}
-
-	return ec._User(ctx, field.Selections, res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Query_users_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().Users(ctx, args["where"].(*model.UserWhereInput))
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.User)
-	rctx.Result = res
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				if res[idx1] == nil {
-					return graphql.Null
-				}
-
-				return ec._User(ctx, field.Selections, res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
 }
 
 // nolint: vetshadow
@@ -1096,6 +997,101 @@ func (ec *executionContext) _Query_materials(ctx context.Context, field graphql.
 				}
 
 				return ec._Material(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_user_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Query().User(ctx, args["where"].(model.UserWhereUniqueInput))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	rctx.Result = res
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._User(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_users_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Query().Users(ctx, args["where"].(*model.UserWhereInput))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.User)
+	rctx.Result = res
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._User(ctx, field.Selections, res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -2788,6 +2784,31 @@ type Material {
 #     DELETE
 # }
 
+input MaterialCreateInput {
+    name: String!
+    @validate(
+        min: 10
+        max: 20
+    )
+}
+
+input MaterialUpdateInput {
+    name: String!
+    @validate(
+        min: 10
+        max: 20
+    )
+}
+
+input MaterialWhereUniqueInput {
+    id: Int!
+}
+
+input MaterialWhereInput {
+    id: Int!
+    name: String!
+}
+
 input UserCreateInput {
     name: String!
     @validate(
@@ -2817,45 +2838,20 @@ input UserWhereInput {
     name: String!
 }
 
-input MaterialCreateInput {
-    name: String!
-    @validate(
-        min: 10
-        max: 20
-    )
-}
-
-input MaterialUpdateInput {
-    name: String!
-    @validate(
-        min: 10
-        max: 20
-    )
-}
-
-input MaterialWhereUniqueInput {
-    id: Int!
-}
-
-input MaterialWhereInput {
-    id: Int!
-    name: String!
-}
-
 type Mutation {
-    createUser(data: UserCreateInput!): User!
+    createUser(data: UserCreateInput!): User
     updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
     deleteUser(where: UserWhereUniqueInput!): User
-    createMaterial(data: MaterialCreateInput!): Material!
+    createMaterial(data: MaterialCreateInput!): Material
     updateMaterial(data: MaterialUpdateInput!, where: MaterialWhereUniqueInput!): Material
     deleteMaterial(where: MaterialWhereUniqueInput!): Material
 }
 
 type Query {
-    user(where: UserWhereUniqueInput!): User
-    users(where: UserWhereInput): [User]!
     material(where: MaterialWhereUniqueInput!): Material
     materials(where: MaterialWhereInput): [Material]!
+    user(where: UserWhereUniqueInput!): User
+    users(where: UserWhereInput): [User]!
 }
 `},
 )

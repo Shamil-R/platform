@@ -3,18 +3,15 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"gitlab/nefco/platform"
-	"gitlab/nefco/platform/server/graph"
+	"gitlab/nefco/platform/server"
 	"log"
 	"net/http"
 	"strings"
 
-	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
 	"github.com/vektah/gqlparser/ast"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/99designs/gqlgen/handler"
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/spf13/cobra"
 )
@@ -41,22 +38,26 @@ var runCmd = &cobra.Command{
 		// 	log.Fatal(err)
 		// }
 
-		conf := graph.Config{
-			Resolvers: &platform.Resolver{},
-		}
+		// conf := graph.Config{
+		// 	Resolvers: &platform.Resolver{},
+		// }
 
-		router := chi.NewRouter()
+		// router := chi.NewRouter()
 
 		// router.Use(Middleware(db))
 
-		router.Handle("/", handler.Playground("Platform", "/query"))
-		router.Handle("/query",
-			handler.GraphQL(
-				graph.NewExecutableSchema(conf),
-				handler.ResolverMiddleware(ResolverMiddleware()),
-				// handler.RequestMiddleware(RequestMiddleware()),
-			))
-		if err := http.ListenAndServe(":8080", router); err != nil {
+		// router.Handle("/", handler.Playground("Platform", "/query"))
+		// router.Handle("/query",
+		// 	handler.GraphQL(
+		// 		graph.NewExecutableSchema(conf),
+		// 		handler.ResolverMiddleware(ResolverMiddleware()),
+		// 		// handler.RequestMiddleware(RequestMiddleware()),
+		// 	))
+		// if err := http.ListenAndServe(":8080", router); err != nil {
+		// 	panic(err)
+		// }
+
+		if err := server.New(); err != nil {
 			panic(err)
 		}
 	},

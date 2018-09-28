@@ -6,5 +6,5 @@ model:
   filename: server/model/model_gen.go
   package: model
 resolver:
-  filename: resolver.go
+  filename: server/resolver.go
   type: Resolver
