@@ -7,10 +7,10 @@ import (
 	{{ .Alias }} "{{ .Path }}"
 	{{- end }}
 )
-{{ range .Services }}
+{{ range .Schema.Types.ForMutation }}
 type {{ .Name }}Service interface {
 	{{- range .Actions }}
-	{{ template "func" .Field }}
+	{{ template "func" .FieldDefinition }}
 	{{- end }}
 }
 {{ end -}}

@@ -1,8 +1,11 @@
 package schema
 
 import (
+	"fmt"
 	"strings"
 
+	"github.com/huandu/xstrings"
+	"github.com/jinzhu/inflection"
 	"github.com/vektah/gqlparser/ast"
 )
 
@@ -18,30 +21,29 @@ func (s *Schema) Types() DefinitionList {
 	definitions := make(DefinitionList, 0, len(s.Schema.Types))
 	for _, def := range s.Schema.Types {
 		if !strings.HasPrefix(def.Name, "__") {
-			definitions = append(definitions, &Definition{def})
+			definitions = append(definitions, &Definition{def, s})
 		}
 	}
 	return definitions
 }
 
-func (s *Schema) MutationAndQueryFields() FieldList {
-	fields := make(FieldList, 0)
-
-	mutation := s.Types().Mutation()
-	if mutation != nil {
-		fields = append(fields, mutation.Fields()...)
+func (s *Schema) Mutation() *Definition {
+	if s.Schema.Mutation == nil {
+		return nil
 	}
+	return &Definition{s.Schema.Mutation, s}
+}
 
-	query := s.Types().Query()
-	if query != nil {
-		fields = append(fields, query.Fields()...)
+func (s *Schema) Query() *Definition {
+	if s.Schema.Query == nil {
+		return nil
 	}
-
-	return fields
+	return &Definition{s.Schema.Query, s}
 }
 
 type Definition struct {
 	*ast.Definition
+	schema *Schema
 }
 
 func (d *Definition) IsMutation() bool {
@@ -66,6 +68,51 @@ func (d *Definition) Fields() FieldList {
 		fields[i] = &FieldDefinition{field}
 	}
 	return fields
+}
+
+func (d *Definition) Mutations() ActionList {
+	mutation := d.schema.Mutation()
+	if mutation == nil {
+		return ActionList{}
+	}
+	checks := map[string]string{
+		fmt.Sprintf("create%s", d.Name): "create",
+		fmt.Sprintf("update%s", d.Name): "update",
+		fmt.Sprintf("delete%s", d.Name): "delete",
+	}
+	actions := make(ActionList, 0, len(mutation.Fields()))
+	for _, field := range mutation.Fields() {
+		if action, ok := checks[field.Name]; ok {
+			actions = append(actions, &Action{action, field, d})
+		}
+
+	}
+	return actions
+}
+
+func (d *Definition) Queries() ActionList {
+	query := d.schema.Query()
+	if query == nil {
+		return ActionList{}
+	}
+	item := xstrings.FirstRuneToLower(d.Name)
+	collection := inflection.Plural(item)
+	checks := map[string]string{
+		item:       "item",
+		collection: "collection",
+	}
+	actions := make(ActionList, 0, len(query.Fields()))
+	for _, field := range query.Fields() {
+		if action, ok := checks[field.Name]; ok {
+			actions = append(actions, &Action{action, field, d})
+		}
+
+	}
+	return actions
+}
+
+func (d *Definition) Actions() ActionList {
+	return append(d.Mutations(), d.Queries()...)
 }
 
 type DefinitionList []*Definition
@@ -111,20 +158,6 @@ func (l DefinitionList) ForMutation() DefinitionList {
 
 func (l DefinitionList) ForQuery() DefinitionList {
 	return l.objects()
-}
-
-func (l DefinitionList) Mutation() *Definition {
-	fn := func(def *Definition) bool {
-		return def.IsMutation()
-	}
-	return l.first(fn)
-}
-
-func (l DefinitionList) Query() *Definition {
-	fn := func(def *Definition) bool {
-		return def.IsQuery()
-	}
-	return l.first(fn)
 }
 
 type FieldDefinition struct {
@@ -331,3 +364,11 @@ func (l DirectiveList) ForCreateInput() DirectiveList {
 func (l DirectiveList) ForUpdateInput() DirectiveList {
 	return l.ForCreateInput()
 }
+
+type Action struct {
+	Action          string
+	FieldDefinition *FieldDefinition
+	Definition      *Definition
+}
+
+type ActionList []*Action

@@ -1,0 +1,4 @@
+
+func (s *{{ lower .Definition.Name }}sService) {{ template "func" .FieldDefinition }} {
+	{{ .Content }}
+}
