@@ -13,6 +13,11 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
+type Config struct {
+	InputSchemaPath  string
+	OutputSchemaPath string
+}
+
 func Load(filename string) (*Schema, error) {
 	buff := &bytes.Buffer{}
 
@@ -43,7 +48,7 @@ func Generate(cfg Config) error {
 
 	buff := &bytes.Buffer{}
 
-	if err := read(cfg.Source, buff); err != nil {
+	if err := read(cfg.InputSchemaPath, buff); err != nil {
 		return err
 	}
 
@@ -56,7 +61,7 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	if err := file.Write(cfg.Generate, buff); err != nil {
+	if err := file.Write(cfg.OutputSchemaPath, buff); err != nil {
 		return err
 	}
 

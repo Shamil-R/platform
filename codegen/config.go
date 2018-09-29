@@ -1,57 +1,88 @@
 package codegen
 
 import (
+	"gitlab/nefco/platform/codegen/gqlgen"
 	"gitlab/nefco/platform/codegen/schema"
 	"gitlab/nefco/platform/codegen/service"
 	"path"
+
+	"github.com/spf13/viper"
 )
 
 var DefaultConfig = Config{
-	ProjectPath: "gitlab/nefco/platform/",
-	SchemaConfig: SchemaConfig{
-		Source:   "server/schema/schema.graphql",
-		Generate: "server/schema/schema_gen.graphql",
+	ProjectDir: "gitlab/nefco/platform/",
+	Schema: ConfigSchema{
+		Path: "schema.graphql",
 	},
-	ModelConfig: ConfigModel{
-		Dir: "server/model/",
-	},
-	ServiceConfig: ConfigService{
-		Dir: "server/service/",
+	Output: ConfigOutput{
+		Dir: "/server",
 	},
 }
 
 type Config struct {
-	ProjectPath   string
-	SchemaConfig  SchemaConfig  `mapstructure:"schema"`
-	ModelConfig   ConfigModel   `mapstructure:"model"`
-	ServiceConfig ConfigService `mapstructure:"service"`
+	ProjectDir string
+	Schema     ConfigSchema `mapstructure:"schema"`
+	Output     ConfigOutput `mapstructure:"output"`
 }
 
-func (c Config) Schema() schema.Config {
+type ConfigSchema struct {
+	Path string `mapstructure:"path"`
+}
+
+type ConfigOutput struct {
+	Dir string `mapstructure:"dir"`
+}
+
+func (c Config) withProject(p string) string {
+	return path.Join(c.ProjectDir, p)
+}
+
+func (c Config) withOutput(p string) string {
+	return path.Join(c.Output.Dir, p)
+}
+
+func (c Config) schemaGenPath() string {
+	return c.withOutput("schema/schema_gen.graphql")
+}
+
+func (c Config) GqlgenConfig() gqlgen.Config {
+	return gqlgen.Config{
+		Schema: c.schemaGenPath(),
+		Exec: gqlgen.ConfigExec{
+			Filename: c.withOutput("graph/graph_gen.go"),
+			Package:  "graph",
+		},
+		Model: gqlgen.ConfigModel{
+			Filename: c.withOutput("model/model_gen.go"),
+			Package:  "model",
+		},
+		Resolver: gqlgen.ConfigResolver{
+			Filename: c.withOutput("resolver.go"),
+			Type:     "Resolver",
+		},
+		Output: ".gqlgen.yml",
+	}
+}
+
+func (c Config) SchemaConfig() schema.Config {
 	return schema.Config{
-		Source:   c.SchemaConfig.Source,
-		Generate: c.SchemaConfig.Generate,
+		InputSchemaPath:  c.Schema.Path,
+		OutputSchemaPath: c.schemaGenPath(),
 	}
 }
 
-func (c Config) Service() service.Config {
+func (c Config) ServiceConfig() service.Config {
 	return service.Config{
-		SchemaPath:     c.SchemaConfig.Generate,
-		ServiceDir:     c.ServiceConfig.Dir,
-		ServicePackage: path.Base(c.ServiceConfig.Dir),
-		ModelImport:    path.Join(c.ProjectPath, c.ModelConfig.Dir),
+		ModelImport: c.withProject(c.withOutput("model")),
+		SchemaPath:  c.schemaGenPath(),
+		OutputDir:   c.withOutput("service"),
 	}
 }
 
-type SchemaConfig struct {
-	Source   string `mapstructure:"source"`
-	Generate string `mapstructure:"generate"`
-}
-
-type ConfigModel struct {
-	Dir string `mapstructure:"dir"`
-}
-
-type ConfigService struct {
-	Dir string `mapstructure:"dir"`
+func readConfig(v *viper.Viper) (Config, error) {
+	cfg := DefaultConfig
+	if err := v.UnmarshalKey("codegen", &cfg); err != nil {
+		return cfg, err
+	}
+	return cfg, nil
 }

@@ -25,6 +25,7 @@ type Service interface {
 
 type Config struct {
 	SchemaPath     string
+	OutputDir      string
 	ServiceDir     string
 	ServicePackage string
 	ModelImport    string

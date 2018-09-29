@@ -1,37 +1,31 @@
 package cmd
 
-import (
-	"gitlab/nefco/platform/codegen"
+// var DefaultConfig = Config{
+// 	Codegen: codegen.DefaultConfig,
+// }
 
-	"github.com/fatih/structs"
-)
+// type Config struct {
+// 	Codegen codegen.Config `mapstructure:"codegen"`
+// }
 
-var DefaultConfig = Config{
-	Codegen: codegen.DefaultConfig,
-}
+// func configVars(s interface{}) []string {
+// 	res := make([]string, 0, 1)
 
-type Config struct {
-	Codegen codegen.Config `mapstructure:"codegen"`
-}
+// 	fields := structs.Fields(s)
 
-func configVars(s interface{}) []string {
-	res := make([]string, 0, 1)
+// 	for _, field := range fields {
+// 		tag := field.Tag("mapstructure")
 
-	fields := structs.Fields(s)
+// 		if structs.IsStruct(field.Value()) {
+// 			arr := configVars(field.Value())
 
-	for _, field := range fields {
-		tag := field.Tag("mapstructure")
+// 			for _, t := range arr {
+// 				res = append(res, tag+"."+t)
+// 			}
+// 		} else {
+// 			res = append(res, tag)
+// 		}
+// 	}
 
-		if structs.IsStruct(field.Value()) {
-			arr := configVars(field.Value())
-
-			for _, t := range arr {
-				res = append(res, tag+"."+t)
-			}
-		} else {
-			res = append(res, tag)
-		}
-	}
-
-	return res
-}
+// 	return res
+// }

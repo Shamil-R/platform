@@ -71,28 +71,12 @@
   revision = "1eb28afdf9b6e56cf673badd47545f844fe81103"
 
 [[projects]]
-  digest = "1:ca82a3b99694824c627573c2a76d0e49719b4a9c02d1d85a2ac91f1c1f52ab9b"
-  name = "github.com/fatih/structs"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "a720dfa8df582c51dee1b36feabb906bde1588bd"
-  version = "v1.0"
-
-[[projects]]
   digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"
   name = "github.com/fsnotify/fsnotify"
   packages = ["."]
   pruneopts = "UT"
   revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
   version = "v1.4.7"
-
-[[projects]]
-  digest = "1:b9914f85d95a0968bafd1be1908ba29e2eafafd88d6fd13696be42bf5368c380"
-  name = "github.com/go-chi/chi"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "b5294d10673813fac8558e7f47242bc9e61b4c25"
-  version = "v3.3.3"
 
 [[projects]]
   digest = "1:ad5ea7a7c710e2357a123d9e0015095e753ac9e337a9972e856510bc3210fe8a"
@@ -426,8 +410,6 @@
     "github.com/99designs/gqlgen/handler",
     "github.com/Masterminds/sprig",
     "github.com/denisenkom/go-mssqldb",
-    "github.com/fatih/structs",
-    "github.com/go-chi/chi",
     "github.com/gobuffalo/packr",
     "github.com/gobuffalo/packr/packr",
     "github.com/huandu/xstrings",
@@ -439,6 +421,7 @@
     "github.com/vektah/gqlparser",
     "github.com/vektah/gqlparser/ast",
     "go.uber.org/zap",
+    "gopkg.in/yaml.v2",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
