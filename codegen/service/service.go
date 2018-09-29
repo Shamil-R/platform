@@ -24,11 +24,10 @@ type Service interface {
 }
 
 type Config struct {
-	SchemaPath     string
-	OutputDir      string
-	ServiceDir     string
-	ServicePackage string
-	ModelImport    string
+	Package     string
+	ModelImport string
+	SchemaPath  string
+	OutputDir   string
 }
 
 func Generate(cfg Config) error {
@@ -60,7 +59,7 @@ func generateInterface(cfg Config, sch *schema.Schema) error {
 		*code.Code
 		Schema *schema.Schema
 	}{
-		Code:   code.New(cfg.ServicePackage),
+		Code:   code.New(cfg.Package),
 		Schema: sch,
 	}
 	data.AddImport("context", "context")
@@ -72,7 +71,7 @@ func generateInterface(cfg Config, sch *schema.Schema) error {
 		return err
 	}
 
-	filename := path.Join(cfg.ServiceDir + "service_gen.go")
+	filename := path.Join(cfg.OutputDir, "service_gen.go")
 
 	if err := file.Write(filename, buff); err != nil {
 		return err
@@ -103,7 +102,7 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 			*code.Code
 			*schema.Definition
 		}{
-			Code:       code.New(cfg.ServicePackage),
+			Code:       code.New(cfg.Package),
 			Definition: def,
 		}
 		data.AddImport("context", "context")
@@ -135,7 +134,7 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 
 		serviceName := strings.ToLower(def.Name) + "_service_gen.go"
 
-		filename := path.Join(cfg.ServiceDir, serviceName)
+		filename := path.Join(cfg.OutputDir, serviceName)
 
 		if err := file.Write(filename, buff); err != nil {
 			return err

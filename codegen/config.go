@@ -15,7 +15,7 @@ var DefaultConfig = Config{
 		Path: "schema.graphql",
 	},
 	Output: ConfigOutput{
-		Dir: "/server",
+		Dir: "server/",
 	},
 }
 
@@ -73,9 +73,10 @@ func (c Config) SchemaConfig() schema.Config {
 
 func (c Config) ServiceConfig() service.Config {
 	return service.Config{
+		Package:     "service",
 		ModelImport: c.withProject(c.withOutput("model")),
 		SchemaPath:  c.schemaGenPath(),
-		OutputDir:   c.withOutput("service"),
+		OutputDir:   c.withOutput("service/"),
 	}
 }
 
