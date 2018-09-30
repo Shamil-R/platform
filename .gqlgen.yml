@@ -1,10 +1,10 @@
-schema: server/schema/schema_gen.graphql
+schema: app/schema/schema_gen.graphql
 exec:
-  filename: server/graph/graph_gen.go
+  filename: app/graph/graph_gen.go
   package: graph
 model:
-  filename: server/model/model_gen.go
+  filename: app/model/model_gen.go
   package: model
 resolver:
-  filename: server/resolver.go
+  filename: app/resolver_gen.go
   type: Resolver

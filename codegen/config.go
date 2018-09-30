@@ -15,7 +15,7 @@ var DefaultConfig = Config{
 		Path: "schema.graphql",
 	},
 	Output: ConfigOutput{
-		Dir: "server/",
+		Dir: "app/",
 	},
 }
 
@@ -57,7 +57,7 @@ func (c Config) GqlgenConfig() gqlgen.Config {
 			Package:  "model",
 		},
 		Resolver: gqlgen.ConfigResolver{
-			Filename: c.withOutput("resolver.go"),
+			Filename: c.withOutput("resolver_gen.go"),
 			Type:     "Resolver",
 		},
 		Output: ".gqlgen.yml",

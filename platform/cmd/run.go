@@ -3,10 +3,12 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"gitlab/nefco/platform/server"
+	"gitlab/nefco/platform/app"
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/spf13/viper"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/vektah/gqlparser/ast"
@@ -57,7 +59,7 @@ var runCmd = &cobra.Command{
 		// 	panic(err)
 		// }
 
-		if err := server.New(); err != nil {
+		if err := app.Run(viper.GetViper()); err != nil {
 			panic(err)
 		}
 	},

@@ -1,28 +1,32 @@
 package server
 
 import (
-	"context"
 	"fmt"
-	"gitlab/nefco/platform/server/graph"
 	"net/http"
 
-	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
+	"github.com/spf13/viper"
 )
 
-func New() error {
-	conf := graph.Config{
-		Resolvers: &Resolver{},
-	}
-	http.Handle("/", handler.Playground("Platform", "/query"))
-	http.Handle("/query", handler.GraphQL(
-		graph.NewExecutableSchema(conf),
-		handler.RequestMiddleware(DBMiddleware(NewDB())),
-	))
-
-	return http.ListenAndServe(":8080", nil)
+type Config struct {
+	Port int `mapstructure:"port"`
 }
 
+var DefaultConfig = Config{
+	Port: 8080,
+}
+
+func Run(v *viper.Viper, h http.HandlerFunc) error {
+	cfg := DefaultConfig
+	if err := v.UnmarshalKey("app", &cfg); err != nil {
+		return err
+	}
+	http.Handle("/", handler.Playground("Platform", "/query"))
+	http.Handle("/query", h)
+	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), nil)
+}
+
+/*
 func DBMiddleware(db *DB) graphql.RequestMiddleware {
 	return func(ctx context.Context, next func(ctx context.Context) []byte) []byte {
 		reqCtx := graphql.GetRequestContext(ctx)
@@ -83,3 +87,4 @@ func GetDBContext(ctx context.Context) *DBContext {
 	}
 	return val.(*DBContext)
 }
+*/

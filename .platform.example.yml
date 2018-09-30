@@ -1,4 +1,5 @@
-platform:
+app:
+  port: 8080
   service:
     mssql:
       host: 127.0.0.1
@@ -7,4 +8,4 @@ codegen:
   schema:
     path: schema.graphql
   output:
-    dir: server/
+    dir: app/

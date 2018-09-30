@@ -2,4 +2,4 @@ codegen:
   schema:
     path: schema.graphql
   output:
-    dir: server/
+    dir: app/

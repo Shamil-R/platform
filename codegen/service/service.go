@@ -17,6 +17,14 @@ import (
 	"github.com/gobuffalo/packr"
 )
 
+var Services []Service
+
+func init() {
+	Services = []Service{
+		mssql.New(),
+	}
+}
+
 type Service interface {
 	Name() string
 	Init(v *viper.Viper) (handler.Option, error)
