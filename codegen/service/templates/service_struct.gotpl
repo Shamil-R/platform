@@ -10,3 +10,7 @@ import (
 
 type {{ lower .Definition.Name }}Service struct {
 }
+
+func New{{ .Definition.Name }}Service() *{{ lower .Definition.Name }}Service {
+	return &{{ lower .Definition.Name }}Service{}
+}

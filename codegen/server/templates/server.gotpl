@@ -8,4 +8,5 @@ import (
 )
 
 func init() {
+	handler = handler.GraphQL(schema, options...)
 }

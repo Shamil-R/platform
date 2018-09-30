@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"gitlab/nefco/platform/codegen/schema"
+	"gitlab/nefco/platform/codegen/service"
 	"gitlab/nefco/platform/codegen/template"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -12,11 +13,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-type mssql struct{}
-
-func New() *mssql {
-	return &mssql{}
+func init() {
+	service.RegisterService(&mssql{})
 }
+
+type mssql struct{}
 
 func (s *mssql) Name() string {
 	return "mssql"

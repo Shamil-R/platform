@@ -2,10 +2,10 @@ package service
 
 import (
 	"bytes"
+	"fmt"
 	"gitlab/nefco/platform/codegen/file"
 	"gitlab/nefco/platform/codegen/schema"
 	"gitlab/nefco/platform/codegen/service/code"
-	"gitlab/nefco/platform/codegen/service/mssql"
 	"gitlab/nefco/platform/codegen/template"
 	"path"
 	"strings"
@@ -17,19 +17,36 @@ import (
 	"github.com/gobuffalo/packr"
 )
 
-var Services []Service
-
-func init() {
-	Services = []Service{
-		mssql.New(),
-	}
-}
-
 type Service interface {
 	Name() string
 	Init(v *viper.Viper) (handler.Option, error)
 	Generate(a *schema.Action) (string, error)
 }
+
+var services []Service
+
+func init() {
+	services = make([]Service, 0)
+}
+
+func RegisterService(s Service) {
+	services = append(services, s)
+}
+
+func Services() []Service {
+	return services
+}
+
+func serviceByName(name string) (Service, error) {
+	for _, s := range services {
+		if s.Name() == name {
+			return s, nil
+		}
+	}
+	return nil, fmt.Errorf("'%s' service not implemented", name)
+}
+
+var defaultService = "mssql"
 
 type Config struct {
 	Package     string
@@ -91,7 +108,10 @@ func generateInterface(cfg Config, sch *schema.Schema) error {
 func generateStruct(cfg Config, sch *schema.Schema) error {
 	box := packr.NewBox("./templates")
 
-	var service Service = mssql.New()
+	s, err := serviceByName(defaultService)
+	if err != nil {
+		return err
+	}
 
 	tmplStruct, err := template.Read("service_struct", box)
 	if err != nil {
@@ -122,7 +142,7 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 		}
 
 		for _, act := range def.Actions() {
-			content, err := service.Generate(act)
+			content, err := s.Generate(act)
 			if err != nil {
 				return err
 			}
