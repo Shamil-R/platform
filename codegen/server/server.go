@@ -44,7 +44,7 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	if err := file.Write(cfg.SchemaPath, buff); err != nil {
+	if err := file.Write(cfg.OutputPath, buff); err != nil {
 		return err
 	}
 

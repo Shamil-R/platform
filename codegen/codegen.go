@@ -52,3 +52,11 @@ func GenerateService(v *viper.Viper) error {
 	}
 	return service.Generate(cfg.ServiceConfig())
 }
+
+func GenerateServer(v *viper.Viper) error {
+	cfg, err := readConfig(v)
+	if err != nil {
+		return err
+	}
+	return server.Generate(cfg.ServerConfig())
+}

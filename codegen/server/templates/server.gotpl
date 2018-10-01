@@ -20,7 +20,7 @@ func init() {
 
 type resolver struct {
 	{{- range .Types }}
-	{{ .Name }}Service
+	service.{{ .Name }}Service
 	{{- end }}
 }
 
