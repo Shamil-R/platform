@@ -14,8 +14,8 @@ import (
 )
 
 type Config struct {
-	InputSchemaPath  string
-	OutputSchemaPath string
+	Src string
+	Dst string
 }
 
 func Load(filename string) (*Schema, error) {
@@ -48,7 +48,7 @@ func Generate(cfg Config) error {
 
 	buff := &bytes.Buffer{}
 
-	if err := read(cfg.InputSchemaPath, buff); err != nil {
+	if err := read(cfg.Src, buff); err != nil {
 		return err
 	}
 
@@ -61,7 +61,7 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	if err := file.Write(cfg.OutputSchemaPath, buff); err != nil {
+	if err := file.Write(cfg.Dst, buff); err != nil {
 		return err
 	}
 

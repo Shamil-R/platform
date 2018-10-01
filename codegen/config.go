@@ -2,6 +2,7 @@ package codegen
 
 import (
 	"gitlab/nefco/platform/codegen/gqlgen"
+	"gitlab/nefco/platform/codegen/helper"
 	"gitlab/nefco/platform/codegen/schema"
 	"gitlab/nefco/platform/codegen/server"
 	"gitlab/nefco/platform/codegen/service"
@@ -18,7 +19,7 @@ const (
 )
 
 var DefaultConfig = Config{
-	ProjectDir: "gitlab/nefco/platform/",
+	Root: "gitlab/nefco/platform/",
 	Schema: ConfigSchema{
 		Path: "schema.graphql",
 	},
@@ -28,9 +29,9 @@ var DefaultConfig = Config{
 }
 
 type Config struct {
-	ProjectDir string
-	Schema     ConfigSchema `mapstructure:"schema"`
-	Output     ConfigOutput `mapstructure:"output"`
+	Root   string
+	Schema ConfigSchema `mapstructure:"schema"`
+	Output ConfigOutput `mapstructure:"output"`
 }
 
 type ConfigSchema struct {
@@ -41,76 +42,80 @@ type ConfigOutput struct {
 	Dir string `mapstructure:"dir"`
 }
 
-func (c Config) withProject(p string) string {
-	return path.Join(c.ProjectDir, p)
+func (c Config) outputSchema() helper.Output {
+	return helper.Output{
+		Root: c.Root,
+		Path: path.Join(c.Output.Dir, "schema/schema_gen.graphql"),
+	}
 }
 
-func (c Config) withOutput(p string) string {
-	return path.Join(c.Output.Dir, p)
+func (c Config) outputExec() helper.Output {
+	return helper.Output{
+		Root: c.Root,
+		Path: path.Join(c.Output.Dir, "graph/graph_gen.go"),
+	}
 }
 
-func (c Config) withPackage(n, p string) string {
-	return path.Join(c.withOutput(n), p)
+func (c Config) outputModel() helper.Output {
+	return helper.Output{
+		Root: c.Root,
+		Path: path.Join(c.Output.Dir, "model/model_gen.go"),
+	}
 }
 
-func (c Config) execImport() string {
-	return c.withProject(c.withOutput(execPackage))
+func (c Config) outputResolver() helper.Output {
+	return helper.Output{
+		Root: c.Root,
+		Path: path.Join(c.Output.Dir, "resolver_gen.go"),
+		Type: "Resolver",
+	}
 }
 
-func (c Config) modelImport() string {
-	return c.withProject(c.withOutput(modelPackage))
+func (c Config) outputService() helper.Output {
+	return helper.Output{
+		Root: c.Root,
+		Path: path.Join(c.Output.Dir, "service/service_gen.go"),
+	}
 }
 
-func (c Config) serviceImport() string {
-	return c.withProject(c.withOutput(servicePackage))
-}
-
-func (c Config) schemaGenPath() string {
-	return c.withPackage(schemaPackage, "schema_gen.graphql")
+func (c Config) outputServer() helper.Output {
+	return helper.Output{
+		Root: c.Root,
+		Path: path.Join(c.Output.Dir, "server_gen.go"),
+	}
 }
 
 func (c Config) GqlgenConfig() gqlgen.Config {
 	return gqlgen.Config{
-		Schema: c.schemaGenPath(),
-		Exec: gqlgen.ConfigExec{
-			Filename: c.withPackage(execPackage, "graph_gen.go"),
-			Package:  execPackage,
-		},
-		Model: gqlgen.ConfigModel{
-			Filename: c.withPackage(modelPackage, "model_gen.go"),
-			Package:  modelPackage,
-		},
-		Resolver: gqlgen.ConfigResolver{
-			Filename: c.withOutput("resolver_gen.go"),
-			Type:     "Resolver",
-		},
-		Output: ".gqlgen.yml",
+		Schema:   c.outputSchema(),
+		Exec:     c.outputExec(),
+		Model:    c.outputModel(),
+		Resolver: c.outputResolver(),
+		Dst:      ".gqlgen.yml",
 	}
 }
 
 func (c Config) SchemaConfig() schema.Config {
 	return schema.Config{
-		InputSchemaPath:  c.Schema.Path,
-		OutputSchemaPath: c.schemaGenPath(),
+		Src: c.Schema.Path,
+		Dst: c.outputSchema().Path,
 	}
 }
 
 func (c Config) ServiceConfig() service.Config {
 	return service.Config{
-		Package:     servicePackage,
-		ModelImport: c.modelImport(),
-		SchemaPath:  c.schemaGenPath(),
-		OutputDir:   c.withOutput(servicePackage),
+		Schema:  c.outputSchema().Path,
+		Service: c.outputService(),
+		Model:   c.outputModel(),
 	}
 }
 
 func (c Config) ServerConfig() server.Config {
 	return server.Config{
-		Package:       "app",
-		ExecImport:    c.execImport(),
-		ServiceImport: c.serviceImport(),
-		SchemaPath:    c.schemaGenPath(),
-		OutputPath:    c.withOutput("server_gen.go"),
+		Schema:  c.outputSchema().Path,
+		Server:  c.outputServer(),
+		Exec:    c.outputExec(),
+		Service: c.outputService(),
 	}
 }
 

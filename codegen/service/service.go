@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"gitlab/nefco/platform/codegen/file"
+	"gitlab/nefco/platform/codegen/helper"
 	"gitlab/nefco/platform/codegen/schema"
 	"gitlab/nefco/platform/codegen/service/code"
 	"gitlab/nefco/platform/codegen/service/mssql"
@@ -48,14 +49,13 @@ func serviceByName(name string) (Service, error) {
 var defaultService = "mssql"
 
 type Config struct {
-	Package     string
-	ModelImport string
-	SchemaPath  string
-	OutputDir   string
+	Schema  string
+	Service helper.Output
+	Model   helper.Output
 }
 
 func Generate(cfg Config) error {
-	schema, err := schema.Load(cfg.SchemaPath)
+	schema, err := schema.Load(cfg.Schema)
 	if err != nil {
 		return err
 	}
@@ -83,11 +83,11 @@ func generateInterface(cfg Config, sch *schema.Schema) error {
 		*code.Code
 		Schema *schema.Schema
 	}{
-		Code:   code.New(cfg.Package),
+		Code:   code.New(cfg.Service.Package()),
 		Schema: sch,
 	}
 	data.AddImport("context", "context")
-	data.AddImport(cfg.ModelImport, "model")
+	data.AddImport(cfg.Model.Import(), "model")
 
 	buff := &bytes.Buffer{}
 
@@ -95,9 +95,7 @@ func generateInterface(cfg Config, sch *schema.Schema) error {
 		return err
 	}
 
-	filename := path.Join(cfg.OutputDir, "service_gen.go")
-
-	if err := file.Write(filename, buff); err != nil {
+	if err := file.Write(cfg.Service.Path, buff); err != nil {
 		return err
 	}
 
@@ -129,11 +127,11 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 			*code.Code
 			*schema.Definition
 		}{
-			Code:       code.New(cfg.Package),
+			Code:       code.New(cfg.Service.Package()),
 			Definition: def,
 		}
 		data.AddImport("context", "context")
-		data.AddImport(cfg.ModelImport, "model")
+		data.AddImport(cfg.Model.Import(), "model")
 		data.AddImport("github.com/jmoiron/sqlx", "sqlx")
 
 		if err := tmplStruct.Execute(buff, data); err != nil {
@@ -159,9 +157,9 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 			}
 		}
 
-		serviceName := strings.ToLower(def.Name) + "_service_gen.go"
+		serviceName := strings.ToLower(def.Name) + "_" + cfg.Service.Filename()
 
-		filename := path.Join(cfg.OutputDir, serviceName)
+		filename := path.Join(cfg.Service.Dir(), serviceName)
 
 		if err := file.Write(filename, buff); err != nil {
 			return err

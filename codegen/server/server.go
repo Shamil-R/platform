@@ -3,6 +3,7 @@ package server
 import (
 	"bytes"
 	"gitlab/nefco/platform/codegen/file"
+	"gitlab/nefco/platform/codegen/helper"
 	"gitlab/nefco/platform/codegen/schema"
 	"gitlab/nefco/platform/codegen/template"
 
@@ -10,11 +11,10 @@ import (
 )
 
 type Config struct {
-	Package       string
-	ExecImport    string
-	ServiceImport string
-	SchemaPath    string
-	OutputPath    string
+	Schema  string
+	Server  helper.Output
+	Exec    helper.Output
+	Service helper.Output
 }
 
 func Generate(cfg Config) error {
@@ -25,7 +25,7 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	s, err := schema.Load(cfg.SchemaPath)
+	s, err := schema.Load(cfg.Schema)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	if err := file.Write(cfg.OutputPath, buff); err != nil {
+	if err := file.Write(cfg.Server.Path, buff); err != nil {
 		return err
 	}
 
