@@ -3,10 +3,18 @@ package codegen
 import (
 	"gitlab/nefco/platform/codegen/gqlgen"
 	"gitlab/nefco/platform/codegen/schema"
+	"gitlab/nefco/platform/codegen/server"
 	"gitlab/nefco/platform/codegen/service"
 	"path"
 
 	"github.com/spf13/viper"
+)
+
+const (
+	schemaPackage  = "schema"
+	execPackage    = "graph"
+	modelPackage   = "model"
+	servicePackage = "service"
 )
 
 var DefaultConfig = Config{
@@ -41,20 +49,36 @@ func (c Config) withOutput(p string) string {
 	return path.Join(c.Output.Dir, p)
 }
 
+func (c Config) withPackage(n, p string) string {
+	return path.Join(c.withOutput(n), p)
+}
+
+func (c Config) execImport() string {
+	return c.withProject(c.withOutput(execPackage))
+}
+
+func (c Config) modelImport() string {
+	return c.withProject(c.withOutput(modelPackage))
+}
+
+func (c Config) serviceImport() string {
+	return c.withProject(c.withOutput(servicePackage))
+}
+
 func (c Config) schemaGenPath() string {
-	return c.withOutput("schema/schema_gen.graphql")
+	return c.withPackage(schemaPackage, "schema_gen.graphql")
 }
 
 func (c Config) GqlgenConfig() gqlgen.Config {
 	return gqlgen.Config{
 		Schema: c.schemaGenPath(),
 		Exec: gqlgen.ConfigExec{
-			Filename: c.withOutput("graph/graph_gen.go"),
-			Package:  "graph",
+			Filename: c.withPackage(execPackage, "graph_gen.go"),
+			Package:  execPackage,
 		},
 		Model: gqlgen.ConfigModel{
-			Filename: c.withOutput("model/model_gen.go"),
-			Package:  "model",
+			Filename: c.withPackage(modelPackage, "model_gen.go"),
+			Package:  modelPackage,
 		},
 		Resolver: gqlgen.ConfigResolver{
 			Filename: c.withOutput("resolver_gen.go"),
@@ -73,10 +97,20 @@ func (c Config) SchemaConfig() schema.Config {
 
 func (c Config) ServiceConfig() service.Config {
 	return service.Config{
-		Package:     "service",
-		ModelImport: c.withProject(c.withOutput("model")),
+		Package:     servicePackage,
+		ModelImport: c.modelImport(),
 		SchemaPath:  c.schemaGenPath(),
-		OutputDir:   c.withOutput("service/"),
+		OutputDir:   c.withOutput(servicePackage),
+	}
+}
+
+func (c Config) ServerConfig() server.Config {
+	return server.Config{
+		Package:       "app",
+		ExecImport:    c.execImport(),
+		ServiceImport: c.serviceImport(),
+		SchemaPath:    c.schemaGenPath(),
+		OutputPath:    c.withOutput("server_gen.go"),
 	}
 }
 

@@ -3,10 +3,30 @@
 package {{ .Package }}
 
 import (
-	"context"
-	model "{{ .ModelImport }}"
+	graph "{{ .ExecImport }}"
+	service "{{ .ServiceImport }}"
 )
 
 func init() {
-	handler = handler.GraphQL(schema, options...)
+	cfg := graph.Config{
+		Resolvers: &resolver{
+			{{- range .Types }}
+			{{ .Name }}Service:	service.New{{ .Name }}Service(),
+			{{- end }}
+		},
+	}
+	schema = graph.NewExecutableSchema(cfg)
+}
+
+type resolver struct {
+	{{- range .Types }}
+	{{ .Name }}Service
+	{{- end }}
+}
+
+func (r *resolver) Mutation() graph.MutationResolver {
+	return r
+}
+func (r *resolver) Query() graph.QueryResolver {
+	return r
 }

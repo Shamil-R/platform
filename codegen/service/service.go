@@ -6,6 +6,7 @@ import (
 	"gitlab/nefco/platform/codegen/file"
 	"gitlab/nefco/platform/codegen/schema"
 	"gitlab/nefco/platform/codegen/service/code"
+	"gitlab/nefco/platform/codegen/service/mssql"
 	"gitlab/nefco/platform/codegen/template"
 	"path"
 	"strings"
@@ -26,11 +27,9 @@ type Service interface {
 var services []Service
 
 func init() {
-	services = make([]Service, 0)
-}
-
-func RegisterService(s Service) {
-	services = append(services, s)
+	services = []Service{
+		mssql.New(),
+	}
 }
 
 func Services() []Service {
@@ -123,7 +122,7 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 		return err
 	}
 
-	for _, def := range sch.Types().ForMutation() {
+	for _, def := range sch.Types().ForAction() {
 		buff := &bytes.Buffer{}
 
 		data := &struct {

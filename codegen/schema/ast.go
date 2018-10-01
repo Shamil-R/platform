@@ -160,6 +160,10 @@ func (l DefinitionList) ForQuery() DefinitionList {
 	return l.objects()
 }
 
+func (l DefinitionList) ForAction() DefinitionList {
+	return l.objects()
+}
+
 type FieldDefinition struct {
 	*ast.FieldDefinition
 }
