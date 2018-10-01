@@ -12,9 +12,9 @@ import (
 
 type Config struct {
 	Schema  string
-	Server  helper.Output
-	Exec    helper.Output
-	Service helper.Output
+	Server  helper.File
+	Exec    helper.File
+	Service helper.File
 }
 
 func Generate(cfg Config) error {

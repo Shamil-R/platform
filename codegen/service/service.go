@@ -50,8 +50,8 @@ var defaultService = "mssql"
 
 type Config struct {
 	Schema  string
-	Service helper.Output
-	Model   helper.Output
+	Service helper.File
+	Model   helper.File
 }
 
 func Generate(cfg Config) error {

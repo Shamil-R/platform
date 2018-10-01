@@ -9,10 +9,10 @@ import (
 )
 
 type Config struct {
-	Schema   helper.Output
-	Exec     helper.Output
-	Model    helper.Output
-	Resolver helper.Output
+	Schema   helper.File
+	Exec     helper.File
+	Model    helper.File
+	Resolver helper.File
 	Dst      string
 }
 

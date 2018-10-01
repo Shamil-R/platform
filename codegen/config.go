@@ -42,44 +42,51 @@ type ConfigOutput struct {
 	Dir string `mapstructure:"dir"`
 }
 
-func (c Config) outputSchema() helper.Output {
-	return helper.Output{
+func (c Config) fileSchema() helper.File {
+	return helper.File{
 		Root: c.Root,
-		Path: path.Join(c.Output.Dir, "schema/schema_gen.graphql"),
+		Path: c.Schema.Path,
 	}
 }
 
-func (c Config) outputExec() helper.Output {
-	return helper.Output{
+func (c Config) fileExec() helper.File {
+	return helper.File{
 		Root: c.Root,
 		Path: path.Join(c.Output.Dir, "graph/graph_gen.go"),
 	}
 }
 
-func (c Config) outputModel() helper.Output {
-	return helper.Output{
+func (c Config) fileModel() helper.File {
+	return helper.File{
 		Root: c.Root,
 		Path: path.Join(c.Output.Dir, "model/model_gen.go"),
 	}
 }
 
-func (c Config) outputResolver() helper.Output {
-	return helper.Output{
+func (c Config) fileResolver() helper.File {
+	return helper.File{
 		Root: c.Root,
 		Path: path.Join(c.Output.Dir, "resolver_gen.go"),
 		Type: "Resolver",
 	}
 }
 
-func (c Config) outputService() helper.Output {
-	return helper.Output{
+func (c Config) fileExSchema() helper.File {
+	return helper.File{
+		Root: c.Root,
+		Path: path.Join(c.Output.Dir, "schema/schema_gen.graphql"),
+	}
+}
+
+func (c Config) fileService() helper.File {
+	return helper.File{
 		Root: c.Root,
 		Path: path.Join(c.Output.Dir, "service/service_gen.go"),
 	}
 }
 
-func (c Config) outputServer() helper.Output {
-	return helper.Output{
+func (c Config) fileServer() helper.File {
+	return helper.File{
 		Root: c.Root,
 		Path: path.Join(c.Output.Dir, "server_gen.go"),
 	}
@@ -87,10 +94,10 @@ func (c Config) outputServer() helper.Output {
 
 func (c Config) GqlgenConfig() gqlgen.Config {
 	return gqlgen.Config{
-		Schema:   c.outputSchema(),
-		Exec:     c.outputExec(),
-		Model:    c.outputModel(),
-		Resolver: c.outputResolver(),
+		Schema:   c.fileExSchema(),
+		Exec:     c.fileExec(),
+		Model:    c.fileModel(),
+		Resolver: c.fileResolver(),
 		Dst:      ".gqlgen.yml",
 	}
 }
@@ -98,24 +105,24 @@ func (c Config) GqlgenConfig() gqlgen.Config {
 func (c Config) SchemaConfig() schema.Config {
 	return schema.Config{
 		Src: c.Schema.Path,
-		Dst: c.outputSchema().Path,
+		Dst: c.fileExSchema().Path,
 	}
 }
 
 func (c Config) ServiceConfig() service.Config {
 	return service.Config{
-		Schema:  c.outputSchema().Path,
-		Service: c.outputService(),
-		Model:   c.outputModel(),
+		Schema:  c.fileExSchema().Path,
+		Service: c.fileService(),
+		Model:   c.fileModel(),
 	}
 }
 
 func (c Config) ServerConfig() server.Config {
 	return server.Config{
-		Schema:  c.outputSchema().Path,
-		Server:  c.outputServer(),
-		Exec:    c.outputExec(),
-		Service: c.outputService(),
+		Schema:  c.fileExSchema().Path,
+		Server:  c.fileServer(),
+		Exec:    c.fileExec(),
+		Service: c.fileService(),
 	}
 }
 
