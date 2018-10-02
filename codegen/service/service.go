@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"gitlab/nefco/platform/codegen/helper"
-	"gitlab/nefco/platform/codegen/service/code"
 	"gitlab/nefco/platform/codegen/service/mssql"
 	"path"
 	"strings"
@@ -76,19 +75,17 @@ func generateInterface(cfg Config, sch *helper.Schema) error {
 		return err
 	}
 
-	data := &struct {
-		*code.Code
+	data := struct {
+		Config
 		Schema *helper.Schema
 	}{
-		Code:   code.New(cfg.Service.Package()),
+		Config: cfg,
 		Schema: sch,
 	}
-	data.AddImport("context", "context")
-	data.AddImport(cfg.Model.Import(), "model")
 
 	buff := &bytes.Buffer{}
 
-	if err := tmpl.Execute(buff, data); err != nil {
+	if err := tmpl.Execute(buff, &data); err != nil {
 		return err
 	}
 
@@ -121,15 +118,12 @@ func generateStruct(cfg Config, sch *helper.Schema) error {
 		buff := &bytes.Buffer{}
 
 		data := &struct {
-			*code.Code
+			Config
 			*helper.Definition
 		}{
-			Code:       code.New(cfg.Service.Package()),
+			Config:     cfg,
 			Definition: def,
 		}
-		data.AddImport("context", "context")
-		data.AddImport(cfg.Model.Import(), "model")
-		data.AddImport("github.com/jmoiron/sqlx", "sqlx")
 
 		if err := tmplStruct.Execute(buff, data); err != nil {
 			return err

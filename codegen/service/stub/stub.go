@@ -2,7 +2,7 @@ package stub
 
 import (
 	"context"
-	"gitlab/nefco/platform/codegen/schema"
+	"gitlab/nefco/platform/codegen/helper"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
@@ -23,7 +23,7 @@ func (s *stub) Init(v *viper.Viper) (handler.Option, error) {
 	return handler.RequestMiddleware(middleware()), nil
 }
 
-func (s *stub) Generate(a *schema.Action) (string, error) {
+func (s *stub) Generate(a *helper.Action) (string, error) {
 	return `panic("not implemented")`, nil
 }
 
