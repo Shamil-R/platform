@@ -1,4 +1,4 @@
-package template
+package helper
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/jinzhu/inflection"
 )
 
-func Read(name string, box packr.Box) (*template.Template, error) {
+func ReadTemplate(name string, box packr.Box) (*template.Template, error) {
 	if len(box.List()) == 0 {
 		return nil, fmt.Errorf("template: box empty in call to Read")
 	}

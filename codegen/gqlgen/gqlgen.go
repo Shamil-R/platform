@@ -2,7 +2,6 @@ package gqlgen
 
 import (
 	"bytes"
-	"gitlab/nefco/platform/codegen/file"
 	"gitlab/nefco/platform/codegen/helper"
 
 	yaml "gopkg.in/yaml.v2"
@@ -48,7 +47,7 @@ func Generate(cfg Config) error {
 
 	buf := bytes.NewBuffer(b)
 
-	if err := file.Write(cfg.Dst, buf); err != nil {
+	if err := helper.WriteFile(cfg.Dst, buf); err != nil {
 		return err
 	}
 

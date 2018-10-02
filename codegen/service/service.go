@@ -3,12 +3,10 @@ package service
 import (
 	"bytes"
 	"fmt"
-	"gitlab/nefco/platform/codegen/file"
 	"gitlab/nefco/platform/codegen/helper"
 	"gitlab/nefco/platform/codegen/schema"
 	"gitlab/nefco/platform/codegen/service/code"
 	"gitlab/nefco/platform/codegen/service/mssql"
-	"gitlab/nefco/platform/codegen/template"
 	"path"
 	"strings"
 
@@ -22,7 +20,7 @@ import (
 type Service interface {
 	Name() string
 	Init(v *viper.Viper) (handler.Option, error)
-	Generate(a *schema.Action) (string, error)
+	Generate(a *helper.Action) (string, error)
 }
 
 var services []Service
@@ -71,17 +69,17 @@ func Generate(cfg Config) error {
 	return nil
 }
 
-func generateInterface(cfg Config, sch *schema.Schema) error {
+func generateInterface(cfg Config, sch *helper.Schema) error {
 	box := packr.NewBox("./templates")
 
-	tmpl, err := template.Read("service_interface", box)
+	tmpl, err := helper.ReadTemplate("service_interface", box)
 	if err != nil {
 		return err
 	}
 
 	data := &struct {
 		*code.Code
-		Schema *schema.Schema
+		Schema *helper.Schema
 	}{
 		Code:   code.New(cfg.Service.Package()),
 		Schema: sch,
@@ -95,14 +93,14 @@ func generateInterface(cfg Config, sch *schema.Schema) error {
 		return err
 	}
 
-	if err := file.Write(cfg.Service.Path, buff); err != nil {
+	if err := helper.WriteFile(cfg.Service.Path, buff); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func generateStruct(cfg Config, sch *schema.Schema) error {
+func generateStruct(cfg Config, sch *helper.Schema) error {
 	box := packr.NewBox("./templates")
 
 	s, err := serviceByName(defaultService)
@@ -110,12 +108,12 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 		return err
 	}
 
-	tmplStruct, err := template.Read("service_struct", box)
+	tmplStruct, err := helper.ReadTemplate("service_struct", box)
 	if err != nil {
 		return err
 	}
 
-	tmplStructFunc, err := template.Read("service_struct_func", box)
+	tmplStructFunc, err := helper.ReadTemplate("service_struct_func", box)
 	if err != nil {
 		return err
 	}
@@ -125,7 +123,7 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 
 		data := &struct {
 			*code.Code
-			*schema.Definition
+			*helper.Definition
 		}{
 			Code:       code.New(cfg.Service.Package()),
 			Definition: def,
@@ -145,7 +143,7 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 			}
 
 			data := &struct {
-				*schema.Action
+				*helper.Action
 				Content string
 			}{
 				Action:  act,
@@ -161,7 +159,7 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 
 		filename := path.Join(cfg.Service.Dir(), serviceName)
 
-		if err := file.Write(filename, buff); err != nil {
+		if err := helper.WriteFile(filename, buff); err != nil {
 			return err
 		}
 	}

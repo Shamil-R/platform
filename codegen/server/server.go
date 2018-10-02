@@ -2,10 +2,8 @@ package server
 
 import (
 	"bytes"
-	"gitlab/nefco/platform/codegen/file"
 	"gitlab/nefco/platform/codegen/helper"
 	"gitlab/nefco/platform/codegen/schema"
-	"gitlab/nefco/platform/codegen/template"
 
 	"github.com/gobuffalo/packr"
 )
@@ -20,7 +18,7 @@ type Config struct {
 func Generate(cfg Config) error {
 	box := packr.NewBox("./templates")
 
-	tmpl, err := template.Read("server", box)
+	tmpl, err := helper.ReadTemplate("server", box)
 	if err != nil {
 		return err
 	}
@@ -32,7 +30,7 @@ func Generate(cfg Config) error {
 
 	data := &struct {
 		*Config
-		Types schema.DefinitionList
+		Types helper.DefinitionList
 	}{
 		Config: &cfg,
 		Types:  s.Types().ForAction(),
@@ -44,7 +42,7 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	if err := file.Write(cfg.Server.Path, buff); err != nil {
+	if err := helper.WriteFile(cfg.Server.Path, buff); err != nil {
 		return err
 	}
 

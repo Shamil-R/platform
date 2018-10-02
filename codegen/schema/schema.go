@@ -2,8 +2,7 @@ package schema
 
 import (
 	"bytes"
-	"gitlab/nefco/platform/codegen/file"
-	"gitlab/nefco/platform/codegen/template"
+	"gitlab/nefco/platform/codegen/helper"
 	"io"
 	"io/ioutil"
 
@@ -18,7 +17,7 @@ type Config struct {
 	Dst string
 }
 
-func Load(filename string) (*Schema, error) {
+func Load(filename string) (*helper.Schema, error) {
 	buff := &bytes.Buffer{}
 
 	file, err := ioutil.ReadFile(filename)
@@ -41,7 +40,7 @@ func Load(filename string) (*Schema, error) {
 func Generate(cfg Config) error {
 	box := packr.NewBox("./templates")
 
-	tmpl, err := template.Read("schema", box)
+	tmpl, err := helper.ReadTemplate("schema", box)
 	if err != nil {
 		return err
 	}
@@ -61,7 +60,7 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	if err := file.Write(cfg.Dst, buff); err != nil {
+	if err := helper.WriteFile(cfg.Dst, buff); err != nil {
 		return err
 	}
 
@@ -93,7 +92,7 @@ func read(src string, wr io.Writer) error {
 	return nil
 }
 
-func parse(input string) (*Schema, error) {
+func parse(input string) (*helper.Schema, error) {
 	source := &ast.Source{
 		Name:  "schema",
 		Input: input,
@@ -104,5 +103,5 @@ func parse(input string) (*Schema, error) {
 		return nil, gqlErr
 	}
 
-	return NewSchema(schema), nil
+	return helper.NewSchema(schema), nil
 }

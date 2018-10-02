@@ -2,8 +2,7 @@ package mssql
 
 import (
 	"bytes"
-	"gitlab/nefco/platform/codegen/schema"
-	"gitlab/nefco/platform/codegen/template"
+	"gitlab/nefco/platform/codegen/helper"
 
 	"github.com/jmoiron/sqlx"
 
@@ -31,14 +30,14 @@ func (s *mssql) Init(v *viper.Viper) (handler.Option, error) {
 	return handler.RequestMiddleware(middleware(db)), nil
 }
 
-func (s *mssql) Generate(a *schema.Action) (string, error) {
+func (s *mssql) Generate(a *helper.Action) (string, error) {
 	return generate(a)
 }
 
-func generate(a *schema.Action) (string, error) {
+func generate(a *helper.Action) (string, error) {
 	box := packr.NewBox("./templates")
 
-	tmpl, err := template.Read(a.Action, box)
+	tmpl, err := helper.ReadTemplate(a.Action, box)
 	if err != nil {
 		return "", err
 	}
