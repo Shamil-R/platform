@@ -26,11 +26,11 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     volumes:
       - mysql:/var/lib/mysql
-  mssql-server:
+  mssql:
       image: microsoft/mssql-server-linux
       ports:
       - "1433:1433"
-      environment: 
+      environment:
         ACCEPT_EULA: Y
         SA_PASSWORD: p@sSw0rd
       volumes:

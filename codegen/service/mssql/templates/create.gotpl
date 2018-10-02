@@ -1,12 +1,15 @@
 	{{- $table := lower .Name }}
 	{{- $fields := .Fields.ForCreateInput}}
 	{{- $fieldsLen := len $fields }}
-	tx := ctx.Value("tx").(*sqlx.Tx)
+	tx, err := mssql.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	query := `
-		INSERT INTO {{ $table }} (
+		INSERT INTO [{{ $table }}] (
 			{{- range $i, $field := $fields }}
-			{{ .Name }}
+			[{{ .Name }}]
 			{{- if gt (sub $fieldsLen $i) 1 }},{{ end }}
 			{{- end }}
 		) VALUES (
@@ -34,7 +37,7 @@
 	}
 
 	query = `
-		SELECT * FROM {{ $table }}
+		SELECT * FROM [{{ $table }}]
 		WHERE id = :id
 	`
 

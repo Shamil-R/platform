@@ -1,1 +1,49 @@
-panic("not implemented update")
+	{{- $table := lower .Name }}
+	{{- $fields := .Fields.ForUpdateInput}}
+	{{- $fieldsLen := len $fields }}
+	tx, err := mssql.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	query := `
+		UPDATE [{{ $table }}] SET
+			{{- range $i, $field := $fields }}
+			[{{ .Name }}] = :{{ .Name }}
+			{{- if gt (sub $fieldsLen $i) 1 }},{{ end }}
+			{{- end }}
+		WHERE id = :id
+	`
+
+	arg := map[string]interface{}{
+		{{- range $i, $field := $fields }}
+		"{{ .Name }}": data.{{ title .Name }},
+		{{- end }}
+		"id": where.ID,
+	}
+
+	if _, err := tx.NamedExec(query, arg); err != nil {
+		return nil, err
+	}
+
+	query = `
+		SELECT * FROM [{{ $table }}]
+		WHERE id = :id
+	`
+
+	arg = map[string]interface{}{
+		"id": where.ID,
+	}
+
+	stmt, err := tx.PrepareNamed(query)
+	if err != nil {
+		return nil, err
+	}
+
+	r := &model.{{ .Name }}{}
+
+	if err := stmt.Get(r, arg); err != nil {
+		return nil, err
+	}
+
+	return r, nil

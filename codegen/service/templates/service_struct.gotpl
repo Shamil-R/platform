@@ -7,7 +7,7 @@ import (
 
 	model "{{ .Model.Import }}"
 
-	"github.com/jmoiron/sqlx"
+	mssql "gitlab/nefco/platform/codegen/service/mssql"
 )
 
 type {{ lower .Definition.Name }}Service struct {

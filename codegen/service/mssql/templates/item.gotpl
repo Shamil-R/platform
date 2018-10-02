@@ -1,1 +1,27 @@
-panic("not implemented item")
+	{{- $table := lower .Name }}
+	tx, err := mssql.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	query := `
+		SELECT * FROM [{{ $table }}]
+		WHERE id = :id
+	`
+
+	arg := map[string]interface{}{
+		"id": where.ID,
+	}
+
+	stmt, err := tx.PrepareNamed(query)
+	if err != nil {
+		return nil, err
+	}
+
+	r := &model.{{ .Name }}{}
+
+	if err := stmt.Get(r, arg); err != nil {
+		return nil, err
+	}
+
+	return r, nil

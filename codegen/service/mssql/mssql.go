@@ -2,15 +2,34 @@ package mssql
 
 import (
 	"bytes"
+	"fmt"
 	"gitlab/nefco/platform/codegen/helper"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/jmoiron/sqlx/reflectx"
 
 	"github.com/99designs/gqlgen/handler"
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/gobuffalo/packr"
 	"github.com/spf13/viper"
 )
+
+type Config struct {
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+	Database string `mapstructure:"database"`
+}
+
+var DefaultConfig = Config{
+	Host:     "127.0.0.1",
+	Port:     1433,
+	Username: "username",
+	Password: "password",
+	Database: "database",
+}
 
 type mssql struct{}
 
@@ -23,10 +42,22 @@ func (s *mssql) Name() string {
 }
 
 func (s *mssql) Init(v *viper.Viper) (handler.Option, error) {
-	db, err := sqlx.Connect("", "")
+	cfg := DefaultConfig
+	if err := v.UnmarshalKey("app.service.mssql", &cfg); err != nil {
+		return nil, err
+	}
+	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s",
+		cfg.Username,
+		cfg.Password,
+		cfg.Host,
+		cfg.Port,
+		cfg.Database,
+	)
+	db, err := sqlx.Connect("mssql", dsn)
 	if err != nil {
 		return nil, err
 	}
+	db.Mapper = reflectx.NewMapperFunc("json", strings.ToLower)
 	return handler.RequestMiddleware(middleware(db)), nil
 }
 
@@ -50,66 +81,3 @@ func generate(a *helper.Action) (string, error) {
 
 	return buff.String(), nil
 }
-
-/*
-func DBMiddleware(db *DB) graphql.RequestMiddleware {
-	return func(ctx context.Context, next func(ctx context.Context) []byte) []byte {
-		reqCtx := graphql.GetRequestContext(ctx)
-
-		fmt.Println("RequestMiddleware", reqCtx.Doc.Operations)
-
-		dbCtx := NewDBContext(db)
-
-		ctx = WithDBContext(ctx, dbCtx)
-
-		res := next(ctx)
-
-		fmt.Println("Result", *dbCtx.tx)
-
-		return res
-	}
-}
-
-type DB struct {
-	Connection string
-}
-
-func NewDB() *DB {
-	return &DB{
-		Connection: "connection",
-	}
-}
-
-type platformContextKey int
-
-const dbContextKey platformContextKey = 1
-
-type DBContext struct {
-	DB *DB
-	tx *string
-}
-
-func NewDBContext(db *DB) *DBContext {
-	return &DBContext{
-		DB: db,
-	}
-}
-
-func (c *DBContext) Tx(s string) {
-	if c.tx == nil {
-		c.tx = &s
-	}
-}
-
-func WithDBContext(ctx context.Context, db *DBContext) context.Context {
-	return context.WithValue(ctx, dbContextKey, db)
-}
-
-func GetDBContext(ctx context.Context) *DBContext {
-	val := ctx.Value(dbContextKey)
-	if val == nil {
-		return nil
-	}
-	return val.(*DBContext)
-}
-*/

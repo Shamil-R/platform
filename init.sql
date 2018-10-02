@@ -1,27 +1,34 @@
--- переменные
-DECLARE @dbname VARCHAR(8) = 'platform'
+-- создание логина
+IF NOT EXISTS (SELECT * FROM master.sys.server_principals WHERE name = 'platform')
+BEGIN
+	CREATE LOGIN platform WITH PASSWORD = 'p@sSw0rd'
+END
 
 -- удаление и создание БД
-USE master
-IF EXISTS ( SELECT * FROM sys.databases WHERE name = 'platform' )
+IF EXISTS (SELECT * FROM master.sys.databases WHERE name = 'platform')
 BEGIN
     DROP DATABASE platform
 END
 CREATE DATABASE platform
-GO
 
 USE platform
--- создание таблицы users
-IF OBJECT_ID('users', 'U') IS NOT NULL
+
+-- создание пользователя бд
+IF NOT EXISTS (SELECT * FROM master.sys.database_principals WHERE name = 'platform')
 BEGIN
-    DROP TABLE users
+	-- CREATE USER platform FOR LOGIN platform WITH DEFAULT_SCHEMA = dbo
+	EXEC sp_addrolemember 'db_owner', 'platform'
 END
-CREATE TABLE users (
-    id INT,
-    uid NVARCHAR(50),
+
+-- создание таблицы user
+IF OBJECT_ID('user', 'U') IS NOT NULL
+BEGIN
+    DROP TABLE [user]
+END
+CREATE TABLE [user] (
+    id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     name NVARCHAR(50)
 )
-GO
 
-INSERT INTO users (id, uid, name) VALUES(1, '1', 'Test')
-GO
+-- INSERT INTO user (id, name) VALUES(1, 'Test')
+-- GO

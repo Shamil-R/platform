@@ -1,1 +1,24 @@
-panic("not implemented collection")
+	{{- $table := lower .Name }}
+	tx, err := mssql.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	query := `
+		SELECT * FROM [{{ $table }}]
+	`
+
+	arg := map[string]interface{}{}
+
+	stmt, err := tx.PrepareNamed(query)
+	if err != nil {
+		return nil, err
+	}
+
+	r := []*model.{{ .Name }}{}
+
+	if err := stmt.Select(&r, arg); err != nil {
+		return nil, err
+	}
+
+	return r, nil
