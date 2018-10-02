@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"gitlab/nefco/platform/codegen/helper"
-	"gitlab/nefco/platform/codegen/schema"
 	"gitlab/nefco/platform/codegen/service/code"
 	"gitlab/nefco/platform/codegen/service/mssql"
 	"path"
@@ -47,13 +46,13 @@ func serviceByName(name string) (Service, error) {
 var defaultService = "mssql"
 
 type Config struct {
-	Schema  string
+	Schema  helper.File
 	Service helper.File
 	Model   helper.File
 }
 
 func Generate(cfg Config) error {
-	schema, err := schema.Load(cfg.Schema)
+	schema, err := helper.LoadSchema(cfg.Schema.Path)
 	if err != nil {
 		return err
 	}

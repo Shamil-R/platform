@@ -11,13 +11,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-	schemaPackage  = "schema"
-	execPackage    = "graph"
-	modelPackage   = "model"
-	servicePackage = "service"
-)
-
 var DefaultConfig = Config{
 	Root: "gitlab/nefco/platform/",
 	Schema: ConfigSchema{
@@ -71,6 +64,13 @@ func (c Config) fileResolver() helper.File {
 	}
 }
 
+func (c Config) fileConfig() helper.File {
+	return helper.File{
+		Root: c.Root,
+		Path: ".gqlgen.yml",
+	}
+}
+
 func (c Config) fileExSchema() helper.File {
 	return helper.File{
 		Root: c.Root,
@@ -98,20 +98,20 @@ func (c Config) GqlgenConfig() gqlgen.Config {
 		Exec:     c.fileExec(),
 		Model:    c.fileModel(),
 		Resolver: c.fileResolver(),
-		Dst:      ".gqlgen.yml",
+		Config:   c.fileConfig(),
 	}
 }
 
 func (c Config) SchemaConfig() schema.Config {
 	return schema.Config{
-		Src: c.Schema.Path,
-		Dst: c.fileExSchema().Path,
+		In:  c.fileSchema(),
+		Out: c.fileExSchema(),
 	}
 }
 
 func (c Config) ServiceConfig() service.Config {
 	return service.Config{
-		Schema:  c.fileExSchema().Path,
+		Schema:  c.fileExSchema(),
 		Service: c.fileService(),
 		Model:   c.fileModel(),
 	}
@@ -119,7 +119,7 @@ func (c Config) ServiceConfig() service.Config {
 
 func (c Config) ServerConfig() server.Config {
 	return server.Config{
-		Schema:  c.fileExSchema().Path,
+		Schema:  c.fileExSchema(),
 		Server:  c.fileServer(),
 		Exec:    c.fileExec(),
 		Service: c.fileService(),

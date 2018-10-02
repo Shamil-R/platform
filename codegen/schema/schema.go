@@ -3,105 +3,41 @@ package schema
 import (
 	"bytes"
 	"gitlab/nefco/platform/codegen/helper"
-	"io"
-	"io/ioutil"
 
 	"github.com/gobuffalo/packr"
-
-	"github.com/vektah/gqlparser"
-	"github.com/vektah/gqlparser/ast"
 )
 
 type Config struct {
-	Src string
-	Dst string
-}
-
-func Load(filename string) (*helper.Schema, error) {
-	buff := &bytes.Buffer{}
-
-	file, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	if _, err := buff.Write(file); err != nil {
-		return nil, err
-	}
-
-	schema, err := parse(buff.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return schema, nil
+	In  helper.File
+	Out helper.File
 }
 
 func Generate(cfg Config) error {
 	box := packr.NewBox("./templates")
+
+	buf := bytes.NewBuffer(box.Bytes("directives.graphql"))
+
+	if err := helper.ReadSchema(cfg.In.Path, buf); err != nil {
+		return err
+	}
 
 	tmpl, err := helper.ReadTemplate("schema", box)
 	if err != nil {
 		return err
 	}
 
-	buff := &bytes.Buffer{}
-
-	if err := read(cfg.Src, buff); err != nil {
-		return err
-	}
-
-	schema, err := parse(buff.String())
+	schema, err := helper.ParseSchema(buf.String())
 	if err != nil {
 		return err
 	}
 
-	if err := tmpl.Execute(buff, schema); err != nil {
+	if err := tmpl.Execute(buf, schema); err != nil {
 		return err
 	}
 
-	if err := helper.WriteFile(cfg.Dst, buff); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func read(src string, wr io.Writer) error {
-	box := packr.NewBox("./graphql")
-
-	directivesFile := box.Bytes("directives.graphql")
-
-	if _, err := wr.Write(directivesFile); err != nil {
-		return err
-	}
-
-	if _, err := wr.Write([]byte("\n")); err != nil {
-		return err
-	}
-
-	schemaFile, err := ioutil.ReadFile(src)
-	if err != nil {
-		return err
-	}
-
-	if _, err := wr.Write(schemaFile); err != nil {
+	if err := helper.WriteFile(cfg.Out.Path, buf); err != nil {
 		return err
 	}
 
 	return nil
-}
-
-func parse(input string) (*helper.Schema, error) {
-	source := &ast.Source{
-		Name:  "schema",
-		Input: input,
-	}
-
-	schema, gqlErr := gqlparser.LoadSchema(source)
-	if gqlErr != nil {
-		return nil, gqlErr
-	}
-
-	return helper.NewSchema(schema), nil
 }

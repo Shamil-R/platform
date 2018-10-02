@@ -12,7 +12,7 @@ type Config struct {
 	Exec     helper.File
 	Model    helper.File
 	Resolver helper.File
-	Dst      string
+	Config   helper.File
 }
 
 func Generate(cfg Config) error {
@@ -47,7 +47,7 @@ func Generate(cfg Config) error {
 
 	buf := bytes.NewBuffer(b)
 
-	if err := helper.WriteFile(cfg.Dst, buf); err != nil {
+	if err := helper.WriteFile(cfg.Config.Path, buf); err != nil {
 		return err
 	}
 

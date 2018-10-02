@@ -1,20 +1,20 @@
 package helper
 
 import (
+	"bytes"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"strings"
 
 	"github.com/huandu/xstrings"
 	"github.com/jinzhu/inflection"
+	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
 )
 
 type Schema struct {
 	*ast.Schema
-}
-
-func NewSchema(schema *ast.Schema) *Schema {
-	return &Schema{schema}
 }
 
 func (s *Schema) Types() DefinitionList {
@@ -376,3 +376,34 @@ type Action struct {
 }
 
 type ActionList []*Action
+
+func ReadSchema(path string, wr io.Writer) error {
+	file, err := ioutil.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	if _, err := wr.Write(file); err != nil {
+		return err
+	}
+	return nil
+}
+
+func ParseSchema(input string) (*Schema, error) {
+	source := &ast.Source{
+		Name:  "schema",
+		Input: input,
+	}
+	schema, err := gqlparser.LoadSchema(source)
+	if err != nil {
+		return nil, err
+	}
+	return &Schema{schema}, nil
+}
+
+func LoadSchema(path string) (*Schema, error) {
+	buf := bytes.NewBuffer([]byte{})
+	if err := ReadSchema(path, buf); err != nil {
+		return nil, err
+	}
+	return ParseSchema(buf.String())
+}
