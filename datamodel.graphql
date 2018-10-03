@@ -2,19 +2,19 @@ type User {
     id: ID! @unique
     name: String!
     # roles: [RoleObject!]!
-    # materials: [Material!]!
+    materials: [Material!]!
 }
 
-type RoleObject {
-    id: ID! @unique
-    object: String!
-    access: RoleAccess!
-}
+# type RoleObject {
+#     id: ID! @unique
+#     object: String!
+#     access: RoleAccess!
+# }
 
 type Material {
     id: ID! @unique
     name: String!
-    author: User!
+    # author: User!
 }
 
 """

@@ -220,7 +220,8 @@ func (l FieldList) ForObject() FieldList {
 
 func (l FieldList) ForCreateInput() FieldList {
 	fn := func(field *FieldDefinition) bool {
-		return !field.Directives().HasIndentity()
+		return !field.Type().IsSlice() &&
+			!field.Directives().HasIndentity()
 	}
 	return l.filter(fn)
 }
@@ -237,7 +238,7 @@ func (l FieldList) ForWhereUniqueInput() FieldList {
 }
 
 func (l FieldList) ForWhereInput() FieldList {
-	return l
+	return l.ForWhereUniqueInput()
 }
 
 func (l FieldList) ByName(name string) *FieldDefinition {
