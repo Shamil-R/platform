@@ -44,6 +44,17 @@ func (c *SQLContext) Commit() error {
 	return nil
 }
 
+func (c *SQLContext) Rollback() error {
+	if !c.IsTx() {
+		return nil
+	}
+	if err := c.tx.Rollback(); err != nil {
+		return err
+	}
+	c.tx = nil
+	return nil
+}
+
 type key int
 
 const ctxKey key = 1
@@ -71,8 +82,15 @@ func middleware(db *sqlx.DB) graphql.RequestMiddleware {
 		res := next(withContext(ctx, sqlCtx))
 
 		if sqlCtx.IsTx() {
-			if err := sqlCtx.Commit(); err != nil {
-				panic(err)
+			reqCtx := graphql.GetRequestContext(ctx)
+			if len(reqCtx.Errors) == 0 {
+				if err := sqlCtx.Commit(); err != nil {
+					panic(err)
+				}
+			} else {
+				if err := sqlCtx.Rollback(); err != nil {
+					panic(err)
+				}
 			}
 		}
 
