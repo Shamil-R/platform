@@ -61,11 +61,32 @@ func (s *mssql) Init(v *viper.Viper) (handler.Option, error) {
 	return handler.RequestMiddleware(middleware(db)), nil
 }
 
-func (s *mssql) Generate(a *helper.Action) (string, error) {
-	return generate(a)
+func (s *mssql) GenerateCommon(d *helper.Definition) (string, error) {
+	return generateCommon(d)
 }
 
-func generate(a *helper.Action) (string, error) {
+func (s *mssql) GenerateAction(a *helper.Action) (string, error) {
+	return generateAction(a)
+}
+
+func generateCommon(d *helper.Definition) (string, error) {
+	box := packr.NewBox("./templates")
+
+	tmpl, err := helper.ReadTemplate("common", box)
+	if err != nil {
+		return "", err
+	}
+
+	buff := &bytes.Buffer{}
+
+	if err := tmpl.Execute(buff, d); err != nil {
+		return "", err
+	}
+
+	return buff.String(), nil
+}
+
+func generateAction(a *helper.Action) (string, error) {
 	box := packr.NewBox("./templates")
 
 	tmpl, err := helper.ReadTemplate(a.Action, box)

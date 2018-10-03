@@ -18,7 +18,8 @@ import (
 type Service interface {
 	Name() string
 	Init(v *viper.Viper) (handler.Option, error)
-	Generate(a *helper.Action) (string, error)
+	GenerateCommon(d *helper.Definition) (string, error)
+	GenerateAction(a *helper.Action) (string, error)
 }
 
 var services []Service
@@ -115,7 +116,7 @@ func generateStruct(cfg Config, sch *helper.Schema) error {
 	}
 
 	for _, def := range sch.Types().ForAction() {
-		buff := &bytes.Buffer{}
+		buf := bytes.NewBufferString("")
 
 		data := &struct {
 			Config
@@ -125,12 +126,12 @@ func generateStruct(cfg Config, sch *helper.Schema) error {
 			Definition: def,
 		}
 
-		if err := tmplStruct.Execute(buff, data); err != nil {
+		if err := tmplStruct.Execute(buf, data); err != nil {
 			return err
 		}
 
 		for _, act := range def.Actions() {
-			content, err := s.Generate(act)
+			content, err := s.GenerateAction(act)
 			if err != nil {
 				return err
 			}
@@ -143,16 +144,25 @@ func generateStruct(cfg Config, sch *helper.Schema) error {
 				Content: content,
 			}
 
-			if err := tmplStructFunc.Execute(buff, data); err != nil {
+			if err := tmplStructFunc.Execute(buf, data); err != nil {
 				return err
 			}
+		}
+
+		content, err := s.GenerateCommon(def)
+		if err != nil {
+			return err
+		}
+
+		if _, err := buf.WriteString(content); err != nil {
+			return err
 		}
 
 		serviceName := strings.ToLower(def.Name) + "_" + cfg.Service.Filename()
 
 		filename := path.Join(cfg.Service.Dir(), serviceName)
 
-		if err := helper.WriteFile(filename, buff); err != nil {
+		if err := helper.WriteFile(filename, buf); err != nil {
 			return err
 		}
 	}

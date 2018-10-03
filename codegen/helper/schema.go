@@ -131,7 +131,7 @@ func (l DefinitionList) filter(filter definitionListFilter) DefinitionList {
 
 func (l DefinitionList) first(filter definitionListFilter) *Definition {
 	r := l.filter(filter)
-	if r.Size() == 0 {
+	if r.size() == 0 {
 		return nil
 	}
 	return r[0]
@@ -144,7 +144,7 @@ func (l DefinitionList) objects() DefinitionList {
 	return l.filter(fn)
 }
 
-func (l DefinitionList) Size() int {
+func (l DefinitionList) size() int {
 	return len(l)
 }
 
@@ -204,13 +204,13 @@ func (l FieldList) filter(filter fieldListFilter) FieldList {
 
 func (l FieldList) first(filter fieldListFilter) *FieldDefinition {
 	r := l.filter(filter)
-	if r.Size() == 0 {
+	if r.size() == 0 {
 		return nil
 	}
 	return r[0]
 }
 
-func (l FieldList) Size() int {
+func (l FieldList) size() int {
 	return len(l)
 }
 
@@ -326,7 +326,7 @@ func (l DirectiveList) filter(filter directiveListFilter) DirectiveList {
 	return directives
 }
 
-func (l DirectiveList) Size() int {
+func (l DirectiveList) size() int {
 	return len(l)
 }
 
@@ -334,28 +334,28 @@ func (l DirectiveList) HasPrimary() bool {
 	fn := func(directive *Directive) bool {
 		return directive.IsPrimary()
 	}
-	return l.filter(fn).Size() > 0
+	return l.filter(fn).size() > 0
 }
 
 func (l DirectiveList) HasUnique() bool {
 	fn := func(directive *Directive) bool {
 		return directive.IsUnique()
 	}
-	return l.filter(fn).Size() > 0
+	return l.filter(fn).size() > 0
 }
 
 func (l DirectiveList) HasIndentity() bool {
 	fn := func(directive *Directive) bool {
 		return directive.IsIndentity()
 	}
-	return l.filter(fn).Size() > 0
+	return l.filter(fn).size() > 0
 }
 
 func (l DirectiveList) HasValidate() bool {
 	fn := func(directive *Directive) bool {
 		return directive.IsValidate()
 	}
-	return l.filter(fn).Size() > 0
+	return l.filter(fn).size() > 0
 }
 
 func (l DirectiveList) ForCreateInput() DirectiveList {
@@ -376,6 +376,37 @@ type Action struct {
 }
 
 type ActionList []*Action
+
+type actionListFilter func(field *Action) bool
+
+func (l ActionList) size() int {
+	return len(l)
+}
+
+func (l ActionList) filter(filter actionListFilter) ActionList {
+	actions := make(ActionList, 0, len(l))
+	for _, action := range l {
+		if filter(action) {
+			actions = append(actions, action)
+		}
+	}
+	return actions
+}
+
+func (l ActionList) first(filter actionListFilter) *Action {
+	r := l.filter(filter)
+	if r.size() == 0 {
+		return nil
+	}
+	return r[0]
+}
+
+func (l ActionList) ByAction(action string) *Action {
+	fn := func(a *Action) bool {
+		return a.Action == action
+	}
+	return l.first(fn)
+}
 
 func ReadSchema(path string, wr io.Writer) error {
 	file, err := ioutil.ReadFile(path)
