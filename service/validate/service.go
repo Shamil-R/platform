@@ -16,10 +16,6 @@ func init() {
 
 type service struct{}
 
-func (s service) Name() string {
-	return "validate"
-}
-
 func (s service) Middleware(v *viper.Viper) (handler.Option, error) {
 	return handler.ResolverMiddleware(middleware(&validate{})), nil
 }
