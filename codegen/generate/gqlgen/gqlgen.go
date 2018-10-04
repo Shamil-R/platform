@@ -1,10 +1,12 @@
 package gqlgen
 
 import (
-	"bytes"
+	"fmt"
 	"gitlab/nefco/platform/codegen/helper"
+	"gitlab/nefco/platform/codegen/schema"
+	"os"
 
-	yaml "gopkg.in/yaml.v2"
+	"github.com/99designs/gqlgen/codegen"
 )
 
 type Config struct {
@@ -12,42 +14,32 @@ type Config struct {
 	Exec     helper.File
 	Model    helper.File
 	Resolver helper.File
-	Config   helper.File
 }
 
 func Generate(cfg Config) error {
-	var c struct {
-		Schema string `yaml:"schema"`
-		Exec   struct {
-			Filename string `yaml:"filename"`
-			Package  string `yaml:"package"`
-		} `yaml:"exec"`
-		Model struct {
-			Filename string `yaml:"filename"`
-			Package  string `yaml:"package"`
-		} `yaml:"model"`
-		Resolver struct {
-			Filename string `yaml:"filename"`
-			Type     string `yaml:"type"`
-		} `yaml:"resolver"`
-	}
-
-	c.Schema = cfg.Schema.Path
-	c.Exec.Filename = cfg.Exec.Path
-	c.Exec.Package = cfg.Exec.Package()
-	c.Model.Filename = cfg.Model.Path
-	c.Model.Package = cfg.Model.Package()
-	c.Resolver.Filename = cfg.Resolver.Path
-	c.Resolver.Type = cfg.Resolver.Type
-
-	b, err := yaml.Marshal(&c)
+	schemaRaw, err := schema.LoadSchemaRaw(cfg.Schema.Path)
 	if err != nil {
-		return err
+		fmt.Fprintln(os.Stderr, "unable to open schema: "+err.Error())
+		os.Exit(1)
 	}
 
-	buf := bytes.NewBuffer(b)
+	c := codegen.Config{
+		SchemaStr: schemaRaw,
+		Exec: codegen.PackageConfig{
+			Filename: cfg.Exec.Path,
+			Package:  cfg.Exec.Package(),
+		},
+		Model: codegen.PackageConfig{
+			Filename: cfg.Model.Path,
+			Package:  cfg.Model.Package(),
+		},
+		Resolver: codegen.PackageConfig{
+			Filename: cfg.Resolver.Path,
+			Type:     cfg.Resolver.Type,
+		},
+	}
 
-	if err := helper.WriteFile(cfg.Config.Path, buf); err != nil {
+	if err := codegen.Generate(c); err != nil {
 		return err
 	}
 

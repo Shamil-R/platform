@@ -11,15 +11,15 @@ import (
 )
 
 var (
-	genGqlgen  = false
 	genSchema  = false
+	genGqlgen  = false
 	genService = false
 	genServer  = false
 )
 
 func init() {
-	codegenCmd.Flags().BoolVar(&genGqlgen, "gqlgen", false, "generate gqlgen")
 	codegenCmd.Flags().BoolVar(&genSchema, "schema", false, "generate schema")
+	codegenCmd.Flags().BoolVar(&genGqlgen, "gqlgen", false, "generate gqlgen")
 	codegenCmd.Flags().BoolVar(&genService, "service", false, "generate service")
 	codegenCmd.Flags().BoolVar(&genServer, "server", false, "generate server")
 
@@ -31,13 +31,13 @@ var codegenCmd = &cobra.Command{
 	Short: "codegen",
 	Long:  `codegen`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if genGqlgen {
-			if err := codegen.GenerateGqlgen(viper.GetViper()); err != nil {
+		if genSchema {
+			if err := codegen.GenerateSchema(viper.GetViper()); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
-		} else if genSchema {
-			if err := codegen.GenerateSchema(viper.GetViper()); err != nil {
+		} else if genGqlgen {
+			if err := codegen.GenerateGqlgen(viper.GetViper()); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}

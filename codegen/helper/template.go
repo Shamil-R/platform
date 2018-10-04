@@ -35,3 +35,7 @@ func ReadTemplate(name string, box packr.Box) (*template.Template, error) {
 
 	return tmpl, nil
 }
+
+func isLast(i, l int) bool {
+	return l-i > 1
+}

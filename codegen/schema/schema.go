@@ -3,10 +3,10 @@ package schema
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"strings"
 
+	"github.com/gobuffalo/packr"
 	"github.com/huandu/xstrings"
 	"github.com/jinzhu/inflection"
 	"github.com/vektah/gqlparser"
@@ -146,6 +146,17 @@ func (l DefinitionList) objects() DefinitionList {
 
 func (l DefinitionList) size() int {
 	return len(l)
+}
+
+func (l DefinitionList) ForObject() DefinitionList {
+	return l.objects()
+}
+
+func (l DefinitionList) ForEnum() DefinitionList {
+	fn := func(def *Definition) bool {
+		return def.IsEnum()
+	}
+	return l.filter(fn)
 }
 
 func (l DefinitionList) ForInput() DefinitionList {
@@ -409,33 +420,40 @@ func (l ActionList) ByAction(action string) *Action {
 	return l.first(fn)
 }
 
-func ReadSchema(path string, wr io.Writer) error {
-	file, err := ioutil.ReadFile(path)
-	if err != nil {
-		return err
-	}
-	if _, err := wr.Write(file); err != nil {
-		return err
-	}
-	return nil
-}
+func LoadSchemaRaw(path string) (string, error) {
+	box := packr.NewBox("./graphql")
 
-func ParseSchema(input string) (*Schema, error) {
-	source := &ast.Source{
-		Name:  "schema",
-		Input: input,
-	}
-	schema, err := gqlparser.LoadSchema(source)
+	directivesRaw := box.Bytes("directives.graphql")
+
+	buf := bytes.NewBuffer(directivesRaw)
+
+	schemaRaw, err := ioutil.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return &Schema{schema}, nil
+
+	if _, err := buf.Write(schemaRaw); err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
 }
 
 func LoadSchema(path string) (*Schema, error) {
-	buf := bytes.NewBuffer([]byte{})
-	if err := ReadSchema(path, buf); err != nil {
+	schemaRaw, err := LoadSchemaRaw(path)
+	if err != nil {
 		return nil, err
 	}
-	return ParseSchema(buf.String())
+
+	source := &ast.Source{
+		Name:  "schema",
+		Input: schemaRaw,
+	}
+
+	schema, gqlerr := gqlparser.LoadSchema(source)
+	if gqlerr != nil {
+		return nil, gqlerr
+	}
+
+	return &Schema{schema}, nil
 }

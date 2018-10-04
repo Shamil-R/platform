@@ -1,11 +1,6 @@
 {{- define "directive_field" }}
-    {{- range $i, $directive := . }}
-    @{{ .Name }}
-    {{- if .HasArguments }}(
-        {{- range $j, $arg := .Arguments}}
-        {{ .Name }}: {{ .Value.Raw }}
-        {{- end }}
-    )
-    {{- end }}
-    {{- end }}
+{{- range $i, $directive := . -}}
+{{ print " " }}@{{ .Name }}
+{{- if .HasArguments }}({{ template "arguments" .Arguments }}){{ end }}
+{{- end }}
 {{- end }}

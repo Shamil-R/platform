@@ -2,6 +2,7 @@
 type {{ .Name }} {
     {{- range $i, $field := .Fields.ForObject }}
     {{ .Name }}: {{ .Type }}
+	{{- template "directive_field" .Directives }}
     {{- end }}
 }
 {{- end }}

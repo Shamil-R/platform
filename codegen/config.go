@@ -99,7 +99,6 @@ func (c Config) GqlgenConfig() gqlgen.Config {
 		Exec:     c.fileExec(),
 		Model:    c.fileModel(),
 		Resolver: c.fileResolver(),
-		Config:   c.fileConfig(),
 	}
 }
 

@@ -7,7 +7,7 @@ import (
 
 	model "{{ .Model.Import }}"
 
-	mssql "gitlab/nefco/platform/codegen/service/mssql"
+	mssql "gitlab/nefco/platform/codegen/generate/service/mssql"
 )
 
 type {{ lower .Definition.Name }}Service struct {

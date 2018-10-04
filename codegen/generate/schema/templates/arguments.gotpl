@@ -1,0 +1,7 @@
+{{- define "arguments" }}
+{{- $l := len . }}
+{{- range $i, $arg := . }}
+{{- .Name }}: {{ .Value.Raw }}
+{{- if gt (sub $l $i) 1 }}{{ print " " }}{{ end }}
+{{- end }}
+{{- end }}
