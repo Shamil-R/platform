@@ -1,7 +1,8 @@
 {{- define "input_create" }}
 input {{ .Name }}CreateInput {
-    {{- range $i, $field := .Fields.ForCreateInput }}
-    {{ .Name }}: {{ .Type }} {{ template "directive_field" .Directives.ForCreateInput }}
+    {{- range .Fields.ForCreateInput }}
+    {{ .Name }}: {{ .Type }}
+	{{- template "directives" .Directives.ForCreateInput }}
     {{- end }}
 }
 {{- end }}

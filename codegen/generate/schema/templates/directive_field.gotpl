@@ -1,6 +1,0 @@
-{{- define "directive_field" }}
-{{- range $i, $directive := . -}}
-{{ print " " }}@{{ .Name }}
-{{- if .HasArguments }}({{ template "arguments" .Arguments }}){{ end }}
-{{- end }}
-{{- end }}

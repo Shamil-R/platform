@@ -1,5 +1,5 @@
 {{- define "object" }}
-{{- range $i, $def := . }}
+{{- range . }}
 {{ template "object_item" . }}
 {{- end }}
 {{- end }}

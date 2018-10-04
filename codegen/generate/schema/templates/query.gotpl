@@ -1,6 +1,6 @@
 {{- define "query" }}
 type Query {
-{{- range $i, $def := . }}
+{{- range . }}
     {{ untitle .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
     {{ untitle .Name | plural }}(where: {{ .Name }}WhereInput): [{{ .Name }}]!
 {{- end }}

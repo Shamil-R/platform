@@ -1,6 +1,6 @@
 {{- define "mutation" }}
 type Mutation {
-{{- range $i, $def := . }}
+{{- range . }}
     create{{ .Name }}(data: {{ .Name }}CreateInput!): {{ .Name }}
     update{{ .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
     delete{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}

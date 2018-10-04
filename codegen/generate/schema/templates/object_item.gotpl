@@ -1,8 +1,8 @@
 {{- define "object_item" }}
 type {{ .Name }} {
-    {{- range $i, $field := .Fields.ForObject }}
+    {{- range .Fields.ForObject }}
     {{ .Name }}: {{ .Type }}
-	{{- template "directive_field" .Directives }}
+	{{- template "directives" .Directives }}
     {{- end }}
 }
 {{- end }}

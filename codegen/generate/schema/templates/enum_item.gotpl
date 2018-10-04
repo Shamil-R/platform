@@ -1,7 +1,7 @@
 {{- define "enum_item" }}
 {{- template "description" .Description }}
 enum {{ .Name }} {
-{{- range $i, $val := .EnumValues }}
+{{- range .EnumValues }}
     {{- template "description_tab" .Description }}
     {{ .Name }}
 {{- end }}

@@ -16,6 +16,7 @@ func ReadTemplate(name string, box packr.Box) (*template.Template, error) {
 
 	funcs := sprig.TxtFuncMap()
 	funcs["plural"] = inflection.Plural
+	funcs["next"] = next
 
 	tmpl := template.New(name + ".gotpl").Funcs(funcs)
 
@@ -36,6 +37,6 @@ func ReadTemplate(name string, box packr.Box) (*template.Template, error) {
 	return tmpl, nil
 }
 
-func isLast(i, l int) bool {
+func next(i, l int) bool {
 	return l-i > 1
 }
