@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"gitlab/nefco/platform/codegen/service"
+	"gitlab/nefco/platform/codegen/generate/service"
 	"net/http"
 
 	"github.com/99designs/gqlgen/graphql"

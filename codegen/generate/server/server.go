@@ -3,6 +3,7 @@ package server
 import (
 	"bytes"
 	"gitlab/nefco/platform/codegen/helper"
+	"gitlab/nefco/platform/codegen/schema"
 
 	"github.com/gobuffalo/packr"
 )
@@ -22,14 +23,14 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	s, err := helper.LoadSchema(cfg.Schema.Path)
+	s, err := schema.LoadSchema(cfg.Schema.Path)
 	if err != nil {
 		return err
 	}
 
 	data := &struct {
 		*Config
-		Types helper.DefinitionList
+		Types schema.DefinitionList
 	}{
 		Config: &cfg,
 		Types:  s.Types().ForAction(),

@@ -1,10 +1,10 @@
 package codegen
 
 import (
-	"gitlab/nefco/platform/codegen/gqlgen"
-	"gitlab/nefco/platform/codegen/schema"
-	"gitlab/nefco/platform/codegen/server"
-	"gitlab/nefco/platform/codegen/service"
+	"gitlab/nefco/platform/codegen/generate/gqlgen"
+	"gitlab/nefco/platform/codegen/generate/schema"
+	"gitlab/nefco/platform/codegen/generate/server"
+	"gitlab/nefco/platform/codegen/generate/service"
 
 	"github.com/spf13/viper"
 )

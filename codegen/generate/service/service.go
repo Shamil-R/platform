@@ -3,8 +3,9 @@ package service
 import (
 	"bytes"
 	"fmt"
+	"gitlab/nefco/platform/codegen/generate/service/mssql"
 	"gitlab/nefco/platform/codegen/helper"
-	"gitlab/nefco/platform/codegen/service/mssql"
+	"gitlab/nefco/platform/codegen/schema"
 	"path"
 	"strings"
 
@@ -18,8 +19,8 @@ import (
 type Service interface {
 	Name() string
 	Init(v *viper.Viper) (handler.Option, error)
-	GenerateCommon(d *helper.Definition) (string, error)
-	GenerateAction(a *helper.Action) (string, error)
+	GenerateCommon(d *schema.Definition) (string, error)
+	GenerateAction(a *schema.Action) (string, error)
 }
 
 var services []Service
@@ -52,7 +53,7 @@ type Config struct {
 }
 
 func Generate(cfg Config) error {
-	schema, err := helper.LoadSchema(cfg.Schema.Path)
+	schema, err := schema.LoadSchema(cfg.Schema.Path)
 	if err != nil {
 		return err
 	}
@@ -68,7 +69,7 @@ func Generate(cfg Config) error {
 	return nil
 }
 
-func generateInterface(cfg Config, sch *helper.Schema) error {
+func generateInterface(cfg Config, sch *schema.Schema) error {
 	box := packr.NewBox("./templates")
 
 	tmpl, err := helper.ReadTemplate("service_interface", box)
@@ -78,7 +79,7 @@ func generateInterface(cfg Config, sch *helper.Schema) error {
 
 	data := struct {
 		Config
-		Schema *helper.Schema
+		Schema *schema.Schema
 	}{
 		Config: cfg,
 		Schema: sch,
@@ -97,7 +98,7 @@ func generateInterface(cfg Config, sch *helper.Schema) error {
 	return nil
 }
 
-func generateStruct(cfg Config, sch *helper.Schema) error {
+func generateStruct(cfg Config, sch *schema.Schema) error {
 	box := packr.NewBox("./templates")
 
 	s, err := serviceByName(defaultService)
@@ -120,7 +121,7 @@ func generateStruct(cfg Config, sch *helper.Schema) error {
 
 		data := &struct {
 			Config
-			*helper.Definition
+			*schema.Definition
 		}{
 			Config:     cfg,
 			Definition: def,
@@ -137,7 +138,7 @@ func generateStruct(cfg Config, sch *helper.Schema) error {
 			}
 
 			data := &struct {
-				*helper.Action
+				*schema.Action
 				Content string
 			}{
 				Action:  act,

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"gitlab/nefco/platform/codegen/helper"
+	"gitlab/nefco/platform/codegen/schema"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -61,15 +62,15 @@ func (s *mssql) Init(v *viper.Viper) (handler.Option, error) {
 	return handler.RequestMiddleware(middleware(db)), nil
 }
 
-func (s *mssql) GenerateCommon(d *helper.Definition) (string, error) {
+func (s *mssql) GenerateCommon(d *schema.Definition) (string, error) {
 	return generateCommon(d)
 }
 
-func (s *mssql) GenerateAction(a *helper.Action) (string, error) {
+func (s *mssql) GenerateAction(a *schema.Action) (string, error) {
 	return generateAction(a)
 }
 
-func generateCommon(d *helper.Definition) (string, error) {
+func generateCommon(d *schema.Definition) (string, error) {
 	box := packr.NewBox("./templates")
 
 	tmpl, err := helper.ReadTemplate("common", box)
@@ -86,7 +87,7 @@ func generateCommon(d *helper.Definition) (string, error) {
 	return buff.String(), nil
 }
 
-func generateAction(a *helper.Action) (string, error) {
+func generateAction(a *schema.Action) (string, error) {
 	box := packr.NewBox("./templates")
 
 	tmpl, err := helper.ReadTemplate(a.Action, box)
