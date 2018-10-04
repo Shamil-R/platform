@@ -3,7 +3,7 @@ package validate
 import (
 	"context"
 	"fmt"
-	"gitlab/nefco/platform/service"
+	"gitlab/nefco/platform/server"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
@@ -11,16 +11,16 @@ import (
 )
 
 func init() {
-	service.Register(&validateService{})
+	server.RegisterMiddleware(&service{})
 }
 
-type validateService struct{}
+type service struct{}
 
-func (s validateService) Name() string {
+func (s service) Name() string {
 	return "validate"
 }
 
-func (s validateService) Middleware(v *viper.Viper) (handler.Option, error) {
+func (s service) Middleware(v *viper.Viper) (handler.Option, error) {
 	return handler.ResolverMiddleware(middleware(&validate{})), nil
 }
 

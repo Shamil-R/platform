@@ -27,14 +27,22 @@ func Run(v *viper.Viper, exec graphql.ExecutableSchema) error {
 
 	services := service.Services()
 
-	options := make([]handler.Option, len(services))
+	options := make([]handler.Option, 0, len(services)+len(middlewares))
 
-	for i, s := range services {
+	for _, s := range services {
 		o, err := s.Init(v)
 		if err != nil {
 			return err
 		}
-		options[i] = o
+		options = append(options, o)
+	}
+
+	for _, m := range middlewares {
+		o, err := m.Middleware(v)
+		if err != nil {
+			return err
+		}
+		options = append(options, o)
 	}
 
 	http.Handle("/", handler.Playground("Platform", "/query"))
