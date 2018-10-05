@@ -2,13 +2,14 @@ package server
 
 import (
 	"fmt"
-	"gitlab/nefco/platform/codegen/service"
+	codegenservice "gitlab/nefco/platform/codegen/service"
 	"net/http"
 
 	"github.com/99designs/gqlgen/graphql"
 
 	"github.com/99designs/gqlgen/handler"
 	"github.com/spf13/viper"
+	"gitlab/nefco/platform/service"
 )
 
 type Config struct {
@@ -25,7 +26,8 @@ func Run(v *viper.Viper, exec graphql.ExecutableSchema) error {
 		return err
 	}
 
-	services := service.Services()
+	services := codegenservice.Services()
+	middlewares:=service.Middlewares()
 
 	options := make([]handler.Option, 0, len(services)+len(middlewares))
 
