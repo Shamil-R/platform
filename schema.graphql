@@ -2,7 +2,7 @@ type User {
     id: Int! @primary @identity
     name: String! @validate(min: 5) @validate(max: 30)
     # roles: [RoleObject!]!
-    materials: [Material!]!
+    materials: [Material!]
 }
 
 # type RoleObject {
@@ -17,6 +17,7 @@ type Material {
         min: 10
         max: 20
     )
+    author: User!
 }
 
 # """

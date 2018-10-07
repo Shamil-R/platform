@@ -65,7 +65,7 @@ func (d *Definition) IsEnum() bool {
 func (d *Definition) Fields() FieldList {
 	fields := make(FieldList, len(d.Definition.Fields))
 	for i, field := range d.Definition.Fields {
-		fields[i] = &FieldDefinition{field}
+		fields[i] = &FieldDefinition{field, d.schema}
 	}
 	return fields
 }
@@ -175,8 +175,16 @@ func (l DefinitionList) ForAction() DefinitionList {
 	return l.objects()
 }
 
+func (l DefinitionList) ByName(name string) *Definition {
+	fn := func(def *Definition) bool {
+		return def.Name == name
+	}
+	return l.first(fn)
+}
+
 type FieldDefinition struct {
 	*ast.FieldDefinition
+	schema *Schema
 }
 
 func (f *FieldDefinition) Directives() DirectiveList {
@@ -190,13 +198,13 @@ func (f *FieldDefinition) Directives() DirectiveList {
 func (f *FieldDefinition) Arguments() ArgumentDefinitionList {
 	arguments := make(ArgumentDefinitionList, len(f.FieldDefinition.Arguments))
 	for i, arg := range f.FieldDefinition.Arguments {
-		arguments[i] = &ArgumentDefinition{arg}
+		arguments[i] = &ArgumentDefinition{arg, f.schema}
 	}
 	return arguments
 }
 
 func (f *FieldDefinition) Type() *Type {
-	return &Type{f.FieldDefinition.Type}
+	return &Type{f.FieldDefinition.Type, f.schema}
 }
 
 type FieldList []*FieldDefinition
@@ -232,6 +240,7 @@ func (l FieldList) ForObject() FieldList {
 func (l FieldList) ForCreateInput() FieldList {
 	fn := func(field *FieldDefinition) bool {
 		return !field.Type().IsSlice() &&
+			!field.Type().IsObject() &&
 			!field.Directives().HasIndentity()
 	}
 	return l.filter(fn)
@@ -261,6 +270,11 @@ func (l FieldList) ByName(name string) *FieldDefinition {
 
 type Type struct {
 	*ast.Type
+	schema *Schema
+}
+
+func (t *Type) IsObject() bool {
+	return t.schema.Types().ForObject().ByName(t.NamedType) != nil
 }
 
 func (t *Type) IsSlice() bool {
@@ -271,15 +285,16 @@ func (t *Type) Elem() *Type {
 	if t.Type.Elem == nil {
 		return nil
 	}
-	return &Type{t.Type.Elem}
+	return &Type{t.Type.Elem, t.schema}
 }
 
 type ArgumentDefinition struct {
 	*ast.ArgumentDefinition
+	schema *Schema
 }
 
 func (a *ArgumentDefinition) Type() *Type {
-	return &Type{a.ArgumentDefinition.Type}
+	return &Type{a.ArgumentDefinition.Type, a.schema}
 }
 
 type ArgumentDefinitionList []*ArgumentDefinition

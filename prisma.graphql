@@ -1,5 +1,5 @@
 # source: http://localhost:4466
-# timestamp: Wed Oct 03 2018 12:18:28 GMT+0300 (Moscow Standard Time)
+# timestamp: Fri Oct 05 2018 08:17:35 GMT+0300 (Moscow Standard Time)
 
 type AggregateMaterial {
   count: Int!
@@ -23,6 +23,7 @@ scalar Long
 type Material implements Node {
   id: ID!
   name: String!
+  author(where: UserWhereInput): User!
 }
 
 """A connection to a list of items."""
@@ -37,11 +38,16 @@ type MaterialConnection {
 
 input MaterialCreateInput {
   name: String!
+  author: UserCreateOneWithoutMaterialsInput!
 }
 
-input MaterialCreateManyInput {
-  create: [MaterialCreateInput!]
+input MaterialCreateManyWithoutAuthorInput {
+  create: [MaterialCreateWithoutAuthorInput!]
   connect: [MaterialWhereUniqueInput!]
+}
+
+input MaterialCreateWithoutAuthorInput {
+  name: String!
 }
 
 """An edge in a connection."""
@@ -108,32 +114,33 @@ input MaterialSubscriptionWhereInput {
   node: MaterialWhereInput
 }
 
-input MaterialUpdateDataInput {
-  name: String
-}
-
 input MaterialUpdateInput {
   name: String
+  author: UserUpdateOneWithoutMaterialsInput
 }
 
-input MaterialUpdateManyInput {
-  create: [MaterialCreateInput!]
+input MaterialUpdateManyWithoutAuthorInput {
+  create: [MaterialCreateWithoutAuthorInput!]
   connect: [MaterialWhereUniqueInput!]
   disconnect: [MaterialWhereUniqueInput!]
   delete: [MaterialWhereUniqueInput!]
-  update: [MaterialUpdateWithWhereUniqueNestedInput!]
-  upsert: [MaterialUpsertWithWhereUniqueNestedInput!]
+  update: [MaterialUpdateWithWhereUniqueWithoutAuthorInput!]
+  upsert: [MaterialUpsertWithWhereUniqueWithoutAuthorInput!]
 }
 
-input MaterialUpdateWithWhereUniqueNestedInput {
-  where: MaterialWhereUniqueInput!
-  data: MaterialUpdateDataInput!
+input MaterialUpdateWithoutAuthorDataInput {
+  name: String
 }
 
-input MaterialUpsertWithWhereUniqueNestedInput {
+input MaterialUpdateWithWhereUniqueWithoutAuthorInput {
   where: MaterialWhereUniqueInput!
-  update: MaterialUpdateDataInput!
-  create: MaterialCreateInput!
+  data: MaterialUpdateWithoutAuthorDataInput!
+}
+
+input MaterialUpsertWithWhereUniqueWithoutAuthorInput {
+  where: MaterialWhereUniqueInput!
+  update: MaterialUpdateWithoutAuthorDataInput!
+  create: MaterialCreateWithoutAuthorInput!
 }
 
 input MaterialWhereInput {
@@ -225,6 +232,7 @@ input MaterialWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  author: UserWhereInput
 }
 
 input MaterialWhereUniqueInput {
@@ -311,7 +319,16 @@ type UserConnection {
 
 input UserCreateInput {
   name: String!
-  materials: MaterialCreateManyInput
+  materials: MaterialCreateManyWithoutAuthorInput
+}
+
+input UserCreateOneWithoutMaterialsInput {
+  create: UserCreateWithoutMaterialsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutMaterialsInput {
+  name: String!
 }
 
 """An edge in a connection."""
@@ -380,7 +397,24 @@ input UserSubscriptionWhereInput {
 
 input UserUpdateInput {
   name: String
-  materials: MaterialUpdateManyInput
+  materials: MaterialUpdateManyWithoutAuthorInput
+}
+
+input UserUpdateOneWithoutMaterialsInput {
+  create: UserCreateWithoutMaterialsInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateWithoutMaterialsDataInput
+  upsert: UserUpsertWithoutMaterialsInput
+}
+
+input UserUpdateWithoutMaterialsDataInput {
+  name: String
+}
+
+input UserUpsertWithoutMaterialsInput {
+  update: UserUpdateWithoutMaterialsDataInput!
+  create: UserCreateWithoutMaterialsInput!
 }
 
 input UserWhereInput {

@@ -6,11 +6,11 @@
   name = "cloud.google.com/go"
   packages = ["civil"]
   pruneopts = "UT"
-  revision = "97efc2c9ffd9fe8ef47f7f3203dc60bbca547374"
-  version = "v0.28.0"
+  revision = "6cb29e61d96723a38dcac44d4c15c36744d96d07"
+  version = "v0.29.0"
 
 [[projects]]
-  digest = "1:3aae853dc6d1c8bd14876a2628f4c54e62f0658f2930cb3f893295850dfbd141"
+  digest = "1:93dce0aa865e276812a28103ebc04999c9a90fc5cee17b165d5af3cecc3fc1a2"
   name = "github.com/99designs/gqlgen"
   packages = [
     ".",
@@ -22,10 +22,11 @@
     "graphql/introspection",
     "handler",
     "internal/gopath",
+    "internal/imports",
   ]
   pruneopts = "UT"
-  revision = "636435b68700211441303f1a5ed92f3768ba5774"
-  version = "v0.5.1"
+  revision = "6f486bde038887adf67c3e3766624ef111ea95cf"
+  version = "v0.6.0"
 
 [[projects]]
   digest = "1:55388fd080150b9a072912f97b1f5891eb0b50df43401f8b75fb4273d3fec9fc"
@@ -79,7 +80,7 @@
   version = "v1.4.7"
 
 [[projects]]
-  digest = "1:ad5ea7a7c710e2357a123d9e0015095e753ac9e337a9972e856510bc3210fe8a"
+  digest = "1:e7b2d33bb25e492a078f7aeb157906b3fc96d56ed0ae4186ee49259122ac487e"
   name = "github.com/gobuffalo/packr"
   packages = [
     ".",
@@ -88,8 +89,8 @@
     "packr/cmd",
   ]
   pruneopts = "UT"
-  revision = "6c8156ee36301dd007342e79d81c99e7a7834337"
-  version = "v1.13.5"
+  revision = "5a2cbb54c4e7d482e3f518c56f1f86f133d5204f"
+  version = "v1.13.7"
 
 [[projects]]
   digest = "1:3a26588bc48b96825977c1b3df964f8fd842cd6860cc26370588d3563433cf11"
@@ -197,12 +198,12 @@
   revision = "ae18d6b8b3205b561c79e8e5f69bff09736185f4"
 
 [[projects]]
-  digest = "1:645110e089152bd0f4a011a2648fbb0e4df5977be73ca605781157ac297f50c4"
+  digest = "1:e32dfc6abff6a3633ef4d9a1022fd707c8ef26f1e1e8f855dc58dc415ce7c8f3"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
   pruneopts = "UT"
-  revision = "fa473d140ef3c6adf42d6b391fe76707f1f243c8"
-  version = "v1.0.0"
+  revision = "fe40af7a9c397fa3ddba203c38a5042c5d0475ad"
+  version = "v1.1.1"
 
 [[projects]]
   digest = "1:95741de3af260a92cc5c7f3f3061e85273f5a81b5db20d4bd68da74bd521675e"
@@ -256,20 +257,20 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:dab83a1bbc7ad3d7a6ba1a1cc1760f25ac38cdf7d96a5cdd55cd915a4f5ceaf9"
+  digest = "1:c1b1102241e7f645bc8e0c22ae352e8f0dc6484b6cb4d132fa9f24174e0119e2"
   name = "github.com/spf13/pflag"
   packages = ["."]
   pruneopts = "UT"
-  revision = "9a97c102cda95a86cec2345a6f09f55a939babf5"
-  version = "v1.0.2"
+  revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
+  version = "v1.0.3"
 
 [[projects]]
-  digest = "1:6e30a27eac59a148b3f7a32e0ba54706b31dcde5a42f63b22cb47873b62fa343"
+  digest = "1:214775c11fd26da94a100111a62daa25339198a4f9c57cb4aab352da889f5b93"
   name = "github.com/spf13/viper"
   packages = ["."]
   pruneopts = "UT"
-  revision = "8fb642006536c8d3760c99d4fa2389f5e2205631"
-  version = "v1.2.0"
+  revision = "2c12c60302a5a0e62ee102ca9bc996277c2f64f5"
+  version = "v1.2.1"
 
 [[projects]]
   digest = "1:b24d38b282bacf9791408a080f606370efa3d364e4b5fd9ba0f7b87786d3b679"
@@ -281,7 +282,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:f0debaa3ac27a4b2947d538d971cc6262c2da7473b4969e6ebd03e42a188ff8c"
+  digest = "1:7fa8a2105f0b0853395a85d3dd8ef1475c44919374c6496dba7b987586edaced"
   name = "github.com/vektah/gqlparser"
   packages = [
     ".",
@@ -293,7 +294,7 @@
     "validator/rules",
   ]
   pruneopts = "UT"
-  revision = "90edd96486c6b2407f84d93f7d43f09c731cc990"
+  revision = "f119686bf1d4d1a68c7ed6afe35f183625443c41"
 
 [[projects]]
   digest = "1:3c1a69cdae3501bf75e76d0d86dc6f2b0a7421bc205c0cb7b96b19eed464a34d"
@@ -336,7 +337,7 @@
     "scrypt",
   ]
   pruneopts = "UT"
-  revision = "0e37d006457bf46f9e6692014ba72ef82c33022c"
+  revision = "e3636079e1a4c1f337f212cc5cd2aca108f6c900"
 
 [[projects]]
   branch = "master"
@@ -344,7 +345,7 @@
   name = "golang.org/x/net"
   packages = ["context"]
   pruneopts = "UT"
-  revision = "26e67e76b6c3f6ce91f7c52def5af501b4e0f3a2"
+  revision = "68fc911561ed0cb104e22deafa05515909b706ab"
 
 [[projects]]
   branch = "master"
@@ -356,11 +357,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:824ea4aea5f0f50d4e4e139e4a3d7528f70b388dd9162c8ce310eb04581a7d84"
+  digest = "1:f7e5d74f094d44e931785fc1ebc887704953b6689c7d47fce9ff1a8647b83eb6"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "ee1b12c67af419cf5a9be3bdbeea7fc1c5f32f11"
+  revision = "8469e314837c2e2471561de5c47bbf8bfd0d9099"
 
 [[projects]]
   digest = "1:8029e9743749d4be5bc9f7d42ea1659471767860f0cdc34d37c3111bd308a295"
@@ -390,7 +391,7 @@
     "internal/fastwalk",
   ]
   pruneopts = "UT"
-  revision = "90fa682c2a6e6a37b3a1364ce2fe1d5e41af9d6d"
+  revision = "59602fdee893255faef9b2cd3aa8f880ea85265c"
 
 [[projects]]
   digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
@@ -405,6 +406,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/99designs/gqlgen",
+    "github.com/99designs/gqlgen/codegen",
     "github.com/99designs/gqlgen/graphql",
     "github.com/99designs/gqlgen/graphql/introspection",
     "github.com/99designs/gqlgen/handler",
@@ -415,13 +417,13 @@
     "github.com/huandu/xstrings",
     "github.com/jinzhu/inflection",
     "github.com/jmoiron/sqlx",
+    "github.com/jmoiron/sqlx/reflectx",
     "github.com/mitchellh/go-homedir",
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
     "github.com/vektah/gqlparser",
     "github.com/vektah/gqlparser/ast",
     "go.uber.org/zap",
-    "gopkg.in/yaml.v2",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

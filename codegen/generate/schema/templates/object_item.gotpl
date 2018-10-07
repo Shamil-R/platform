@@ -1,8 +1,14 @@
 {{- define "object_item" }}
 type {{ .Name }} {
     {{- range .Fields.ForObject }}
-    {{ .Name }}: {{ .Type }}
+	{{- if .Type.IsObject }}
+	{{ .Name }}(where: {{ .Type.NamedType }}WhereInput): {{ .Type }}
+    {{- else if .Type.IsSlice }}
+	{{ .Name }}(where: {{ .Type.Elem.NamedType }}WhereInput): {{ .Type }}
+	{{- else }}
+	{{ .Name }}: {{ .Type }}
 	{{- template "directives" .Directives }}
+	{{- end }}
     {{- end }}
 }
 {{- end }}

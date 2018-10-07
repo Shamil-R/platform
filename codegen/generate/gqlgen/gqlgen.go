@@ -37,6 +37,22 @@ func Generate(cfg Config) error {
 			Filename: cfg.Resolver.Path,
 			Type:     cfg.Resolver.Type,
 		},
+		Models: codegen.TypeMap{
+			"User": codegen.TypeMapEntry{
+				Fields: map[string]codegen.TypeMapField{
+					"materials": codegen.TypeMapField{
+						Resolver: true,
+					},
+				},
+			},
+			"Material": codegen.TypeMapEntry{
+				Fields: map[string]codegen.TypeMapField{
+					"author": codegen.TypeMapField{
+						Resolver: true,
+					},
+				},
+			},
+		},
 	}
 
 	if err := codegen.Generate(c); err != nil {

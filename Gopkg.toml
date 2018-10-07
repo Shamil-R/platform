@@ -32,7 +32,7 @@ required = ["github.com/99designs/gqlgen", "github.com/gobuffalo/packr/packr", "
 
 [[constraint]]
   name = "github.com/99designs/gqlgen"
-  version = "0.5.0"
+  version = "0.6.0"
 
 [[constraint]]
   branch = "master"
@@ -65,7 +65,3 @@ required = ["github.com/99designs/gqlgen", "github.com/gobuffalo/packr/packr", "
 [[constraint]]
   name = "github.com/huandu/xstrings"
   version = "1.2.0"
-
-[[constraint]]
-  name = "gopkg.in/yaml.v2"
-  version = "2.2.1"

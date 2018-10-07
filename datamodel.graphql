@@ -14,7 +14,7 @@ type User {
 type Material {
     id: ID! @unique
     name: String!
-    # author: User!
+    author: User!
 }
 
 """
