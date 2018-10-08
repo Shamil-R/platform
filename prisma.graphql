@@ -1,5 +1,5 @@
 # source: http://localhost:4466
-# timestamp: Fri Oct 05 2018 08:17:35 GMT+0300 (Moscow Standard Time)
+# timestamp: Mon Oct 08 2018 14:18:36 GMT+0300 (Moscow Standard Time)
 
 type AggregateMaterial {
   count: Int!
@@ -116,7 +116,7 @@ input MaterialSubscriptionWhereInput {
 
 input MaterialUpdateInput {
   name: String
-  author: UserUpdateOneWithoutMaterialsInput
+  author: UserUpdateOneRequiredWithoutMaterialsInput
 }
 
 input MaterialUpdateManyWithoutAuthorInput {
@@ -400,10 +400,9 @@ input UserUpdateInput {
   materials: MaterialUpdateManyWithoutAuthorInput
 }
 
-input UserUpdateOneWithoutMaterialsInput {
+input UserUpdateOneRequiredWithoutMaterialsInput {
   create: UserCreateWithoutMaterialsInput
   connect: UserWhereUniqueInput
-  delete: Boolean
   update: UserUpdateWithoutMaterialsDataInput
   upsert: UserUpsertWithoutMaterialsInput
 }
