@@ -1,5 +1,6 @@
-	{{- $table := lower .Name }}
-	{{- $fields := .Fields.ForUpdateInput}}
+	{{- $model := .Definition.Name }}
+	{{- $table := lower $model}}
+	{{- $fields := .Definition.Fields.ForUpdateInput}}
 	{{- $fieldsLen := len $fields }}
 	tx, err := mssql.Begin(ctx)
 	if err != nil {
@@ -10,7 +11,7 @@
 		UPDATE [{{ $table }}] SET
 			{{- range $i, $field := $fields }}
 			[{{ .Name }}] = :{{ .Name }}
-			{{- if gt (sub $fieldsLen $i) 1 }},{{ end }}
+			{{- if next $i $fieldsLen }},{{ end }}
 			{{- end }}
 		WHERE id = :id
 	`
@@ -40,7 +41,7 @@
 		return nil, err
 	}
 
-	resSelect := &model.{{ .Name }}{}
+	resSelect := &model.{{ $model }}{}
 
 	if err := stmt.Get(resSelect, argSelect); err != nil {
 		return nil, err

@@ -27,6 +27,12 @@ type resolver struct {
 func (r *resolver) Mutation() graph.MutationResolver {
 	return r
 }
+
 func (r *resolver) Query() graph.QueryResolver {
 	return r
 }
+{{- range .Types.WithRelations }}
+func (r *resolver) {{ .Name }}() graph.{{ .Name }}Resolver {
+	return r
+}
+{{- end }}

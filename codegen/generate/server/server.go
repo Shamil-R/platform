@@ -33,7 +33,7 @@ func Generate(cfg Config) error {
 		Types schema.DefinitionList
 	}{
 		Config: &cfg,
-		Types:  s.Types().ForAction(),
+		Types:  s.Types().Objects(),
 	}
 
 	buff := &bytes.Buffer{}

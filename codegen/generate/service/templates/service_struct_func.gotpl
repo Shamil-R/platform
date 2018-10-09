@@ -1,4 +1,4 @@
 
-func (s *{{ lower .Definition.Name }}Service) {{ template "func" .FieldDefinition }} {
+func (s *{{ lower .Definition.Name }}Service) {{ template "func" . }} {
 	{{- .Content }}
 }

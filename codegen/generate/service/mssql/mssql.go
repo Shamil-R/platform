@@ -76,7 +76,7 @@ func generateAction(a *schema.Action) (string, error) {
 
 	buff := &bytes.Buffer{}
 
-	if err := tmpl.Execute(buff, a.Definition); err != nil {
+	if err := tmpl.Execute(buff, a); err != nil {
 		return "", err
 	}
 

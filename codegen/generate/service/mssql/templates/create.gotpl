@@ -1,5 +1,6 @@
-	{{- $table := lower .Name }}
-	{{- $fields := .Fields.ForCreateInput}}
+	{{- $model := .Definition.Name }}
+	{{- $table := lower $model }}
+	{{- $fields := .Definition.Fields.ForCreateInput}}
 	{{- $fieldsLen := len $fields }}
 	tx, err := mssql.Begin(ctx)
 	if err != nil {
@@ -50,7 +51,7 @@
 		return nil, err
 	}
 
-	resSelect := &model.{{ .Name }}{}
+	resSelect := &model.{{ $model }}{}
 
 	if err := stmt.Get(resSelect, argSelect); err != nil {
 		return nil, err

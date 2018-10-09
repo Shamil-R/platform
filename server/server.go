@@ -37,8 +37,8 @@ func Run(v *viper.Viper, exec graphql.ExecutableSchema) error {
 		options = append(options, o)
 	}
 
-	http.Handle("/login", auth.MiddlewareLogin())
 	http.Handle("/", handler.Playground("Platform", "/query"))
+	http.Handle("/login", auth.MiddlewareLogin())
 	http.Handle("/query", auth.MiddlewareAuth(handler.GraphQL(exec, options...)))
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), nil)

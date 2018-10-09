@@ -1,4 +1,5 @@
-	{{- $table := lower .Name }}
+	{{- $model := .Definition.Name }}
+	{{- $table := lower $model }}
 	tx, err := mssql.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -15,7 +16,7 @@
 		return nil, err
 	}
 
-	resSelect := []*model.{{ .Name }}{}
+	resSelect := []*model.{{ $model }}{}
 
 	if err := stmt.Select(&resSelect, argSelect); err != nil {
 		return nil, err

@@ -2,7 +2,6 @@ package schema
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"strings"
 
@@ -76,9 +75,9 @@ func (d *Definition) Mutations() ActionList {
 		return ActionList{}
 	}
 	checks := map[string]string{
-		fmt.Sprintf("create%s", d.Name): "create",
-		fmt.Sprintf("update%s", d.Name): "update",
-		fmt.Sprintf("delete%s", d.Name): "delete",
+		ACTION_CREATE + d.Name: ACTION_CREATE,
+		ACTION_UPDATE + d.Name: ACTION_UPDATE,
+		ACTION_DELETE + d.Name: ACTION_DELETE,
 	}
 	actions := make(ActionList, 0, len(mutation.Fields()))
 	for _, field := range mutation.Fields() {
@@ -98,15 +97,14 @@ func (d *Definition) Queries() ActionList {
 	item := xstrings.FirstRuneToLower(d.Name)
 	collection := inflection.Plural(item)
 	checks := map[string]string{
-		item:       "item",
-		collection: "collection",
+		item:       ACTION_ITEM,
+		collection: ACTION_COLLECTION,
 	}
 	actions := make(ActionList, 0, len(query.Fields()))
 	for _, field := range query.Fields() {
 		if action, ok := checks[field.Name]; ok {
 			actions = append(actions, &Action{action, field, d})
 		}
-
 	}
 	return actions
 }
@@ -115,14 +113,16 @@ func (d *Definition) Relations() ActionList {
 	actions := make(ActionList, 0, len(d.Fields()))
 	for _, field := range d.Fields() {
 		if field.Type().IsSlice() {
-			actions = append(actions, &Action{"relation", field, d})
+			actions = append(actions, &Action{ACTION_RELATION, field, d})
 		}
 	}
 	return actions
 }
 
 func (d *Definition) Actions() ActionList {
-	return append(d.Mutations(), d.Queries()...)
+	actions := append(d.Mutations(), d.Queries()...)
+	actions = append(actions, d.Relations()...)
+	return actions
 }
 
 type DefinitionList []*Definition
@@ -147,7 +147,7 @@ func (l DefinitionList) first(filter definitionListFilter) *Definition {
 	return r[0]
 }
 
-func (l DefinitionList) objects() DefinitionList {
+func (l DefinitionList) Objects() DefinitionList {
 	fn := func(def *Definition) bool {
 		return def.IsObject()
 	}
@@ -159,7 +159,7 @@ func (l DefinitionList) size() int {
 }
 
 func (l DefinitionList) ForObject() DefinitionList {
-	return l.objects()
+	return l.Objects()
 }
 
 func (l DefinitionList) ForEnum() DefinitionList {
@@ -170,19 +170,26 @@ func (l DefinitionList) ForEnum() DefinitionList {
 }
 
 func (l DefinitionList) ForInput() DefinitionList {
-	return l.objects()
+	return l.Objects()
 }
 
 func (l DefinitionList) ForMutation() DefinitionList {
-	return l.objects()
+	return l.Objects()
 }
 
 func (l DefinitionList) ForQuery() DefinitionList {
-	return l.objects()
+	return l.Objects()
 }
 
 func (l DefinitionList) ForAction() DefinitionList {
-	return l.objects()
+	return l.Objects()
+}
+
+func (l DefinitionList) WithRelations() DefinitionList {
+	fn := func(def *Definition) bool {
+		return len(def.Fields().Objects()) > 0
+	}
+	return l.filter(fn)
 }
 
 func (l DefinitionList) ByName(name string) *Definition {
@@ -243,6 +250,16 @@ func (l FieldList) size() int {
 	return len(l)
 }
 
+func (l FieldList) Objects() FieldList {
+	fn := func(field *FieldDefinition) bool {
+		if field.Type().IsSlice() {
+			return field.Type().Elem().IsObject()
+		}
+		return field.Type().IsObject()
+	}
+	return l.filter(fn)
+}
+
 func (l FieldList) ForObject() FieldList {
 	return l
 }
@@ -284,7 +301,11 @@ type Type struct {
 }
 
 func (t *Type) IsObject() bool {
-	return t.schema.Types().ForObject().ByName(t.NamedType) != nil
+	name := t.NamedType
+	// if t.IsSlice() {
+	// 	name = t.Elem().NamedType
+	// }
+	return t.schema.Types().ForObject().ByName(name) != nil
 }
 
 func (t *Type) IsSlice() bool {
@@ -406,10 +427,23 @@ func (l DirectiveList) ForUpdateInput() DirectiveList {
 	return l.ForCreateInput()
 }
 
+const (
+	ACTION_CREATE     = "create"
+	ACTION_UPDATE     = "update"
+	ACTION_DELETE     = "delete"
+	ACTION_ITEM       = "item"
+	ACTION_COLLECTION = "collection"
+	ACTION_RELATION   = "relation"
+)
+
 type Action struct {
 	Action          string
 	FieldDefinition *FieldDefinition
 	Definition      *Definition
+}
+
+func (a *Action) IsRelation() bool {
+	return a.Action == ACTION_RELATION
 }
 
 type ActionList []*Action
@@ -464,21 +498,30 @@ func LoadSchemaRaw(path string) (string, error) {
 	return buf.String(), nil
 }
 
+func ParseSchema(schemaRaw string) (*Schema, error) {
+	source := &ast.Source{
+		Name:  "schema",
+		Input: schemaRaw,
+	}
+
+	schema, err := gqlparser.LoadSchema(source)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Schema{schema}, nil
+}
+
 func LoadSchema(path string) (*Schema, error) {
 	schemaRaw, err := LoadSchemaRaw(path)
 	if err != nil {
 		return nil, err
 	}
 
-	source := &ast.Source{
-		Name:  "schema",
-		Input: schemaRaw,
+	schema, err := ParseSchema(schemaRaw)
+	if err != nil {
+		return nil, err
 	}
 
-	schema, gqlerr := gqlparser.LoadSchema(source)
-	if gqlerr != nil {
-		return nil, gqlerr
-	}
-
-	return &Schema{schema}, nil
+	return schema, nil
 }
