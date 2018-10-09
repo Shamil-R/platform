@@ -65,3 +65,7 @@ required = ["github.com/99designs/gqlgen", "github.com/gobuffalo/packr/packr", "
 [[constraint]]
   name = "github.com/huandu/xstrings"
   version = "1.2.0"
+
+[[constraint]]
+  name = "github.com/go-ozzo/ozzo-validation"
+  version = "3.5.0"

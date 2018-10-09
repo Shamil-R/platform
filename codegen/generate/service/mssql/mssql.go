@@ -42,7 +42,7 @@ func (s *mssql) Name() string {
 	return "mssql"
 }
 
-func (s *mssql) Init(v *viper.Viper) (handler.Option, error) {
+func (s *mssql) Middleware(v *viper.Viper) (handler.Option, error) {
 	cfg := DefaultConfig
 	if err := v.UnmarshalKey("app.service.mssql", &cfg); err != nil {
 		return nil, err
@@ -62,29 +62,8 @@ func (s *mssql) Init(v *viper.Viper) (handler.Option, error) {
 	return handler.RequestMiddleware(middleware(db)), nil
 }
 
-func (s *mssql) GenerateCommon(d *schema.Definition) (string, error) {
-	return generateCommon(d)
-}
-
-func (s *mssql) GenerateAction(a *schema.Action) (string, error) {
+func (s *mssql) Generate(a *schema.Action) (string, error) {
 	return generateAction(a)
-}
-
-func generateCommon(d *schema.Definition) (string, error) {
-	box := packr.NewBox("./templates")
-
-	tmpl, err := helper.ReadTemplate("common", box)
-	if err != nil {
-		return "", err
-	}
-
-	buff := &bytes.Buffer{}
-
-	if err := tmpl.Execute(buff, d); err != nil {
-		return "", err
-	}
-
-	return buff.String(), nil
 }
 
 func generateAction(a *schema.Action) (string, error) {

@@ -2,13 +2,13 @@ package server
 
 import (
 	"fmt"
-	codegenservice "gitlab/nefco/platform/codegen/service"
+	"gitlab/nefco/platform/service"
+	"gitlab/nefco/platform/service/auth"
 	"net/http"
+
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/spf13/viper"
-	"gitlab/nefco/platform/service"
-	"gitlab/nefco/platform/service/auth"
 )
 
 type Config struct {
@@ -25,18 +25,9 @@ func Run(v *viper.Viper, exec graphql.ExecutableSchema) error {
 		return err
 	}
 
-	services := codegenservice.Services()
-	middlewares:=service.Middlewares()
+	middlewares := service.Middlewares()
 
-	options := make([]handler.Option, 0, len(services)+len(middlewares))
-
-	for _, s := range services {
-		o, err := s.Init(v)
-		if err != nil {
-			return err
-		}
-		options = append(options, o)
-	}
+	options := make([]handler.Option, 0, len(middlewares))
 
 	for _, m := range middlewares {
 		o, err := m.Middleware(v)
@@ -45,7 +36,6 @@ func Run(v *viper.Viper, exec graphql.ExecutableSchema) error {
 		}
 		options = append(options, o)
 	}
-
 
 	http.Handle("/login", auth.MiddlewareLogin())
 	http.Handle("/", handler.Playground("Platform", "/query"))

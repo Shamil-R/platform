@@ -2,16 +2,17 @@ package role
 
 import (
 	"context"
+	"strings"
+
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/spf13/viper"
 	"github.com/vektah/gqlparser/ast"
-	"strings"
 )
 
 type service struct{}
 
-func New()*service{
+func New() *service {
 	return &service{}
 }
 
@@ -26,9 +27,13 @@ func (s service) Middleware(v *viper.Viper) (handler.Option, error) {
 func middleware(role Role) graphql.FieldMiddleware {
 	return func(ctx context.Context, next graphql.Resolver) (interface{}, error) {
 		data, err := transform(ctx)
-		if err != nil {return nil, err}
+		if err != nil {
+			return nil, err
+		}
 
-		if err := role.CheckAccess(ctx, data); err != nil {return nil, err}
+		if err := role.CheckAccess(ctx, data); err != nil {
+			return nil, err
+		}
 		return next(ctx)
 	}
 }
@@ -37,9 +42,13 @@ func transform(ctx context.Context) ([]Data, error) {
 	resCtx := graphql.GetResolverContext(ctx)
 	// фильтр служебных запросов
 	name := resCtx.Field.Name
-	if strings.HasPrefix(name, "__") {return nil, nil}
+	if strings.HasPrefix(name, "__") {
+		return nil, nil
+	}
 	// фильтр ответов на запрос
-	if resCtx.Object != "Query" && resCtx.Object != "Mutation" {return nil, nil}
+	if resCtx.Object != "Query" && resCtx.Object != "Mutation" {
+		return nil, nil
+	}
 
 	result := []Data{}
 
@@ -64,7 +73,9 @@ func walkField(set ast.SelectionSet, actionName string, data []Data) ([]Data, er
 				} else {
 					var err error
 					data, err = walkField(sel.SelectionSet, actionName, data)
-					if err != nil {return nil, err}
+					if err != nil {
+						return nil, err
+					}
 				}
 				// {interface,union}
 			case *ast.InlineFragment:
@@ -76,8 +87,9 @@ func walkField(set ast.SelectionSet, actionName string, data []Data) ([]Data, er
 	}
 	return data, nil
 }
+
 //todo
-func getActionName(fieldName string) (string) {
+func getActionName(fieldName string) string {
 	actions := [3]string{"create", "update", "delete"}
 
 	for _, action := range actions {

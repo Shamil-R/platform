@@ -72,12 +72,28 @@
   revision = "1eb28afdf9b6e56cf673badd47545f844fe81103"
 
 [[projects]]
+  digest = "1:76dc72490af7174349349838f2fe118996381b31ea83243812a97e5a0fd5ed55"
+  name = "github.com/dgrijalva/jwt-go"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
+  version = "v3.2.0"
+
+[[projects]]
   digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"
   name = "github.com/fsnotify/fsnotify"
   packages = ["."]
   pruneopts = "UT"
   revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
   version = "v1.4.7"
+
+[[projects]]
+  digest = "1:c116114869f44c711fa5baf9e019fa327101c82ddc4dcc1de84db1f6c43a2d36"
+  name = "github.com/go-ozzo/ozzo-validation"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "106681dbb37bfa3e7683c4c8129cb7f5925ea3e9"
+  version = "v3.5.0"
 
 [[projects]]
   digest = "1:e7b2d33bb25e492a078f7aeb157906b3fc96d56ed0ae4186ee49259122ac487e"
@@ -412,6 +428,8 @@
     "github.com/99designs/gqlgen/handler",
     "github.com/Masterminds/sprig",
     "github.com/denisenkom/go-mssqldb",
+    "github.com/dgrijalva/jwt-go",
+    "github.com/go-ozzo/ozzo-validation",
     "github.com/gobuffalo/packr",
     "github.com/gobuffalo/packr/packr",
     "github.com/huandu/xstrings",

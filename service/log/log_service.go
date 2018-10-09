@@ -1,21 +1,20 @@
 package log
 
 import (
+	"context"
+	"fmt"
 	"gitlab/nefco/platform/service/auth"
 	"time"
-	"fmt"
-	"context"
 )
 
 type Data struct {
-	Object string
+	Object    string
 	CreatedAt time.Time
-	Action string
-
+	Action    string
 }
 
 type Log interface {
-	Save (context.Context, []Data) error
+	Save(context.Context, []Data) error
 }
 
 type log struct{}
@@ -27,6 +26,3 @@ func (r log) Save(ctx context.Context, d []Data) error {
 	}
 	return nil
 }
-
-
-

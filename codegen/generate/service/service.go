@@ -3,48 +3,31 @@ package service
 import (
 	"bytes"
 	"fmt"
-	"gitlab/nefco/platform/codegen/generate/service/mssql"
 	"gitlab/nefco/platform/codegen/helper"
 	"gitlab/nefco/platform/codegen/schema"
+	"gitlab/nefco/platform/service"
 	"path"
 	"strings"
-
-	"github.com/spf13/viper"
-
-	"github.com/99designs/gqlgen/handler"
 
 	"github.com/gobuffalo/packr"
 )
 
-type Service interface {
-	Name() string
-	Init(v *viper.Viper) (handler.Option, error)
-	GenerateCommon(d *schema.Definition) (string, error)
-	GenerateAction(a *schema.Action) (string, error)
+type Generator interface {
+	Generate(a *schema.Action) (string, error)
 }
 
-var services []Service
-
-func init() {
-	services = []Service{
-		mssql.New(),
-	}
-}
-
-func Services() []Service {
-	return services
-}
-
-func serviceByName(name string) (Service, error) {
-	for _, s := range services {
+func generator(name string) (Generator, error) {
+	for _, s := range service.Services() {
 		if s.Name() == name {
-			return s, nil
+			if g, ok := s.(Generator); ok {
+				return g, nil
+			}
 		}
 	}
 	return nil, fmt.Errorf("'%s' service not implemented", name)
 }
 
-var defaultService = "mssql"
+var defaultGenerator = "mssql"
 
 type Config struct {
 	Schema  helper.File
@@ -101,7 +84,7 @@ func generateInterface(cfg Config, sch *schema.Schema) error {
 func generateStruct(cfg Config, sch *schema.Schema) error {
 	box := packr.NewBox("./templates")
 
-	s, err := serviceByName(defaultService)
+	gen, err := generator(defaultGenerator)
 	if err != nil {
 		return err
 	}
@@ -132,7 +115,7 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 		}
 
 		for _, act := range def.Actions() {
-			content, err := s.GenerateAction(act)
+			content, err := gen.Generate(act)
 			if err != nil {
 				return err
 			}
@@ -148,15 +131,6 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 			if err := tmplStructFunc.Execute(buf, data); err != nil {
 				return err
 			}
-		}
-
-		content, err := s.GenerateCommon(def)
-		if err != nil {
-			return err
-		}
-
-		if _, err := buf.WriteString(content); err != nil {
-			return err
 		}
 
 		serviceName := strings.ToLower(def.Name) + "_" + cfg.Service.Filename()

@@ -3,16 +3,17 @@ package validate
 import (
 	"context"
 
+	"strings"
+
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/spf13/viper"
-	"strings"
 	"github.com/vektah/gqlparser/ast"
 )
 
 type service struct{}
 
-func New()*service{
+func New() *service {
 	return &service{}
 }
 
@@ -43,9 +44,13 @@ func transform(ctx context.Context) ([]Data, error) {
 
 	// фильтр служебных запросов
 	name := resCtx.Field.Name
-	if strings.HasPrefix(name, "__") {return nil,nil}
+	if strings.HasPrefix(name, "__") {
+		return nil, nil
+	}
 	// фильтр ответов на запрос
-	if resCtx.Object != "Mutation" {return nil,nil}
+	if resCtx.Object != "Mutation" {
+		return nil, nil
+	}
 
 	result := []Data{}
 
@@ -80,7 +85,7 @@ func walkDefinition(childs ast.ChildValueList, defFields ast.FieldList, data []D
 
 			if defField != nil {
 				for _, dir := range defField.Directives {
-					if dir.Name == "validate"{
+					if dir.Name == "validate" {
 						for _, arg := range dir.Arguments {
 							data = append(data, Data{arg.Name, arg.Value.Raw, child.Value.Raw, child.Value.Definition.Name})
 						}
@@ -92,4 +97,3 @@ func walkDefinition(childs ast.ChildValueList, defFields ast.FieldList, data []D
 	}
 	return data, nil
 }
-

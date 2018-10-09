@@ -1,13 +1,14 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"net/http"
 	"strings"
 	"time"
-	"context"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 type key int
@@ -119,7 +120,7 @@ func MiddlewareLogin() http.HandlerFunc {
 		// Создаем новый токен
 		claims := jwt.MapClaims{
 			"user_id": 1,
-			"exp": time.Now().Add(time.Hour * 24).Unix(),
+			"exp":     time.Now().Add(time.Hour * 24).Unix(),
 		}
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
