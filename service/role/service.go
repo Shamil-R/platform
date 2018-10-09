@@ -2,10 +2,10 @@ package role
 
 import (
 	"context"
-	"github.com/vektah/gqlparser/ast"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/spf13/viper"
+	"github.com/vektah/gqlparser/ast"
 	"strings"
 )
 
@@ -28,14 +28,13 @@ func middleware(role Role) graphql.FieldMiddleware {
 		data, err := transform(ctx)
 		if err != nil {return nil, err}
 
-		if err := role.CheckAccess(data); err != nil {return nil, err}
+		if err := role.CheckAccess(ctx, data); err != nil {return nil, err}
 		return next(ctx)
 	}
 }
 
 func transform(ctx context.Context) ([]Data, error) {
 	resCtx := graphql.GetResolverContext(ctx)
-
 	// фильтр служебных запросов
 	name := resCtx.Field.Name
 	if strings.HasPrefix(name, "__") {return nil, nil}

@@ -27,9 +27,9 @@ func (s service) Middleware(v *viper.Viper) (handler.Option, error) {
 func middleware(log Log) graphql.RequestMiddleware {
 	return func(ctx context.Context, next func(ctx context.Context) []byte) []byte {
 		data, err := transform(ctx)
-		if err != nil {return nil}//todo
+		if err != nil {panic(err)}
 
-		if err := log.Save(data); err != nil {return nil}//todo
+		if err := log.Save(ctx, data); err != nil {panic(err)}
 		return next(ctx)
 	}
 }
@@ -50,7 +50,7 @@ func transform(ctx context.Context) ([]Data, error) {
 			actionName := getActionName(name)
 
 			for _, arg := range selection.(*ast.Field).Arguments {
-				result = append(result, Data{1, arg.Value.String(), time.Now(), actionName})
+				result = append(result, Data{arg.Value.String(), time.Now(), actionName})
 			}
 		}
 	}

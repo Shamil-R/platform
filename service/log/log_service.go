@@ -1,12 +1,13 @@
 package log
 
 import (
+	"gitlab/nefco/platform/service/auth"
 	"time"
 	"fmt"
+	"context"
 )
 
 type Data struct {
-	UserID int
 	Object string
 	CreatedAt time.Time
 	Action string
@@ -14,14 +15,15 @@ type Data struct {
 }
 
 type Log interface {
-	Save (d []Data) error
+	Save (context.Context, []Data) error
 }
 
 type log struct{}
 
-func (r log) Save(d []Data) error {
+func (r log) Save(ctx context.Context, d []Data) error {
+	userData := auth.GetContext(ctx)
 	for _, elem := range d {
-		fmt.Println(elem.UserID, elem.Object, elem.CreatedAt, elem.Action)
+		fmt.Println(userData.ID, elem.Object, elem.CreatedAt, elem.Action)
 	}
 	return nil
 }

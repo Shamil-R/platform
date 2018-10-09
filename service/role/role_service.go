@@ -3,6 +3,8 @@ package role
 import (
 	"gitlab/nefco/auction/errors"
 	"fmt"
+	"context"
+	"gitlab/nefco/platform/service/auth"
 )
 
 type AvailableFields struct {
@@ -19,14 +21,14 @@ type Data struct {
 }
 
 type Role interface {
-	CheckAccess (d []Data) error
+	CheckAccess (context.Context, []Data) error
 }
 
 type role struct{}
 
-func (r role) CheckAccess(d []Data) error {
+func (r role) CheckAccess(ctx context.Context, d []Data) error {
 	for _, elem := range d {
-		availableFields, err := r.getAvailableFields(1, elem.Table, elem.Field)
+		availableFields, err := r.getAvailableFields(ctx, elem.Table, elem.Field)
 		if err != nil {
 			return errors.New("Ошибка получения информации о ваших правах")
 		}
@@ -39,18 +41,21 @@ func (r role) CheckAccess(d []Data) error {
 	return nil
 }
 
-
-func (r role) getAvailableFields(userID int, object string, field string) (*AvailableFields, error) {
+func (r role) getAvailableFields(ctx context.Context, object string, field string) (*[]AvailableFields, error) {
 	action := "update"
-	return &AvailableFields{object, field, userID, action}, nil
+	userData := auth.GetContext(ctx)
+	return &[]AvailableFields{{object, field, userData.ID, action}}, nil
 }
 
-func (r role) checkAvailability(availableFields *AvailableFields, action string) (bool) {
-	var res bool
-	if (availableFields != nil && (availableFields.Action == action || action == "read")) {
-		res = true
-	} else {
-		res = false
+func (r role) checkAvailability(availableFields *[]AvailableFields, action string) (bool) {
+	res := false
+	if availableFields != nil && len(*availableFields) > 0 {
+		for _, row := range *availableFields {
+			if ((row.Action == action || action == "read")) {
+				res = true
+				break
+			}
+		}
 	}
 	return res
 }
