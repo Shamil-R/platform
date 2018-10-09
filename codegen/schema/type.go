@@ -12,7 +12,7 @@ func (t *Type) IsObject() bool {
 	// if t.IsSlice() {
 	// 	name = t.Elem().NamedType
 	// }
-	return t.schema.Types().ForObject().ByName(name) != nil
+	return t.schema.Types().Objects().ByName(name) != nil
 }
 
 func (t *Type) IsSlice() bool {

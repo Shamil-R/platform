@@ -7,7 +7,7 @@ import (
 
 	model "{{ .Model.Import }}"
 )
-{{ range .Schema.Types.ForAction }}
+{{ range .Schema.Types.Objects }}
 type {{ .Name }}Service interface {
 	{{- range .Actions }}
 	{{ template "func" . }}

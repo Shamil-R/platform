@@ -124,32 +124,32 @@ func (l DefinitionList) Objects() DefinitionList {
 	return l.filter(fn)
 }
 
-func (l DefinitionList) ForObject() DefinitionList {
-	return l.Objects()
-}
+// func (l DefinitionList) ForObject() DefinitionList {
+// 	return l.Objects()
+// }
 
-func (l DefinitionList) ForEnum() DefinitionList {
+func (l DefinitionList) Enums() DefinitionList {
 	fn := func(def *Definition) bool {
 		return def.IsEnum()
 	}
 	return l.filter(fn)
 }
 
-func (l DefinitionList) ForInput() DefinitionList {
-	return l.Objects()
-}
+// func (l DefinitionList) ForInput() DefinitionList {
+// 	return l.Objects()
+// }
 
-func (l DefinitionList) ForMutation() DefinitionList {
-	return l.Objects()
-}
+// func (l DefinitionList) ForMutation() DefinitionList {
+// 	return l.Objects()
+// }
 
-func (l DefinitionList) ForQuery() DefinitionList {
-	return l.Objects()
-}
+// func (l DefinitionList) ForQuery() DefinitionList {
+// 	return l.Objects()
+// }
 
-func (l DefinitionList) ForAction() DefinitionList {
-	return l.Objects()
-}
+// func (l DefinitionList) ForAction() DefinitionList {
+// 	return l.Objects()
+// }
 
 func (l DefinitionList) WithRelations() DefinitionList {
 	fn := func(def *Definition) bool {

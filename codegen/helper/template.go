@@ -11,7 +11,7 @@ import (
 
 func ReadTemplate(name string, box packr.Box) (*template.Template, error) {
 	if len(box.List()) == 0 {
-		return nil, fmt.Errorf("template: box empty in call to Read")
+		return nil, fmt.Errorf("template: box empty in call to ReadTemplate")
 	}
 
 	funcs := sprig.TxtFuncMap()

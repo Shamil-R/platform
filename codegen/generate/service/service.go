@@ -99,7 +99,7 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 		return err
 	}
 
-	for _, def := range sch.Types().ForAction() {
+	for _, def := range sch.Types().Objects() {
 		buf := bytes.NewBufferString("")
 
 		data := &struct {
