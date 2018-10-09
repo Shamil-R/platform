@@ -4,22 +4,37 @@
 		return nil, err
 	}
 
-	r, err := {{ lower .Name }}(ctx, where.ID)
+	querySelect := `
+		SELECT * FROM [{{ $table }}]
+		WHERE id = :id
+	`
+
+	argSelect := map[string]interface{}{
+		"id": where.ID,
+	}
+
+	stmt, err := tx.PrepareNamed(querySelect)
 	if err != nil {
 		return nil, err
 	}
 
-	query := `
+	resSelect := &model.{{ .Name }}{}
+
+	if err := stmt.Get(resSelect, argSelect); err != nil {
+		return nil, err
+	}
+
+	queryDelete := `
 		DELETE FROM [{{ $table }}]
 		WHERE id = :id
 	`
 
-	arg := map[string]interface{}{
+	argDelete := map[string]interface{}{
 		"id": where.ID,
 	}
 
-	if _, err = tx.NamedExec(query, arg); err != nil {
+	if _, err = tx.NamedExec(queryDelete, argDelete); err != nil {
 		return nil, err
 	}
 
-	return r, nil
+	return resSelect, nil

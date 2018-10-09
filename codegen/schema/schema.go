@@ -111,6 +111,16 @@ func (d *Definition) Queries() ActionList {
 	return actions
 }
 
+func (d *Definition) Relations() ActionList {
+	actions := make(ActionList, 0, len(d.Fields()))
+	for _, field := range d.Fields() {
+		if field.Type().IsSlice() {
+			actions = append(actions, &Action{"relation", field, d})
+		}
+	}
+	return actions
+}
+
 func (d *Definition) Actions() ActionList {
 	return append(d.Mutations(), d.Queries()...)
 }

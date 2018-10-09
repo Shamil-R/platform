@@ -4,21 +4,21 @@
 		return nil, err
 	}
 
-	query := `
+	querySelect := `
 		SELECT * FROM [{{ $table }}]
 	`
 
-	arg := map[string]interface{}{}
+	argSelect := map[string]interface{}{}
 
-	stmt, err := tx.PrepareNamed(query)
+	stmt, err := tx.PrepareNamed(querySelect)
 	if err != nil {
 		return nil, err
 	}
 
-	r := []*model.{{ .Name }}{}
+	resSelect := []*model.{{ .Name }}{}
 
-	if err := stmt.Select(&r, arg); err != nil {
+	if err := stmt.Select(&resSelect, argSelect); err != nil {
 		return nil, err
 	}
 
-	return r, nil
+	return resSelect, nil

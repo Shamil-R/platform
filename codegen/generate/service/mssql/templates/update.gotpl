@@ -6,7 +6,7 @@
 		return nil, err
 	}
 
-	query := `
+	queryUpdate := `
 		UPDATE [{{ $table }}] SET
 			{{- range $i, $field := $fields }}
 			[{{ .Name }}] = :{{ .Name }}
@@ -15,20 +15,35 @@
 		WHERE id = :id
 	`
 
-	arg := map[string]interface{}{
+	argUpdate := map[string]interface{}{
 		{{- range $i, $field := $fields }}
 		"{{ .Name }}": data.{{ title .Name }},
 		{{- end }}
 		"id": where.ID,
 	}
 
-	if _, err := tx.NamedExec(query, arg); err != nil {
+	if _, err := tx.NamedExec(queryUpdate, argUpdate); err != nil {
 		return nil, err
 	}
 
-	r, err := {{ lower .Name }}(ctx, where.ID)
+	querySelect := `
+		SELECT * FROM [{{ $table }}]
+		WHERE id = :id
+	`
+
+	argSelect := map[string]interface{}{
+		"id": where.ID,
+	}
+
+	stmt, err := tx.PrepareNamed(querySelect)
 	if err != nil {
 		return nil, err
 	}
 
-	return r, nil
+	resSelect := &model.{{ .Name }}{}
+
+	if err := stmt.Get(resSelect, argSelect); err != nil {
+		return nil, err
+	}
+
+	return resSelect, nil

@@ -6,7 +6,7 @@
 		return nil, err
 	}
 
-	query := `
+	queryInsert := `
 		INSERT INTO [{{ $table }}] (
 			{{- range $i, $field := $fields }}
 			[{{ .Name }}]
@@ -20,40 +20,40 @@
 		)
 	`
 
-	arg := map[string]interface{}{
+	argInsert := map[string]interface{}{
 		{{- range $i, $field := $fields }}
 		"{{ .Name }}": data.{{ title .Name }},
 		{{- end }}
 	}
 
-	result, err := tx.NamedExec(query, arg)
+	resInsert, err := tx.NamedExec(queryInsert, argInsert)
 	if err != nil {
 		return nil, err
 	}
 
-	id, err := result.LastInsertId()
+	id, err := resInsert.LastInsertId()
 	if err != nil {
 		return nil, err
 	}
 
-	query = `
+	querySelect := `
 		SELECT * FROM [{{ $table }}]
 		WHERE id = :id
 	`
 
-	arg = map[string]interface{}{
+	argSelect := map[string]interface{}{
 		"id": id,
 	}
 
-	stmt, err := tx.PrepareNamed(query)
+	stmt, err := tx.PrepareNamed(querySelect)
 	if err != nil {
 		return nil, err
 	}
 
-	r := &model.{{ .Name }}{}
+	resSelect := &model.{{ .Name }}{}
 
-	if err := stmt.Get(r, arg); err != nil {
+	if err := stmt.Get(resSelect, argSelect); err != nil {
 		return nil, err
 	}
 
-	return r, nil
+	return resSelect, nil
