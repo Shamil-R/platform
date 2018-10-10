@@ -2,6 +2,7 @@ package service
 
 import (
 	"gitlab/nefco/platform/codegen/generate/service/mssql"
+	"gitlab/nefco/platform/codegen/generate/service/stub"
 	"gitlab/nefco/platform/service/log"
 	"gitlab/nefco/platform/service/role"
 	"gitlab/nefco/platform/service/validate"
@@ -15,6 +16,7 @@ func init() {
 		validate.New(),
 		role.New(),
 		log.New(),
+		stub.New(),
 		mssql.New(),
 	}
 }

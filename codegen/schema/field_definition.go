@@ -4,7 +4,12 @@ import "github.com/vektah/gqlparser/ast"
 
 type FieldDefinition struct {
 	*ast.FieldDefinition
-	schema *Schema
+	schema     *Schema
+	definition *Definition
+}
+
+func (f *FieldDefinition) Definition() *Definition {
+	return f.definition
 }
 
 func (f *FieldDefinition) Directives() DirectiveList {
@@ -31,6 +36,10 @@ type FieldList []*FieldDefinition
 
 type fieldListFilter func(field *FieldDefinition) bool
 
+func (l FieldList) size() int {
+	return len(l)
+}
+
 func (l FieldList) filter(filter fieldListFilter) FieldList {
 	fields := make(FieldList, 0, len(l))
 	for _, field := range l {
@@ -49,16 +58,13 @@ func (l FieldList) first(filter fieldListFilter) *FieldDefinition {
 	return r[0]
 }
 
-func (l FieldList) size() int {
-	return len(l)
-}
-
 func (l FieldList) Objects() FieldList {
 	fn := func(field *FieldDefinition) bool {
-		if field.Type().IsSlice() {
-			return field.Type().Elem().IsObject()
-		}
-		return field.Type().IsObject()
+		// if field.Type().IsSlice() {
+		// 	return field.Type().Elem().IsObject()
+		// }
+		// return field.Type().IsObject()
+		return true
 	}
 	return l.filter(fn)
 }
@@ -70,7 +76,7 @@ func (l FieldList) ForObject() FieldList {
 func (l FieldList) ForCreateInput() FieldList {
 	fn := func(field *FieldDefinition) bool {
 		return !field.Type().IsSlice() &&
-			!field.Type().IsObject() &&
+			// !field.Type().IsObject() &&
 			!field.Directives().HasIndentity()
 	}
 	return l.filter(fn)

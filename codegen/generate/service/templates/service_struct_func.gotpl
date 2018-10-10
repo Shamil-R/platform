@@ -1,4 +1,0 @@
-
-func (s *{{ lower .Definition.Name }}Service) {{ template "func" . }} {
-	{{- .Content }}
-}

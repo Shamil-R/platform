@@ -2,6 +2,6 @@
 {{- if .IsSlice }}[]
 {{- template "type" .Elem }}
 {{- else }}
-{{- if not .NonNull }}*{{ end }}model.{{ .NamedType }}
+{{- if not .NonNull }}*{{ end }}model.{{ .Name }}
 {{- end }}
 {{- end }}

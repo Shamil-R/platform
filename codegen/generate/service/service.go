@@ -13,7 +13,7 @@ import (
 )
 
 type Generator interface {
-	Generate(a *schema.Action) (string, error)
+	Box() packr.Box
 }
 
 func generator(name string) (Generator, error) {
@@ -27,7 +27,7 @@ func generator(name string) (Generator, error) {
 	return nil, fmt.Errorf("'%s' service not implemented", name)
 }
 
-var defaultGenerator = "mssql"
+var defaultGenerator = "stub"
 
 type Config struct {
 	Schema  helper.File
@@ -36,52 +36,6 @@ type Config struct {
 }
 
 func Generate(cfg Config) error {
-	schema, err := schema.LoadSchema(cfg.Schema.Path)
-	if err != nil {
-		return err
-	}
-
-	if err := generateInterface(cfg, schema); err != nil {
-		return err
-	}
-
-	if err := generateStruct(cfg, schema); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func generateInterface(cfg Config, sch *schema.Schema) error {
-	box := packr.NewBox("./templates")
-
-	tmpl, err := helper.ReadTemplate("service_interface", box)
-	if err != nil {
-		return err
-	}
-
-	data := struct {
-		Config
-		Schema *schema.Schema
-	}{
-		Config: cfg,
-		Schema: sch,
-	}
-
-	buff := &bytes.Buffer{}
-
-	if err := tmpl.Execute(buff, &data); err != nil {
-		return err
-	}
-
-	if err := helper.WriteFile(cfg.Service.Path, buff); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func generateStruct(cfg Config, sch *schema.Schema) error {
 	box := packr.NewBox("./templates")
 
 	gen, err := generator(defaultGenerator)
@@ -89,18 +43,18 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 		return err
 	}
 
-	tmplStruct, err := helper.ReadTemplate("service_struct", box)
+	tmpl, err := helper.ReadTemplate("service", box, gen.Box())
 	if err != nil {
 		return err
 	}
 
-	tmplStructFunc, err := helper.ReadTemplate("service_struct_func", box)
+	s, err := schema.LoadSchema(cfg.Schema.Path)
 	if err != nil {
 		return err
 	}
 
-	for _, def := range sch.Types().Objects() {
-		buf := bytes.NewBufferString("")
+	for _, def := range s.Types().Objects() {
+		buf := bytes.NewBuffer([]byte{})
 
 		data := &struct {
 			Config
@@ -110,27 +64,8 @@ func generateStruct(cfg Config, sch *schema.Schema) error {
 			Definition: def,
 		}
 
-		if err := tmplStruct.Execute(buf, data); err != nil {
+		if err := tmpl.Execute(buf, data); err != nil {
 			return err
-		}
-
-		for _, act := range def.Actions() {
-			content, err := gen.Generate(act)
-			if err != nil {
-				return err
-			}
-
-			data := &struct {
-				*schema.Action
-				Content string
-			}{
-				Action:  act,
-				Content: content,
-			}
-
-			if err := tmplStructFunc.Execute(buf, data); err != nil {
-				return err
-			}
 		}
 
 		serviceName := strings.ToLower(def.Name) + "_" + cfg.Service.Filename()

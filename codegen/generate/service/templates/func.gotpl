@@ -1,9 +1,3 @@
 {{- define "func" }}
-{{- title .FieldDefinition.Name }}(ctx context.Context{{ print ", " }}
-	{{- if .IsRelation }}obj *model.{{.Definition.Name}}{{ print ", " }}{{ end }}
-	{{- $argsLen := len .FieldDefinition.Arguments }}
-	{{- range $i, $arg := .FieldDefinition.Arguments }}
-	{{- .Name }} {{ template "type" .Type }}
-	{{- if next $i $argsLen }}{{ print ", " }}{{ end }}
-	{{- end }}) ({{ template "type" .FieldDefinition.Type }}, error)
+{{- title .Name }}(ctx context.Context, {{ template "args" .Arguments }}) ({{ template "type" .Type }}, error)
 {{- end }}

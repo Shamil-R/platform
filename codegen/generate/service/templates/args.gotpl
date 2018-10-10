@@ -1,0 +1,6 @@
+{{- define "args" }}
+{{- range $i, $arg := . }}
+{{- if gt $i 0 }}{{ print ", " }}{{ end }}
+{{- .Name }} {{ template "type" .Type }}
+{{- end }}
+{{- end }}

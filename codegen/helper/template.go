@@ -9,18 +9,24 @@ import (
 	"github.com/jinzhu/inflection"
 )
 
-func ReadTemplate(name string, box packr.Box) (*template.Template, error) {
-	if len(box.List()) == 0 {
-		return nil, fmt.Errorf("template: box empty in call to ReadTemplate")
+func ReadTemplate(name string, boxes ...packr.Box) (*template.Template, error) {
+	m := make(map[string]string)
+	for _, box := range boxes {
+		for _, n := range box.List() {
+			m[n] = box.String(n)
+		}
+	}
+
+	if len(m) == 0 {
+		return nil, fmt.Errorf("template: boxes empty in call to ReadTemplate")
 	}
 
 	funcs := sprig.TxtFuncMap()
 	funcs["plural"] = inflection.Plural
-	funcs["next"] = next
 
 	tmpl := template.New(name + ".gotpl").Funcs(funcs)
 
-	for _, n := range box.List() {
+	for n, text := range m {
 		var t *template.Template
 
 		if n == tmpl.Name() {
@@ -29,14 +35,10 @@ func ReadTemplate(name string, box packr.Box) (*template.Template, error) {
 			t = tmpl.New(n)
 		}
 
-		if _, err := t.Parse(box.String(n)); err != nil {
+		if _, err := t.Parse(text); err != nil {
 			return nil, err
 		}
 	}
 
 	return tmpl, nil
-}
-
-func next(i, l int) bool {
-	return l-i > 1
 }
