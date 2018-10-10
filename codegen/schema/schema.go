@@ -11,11 +11,6 @@ import (
 )
 
 const (
-	DIRECTIVE_PRIMARY   = "primary"
-	DIRECTIVE_UNIQUE    = "unique"
-	DIRECTIVE_INDENTITY = "identity"
-	DIRECTIVE_VALIDATE  = "validate"
-
 	ACTION_CREATE     = "create"
 	ACTION_UPDATE     = "update"
 	ACTION_DELETE     = "delete"
@@ -26,16 +21,6 @@ const (
 
 type Schema struct {
 	*ast.Schema
-}
-
-func (s *Schema) Types() DefinitionList {
-	definitions := make(DefinitionList, 0, len(s.Schema.Types))
-	for _, def := range s.Schema.Types {
-		if !strings.HasPrefix(def.Name, "__") {
-			definitions = append(definitions, &Definition{def, s})
-		}
-	}
-	return definitions
 }
 
 func (s *Schema) Mutation() *Definition {
@@ -50,6 +35,16 @@ func (s *Schema) Query() *Definition {
 		return nil
 	}
 	return &Definition{s.Schema.Query, s}
+}
+
+func (s *Schema) Types() DefinitionList {
+	definitions := make(DefinitionList, 0, len(s.Schema.Types))
+	for _, def := range s.Schema.Types {
+		if !strings.HasPrefix(def.Name, "__") {
+			definitions = append(definitions, &Definition{def, s})
+		}
+	}
+	return definitions
 }
 
 func LoadSchemaRaw(path string) (string, error) {

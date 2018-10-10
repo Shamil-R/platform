@@ -1,8 +1,9 @@
 {{- define "input_update" }}
 input {{ .Name }}UpdateInput {
-    {{- range .Fields.ForUpdateInput }}
-    {{ .Name }}: {{ .Type }}
-    {{- template "directives" .Directives.ForUpdateInput }}
+    {{- range .Fields }}
+    {{- if and (not .Type.IsDefinition) (not .Directives.HasIndentity) }}
+	{{ .Name }}: {{ .Type }}{{ template "directives" .Directives }}
+	{{- end }}
     {{- end }}
 }
 {{- end }}

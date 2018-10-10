@@ -2,7 +2,11 @@
 {{- range . }}
 type {{ .Name }} {
     {{- range .Fields }}
+	{{- if .Type.IsDefinition }}
+	{{ .Name }}(where: {{ .Type.Name }}WhereInput): {{ .Type }}
+	{{- else }}
 	{{ .Name }}: {{ .Type }}
+	{{- end }}
 	{{- template "directives" .Directives }}
     {{- end }}
 }

@@ -1,7 +1,9 @@
 {{- define "input_where" }}
 input {{ .Name }}WhereInput {
-    {{- range .Fields.ForWhereInput }}
-    {{ .Name }}: {{ .Type }}
+    {{- range .Fields }}
+    {{- if .Directives.HasIndentity }}
+	{{ .Name }}: {{ .Type }}{{ template "directives" .Directives }}
+	{{- end }}
     {{- end }}
 }
 {{- end }}

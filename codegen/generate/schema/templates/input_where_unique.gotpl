@@ -1,7 +1,9 @@
 {{- define "input_where_unique" }}
 input {{ .Name }}WhereUniqueInput {
-    {{- range .Fields.ForWhereUniqueInput }}
-    {{ .Name }}: {{ .Type }}
+    {{- range .Fields }}
+    {{- if .Directives.HasIndentity }}
+	{{ .Name }}: {{ .Type }}{{ template "directives" .Directives }}
+	{{- end }}
     {{- end }}
 }
 {{- end }}

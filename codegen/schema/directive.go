@@ -2,6 +2,13 @@ package schema
 
 import "github.com/vektah/gqlparser/ast"
 
+const (
+	DIRECTIVE_PRIMARY   = "primary"
+	DIRECTIVE_UNIQUE    = "unique"
+	DIRECTIVE_INDENTITY = "identity"
+	DIRECTIVE_VALIDATE  = "validate"
+)
+
 type Directive struct {
 	*ast.Directive
 }
@@ -30,6 +37,10 @@ type DirectiveList []*Directive
 
 type directiveListFilter func(field *Directive) bool
 
+func (l DirectiveList) size() int {
+	return len(l)
+}
+
 func (l DirectiveList) filter(filter directiveListFilter) DirectiveList {
 	directives := make(DirectiveList, 0, len(l))
 	for _, directive := range l {
@@ -38,10 +49,6 @@ func (l DirectiveList) filter(filter directiveListFilter) DirectiveList {
 		}
 	}
 	return directives
-}
-
-func (l DirectiveList) size() int {
-	return len(l)
 }
 
 func (l DirectiveList) HasPrimary() bool {
@@ -70,15 +77,4 @@ func (l DirectiveList) HasValidate() bool {
 		return directive.IsValidate()
 	}
 	return l.filter(fn).size() > 0
-}
-
-func (l DirectiveList) ForCreateInput() DirectiveList {
-	fn := func(directive *Directive) bool {
-		return directive.IsValidate()
-	}
-	return l.filter(fn)
-}
-
-func (l DirectiveList) ForUpdateInput() DirectiveList {
-	return l.ForCreateInput()
 }

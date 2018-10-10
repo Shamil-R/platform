@@ -7,13 +7,9 @@ type Type struct {
 	schema *Schema
 }
 
-// func (t *Type) IsObject() bool {
-// 	name := t.NamedType
-// 	// if t.IsSlice() {
-// 	// 	name = t.Elem().NamedType
-// 	// }
-// 	return t.schema.Types().Objects().ByName(name) != nil
-// }
+func (t *Type) IsDefinition() bool {
+	return t.schema.Types().Objects().Contains(t)
+}
 
 func (t *Type) IsSlice() bool {
 	return t.NamedType == "" && t.Elem() != nil
