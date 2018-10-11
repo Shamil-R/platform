@@ -7,7 +7,7 @@
 	queryUpdate := `
 		UPDATE {{ template "table" . }} SET
 			{{- with .Arguments.ByName "data" }}
-			{{- range $i, $arg := .Type.Definition.Fields }}
+			{{- range $i, $field := .Type.Definition.Fields }}
 			{{- if gt $i 0 }}, {{ end }}
 			{{ template "field" . }} = {{ template "bind" . }}
 			{{- end }}
@@ -17,7 +17,7 @@
 
 	argUpdate := map[string]interface{}{
 		{{- with .Arguments.ByName "data" }}
-		{{- range $i, $arg := .Type.Definition.Fields }}
+		{{- range $i, $field := .Type.Definition.Fields }}
 		"{{ .Name }}": data.{{ title .Name }},
 		{{- end }}
 		{{- end }}

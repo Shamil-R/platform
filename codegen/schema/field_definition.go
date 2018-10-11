@@ -56,3 +56,17 @@ func (l FieldList) first(filter fieldListFilter) *FieldDefinition {
 	}
 	return r[0]
 }
+
+func (l FieldList) HasRelation() bool {
+	fn := func(field *FieldDefinition) bool {
+		return field.Type().IsRelation()
+	}
+	return l.filter(fn).size() > 0
+}
+
+func (l FieldList) Relations() FieldList {
+	fn := func(field *FieldDefinition) bool {
+		return field.Type().IsRelation()
+	}
+	return l.filter(fn)
+}

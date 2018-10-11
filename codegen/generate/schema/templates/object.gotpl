@@ -2,7 +2,7 @@
 {{- range . }}
 type {{ .Name }} {
     {{- range .Fields }}
-	{{- if .Type.IsDefinition }}
+	{{- if .Type.IsRelation }}
 	{{ .Name }}(where: {{ .Type.Name }}WhereInput): {{ .Type }}
 	{{- else }}
 	{{ .Name }}: {{ .Type }}

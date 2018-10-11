@@ -1,7 +1,7 @@
 {{- define "input_create" }}
 input {{ .Name }}CreateInput {
     {{- range .Fields }}
-    {{- if and (not .Type.IsDefinition) (not .Directives.HasIndentity) }}
+    {{- if and (not .Type.IsRelation) (not .Directives.HasIndentity) }}
 	{{ .Name }}: {{ .Type }}{{ template "directives" .Directives }}
 	{{- end }}
     {{- end }}

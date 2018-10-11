@@ -7,7 +7,7 @@ type Type struct {
 	schema *Schema
 }
 
-func (t *Type) IsDefinition() bool {
+func (t *Type) IsRelation() bool {
 	return t.schema.Types().Objects().Contains(t)
 }
 

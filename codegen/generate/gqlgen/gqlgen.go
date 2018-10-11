@@ -20,20 +20,20 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	// schema, err := schema.ParseSchema(schemaRaw)
-	// if err != nil {
-	// 	return err
-	// }
+	schema, err := schema.ParseSchema(schemaRaw)
+	if err != nil {
+		return err
+	}
 
 	models := codegen.TypeMap{}
 
-	// for _, obj := range schema.Types().Objects() {
-	// 	fields := map[string]codegen.TypeMapField{}
-	// 	for _, field := range obj.Fields().Objects() {
-	// 		fields[field.Name] = codegen.TypeMapField{Resolver: true}
-	// 	}
-	// 	models[obj.Name] = codegen.TypeMapEntry{Fields: fields}
-	// }
+	for _, obj := range schema.Types().Objects() {
+		fields := map[string]codegen.TypeMapField{}
+		for _, field := range obj.Fields().Relations() {
+			fields[field.Name] = codegen.TypeMapField{Resolver: true}
+		}
+		models[obj.Name] = codegen.TypeMapEntry{Fields: fields}
+	}
 
 	c := codegen.Config{
 		SchemaStr: schemaRaw,

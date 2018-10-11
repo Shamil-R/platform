@@ -78,10 +78,8 @@ func (d *Definition) Queries() ActionList {
 
 func (d *Definition) Relations() ActionList {
 	acts := make(ActionList, 0)
-	for _, field := range d.Fields() {
-		if field.Type().IsDefinition() {
-			acts = append(acts, &Action{field, ACTION_RELATION})
-		}
+	for _, field := range d.Fields().Relations() {
+		acts = append(acts, &Action{field, ACTION_RELATION})
 	}
 	return acts
 }

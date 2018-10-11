@@ -9,30 +9,41 @@ import (
 
 func init() {
 	cfg := graph.Config{
-		Resolvers: &resolver{
-			{{- range .Types }}
-			{{ .Name }}Service:	service.New{{ .Name }}Service(),
-			{{- end }}
-		},
+		Resolvers: &resolver{},
 	}
 	schema = graph.NewExecutableSchema(cfg)
 }
 
-type resolver struct {
-	{{- range .Types }}
-	service.{{ .Name }}Service
-	{{- end }}
-}
+type resolver struct{}
 
 func (r *resolver) Mutation() graph.MutationResolver {
-	return r
+	return &struct {
+		{{- range .Types.Objects }}
+		service.{{ .Name }}MutationService
+		{{- end }}
+	} {
+		{{- range .Types.Objects }}
+		{{ .Name }}MutationService: service.New{{ .Name }}MutationService(),
+		{{- end }}
+	}
 }
 
 func (r *resolver) Query() graph.QueryResolver {
-	return r
+	return &struct {
+		{{- range .Types.Objects }}
+		service.{{ .Name }}QueryService
+		{{- end }}
+	} {
+		{{- range .Types.Objects }}
+		{{ .Name }}QueryService: service.New{{ .Name }}QueryService(),
+		{{- end }}
+	}
 }
-{{- range .Types.WithRelations }}
-func (r *resolver) {{ .Name }}() graph.{{ .Name }}Resolver {
-	return r
+
+{{- range $i, $def := .Types.Objects }}
+{{- if .Fields.HasRelation }}
+func (r *resolver) {{ $def.Name }}() graph.{{ $def.Name }}Resolver {
+	return service.New{{ $def.Name }}RelationService()
 }
 {{- end }}
+{{ end }}

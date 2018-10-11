@@ -9,12 +9,12 @@
 	queryInsert := `
 		INSERT INTO {{ template "table" . }} (
 			{{- with .Arguments.ByName "data" }}
-			{{- range $i, $arg := .Type.Definition.Fields }}
+			{{- range $i, $field := .Type.Definition.Fields }}
 			{{- if gt $i 0 }}, {{ end }}
 			{{ template "field" . }}
 			{{- end }}
 		) VALUES (
-			{{- range $i, $arg := .Type.Definition.Fields }}
+			{{- range $i, $field := .Type.Definition.Fields }}
 			{{- if gt $i 0 }}, {{ end }}
 			{{ template "bind" . }}
 			{{- end }}
