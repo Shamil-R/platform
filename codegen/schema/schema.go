@@ -10,15 +10,6 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
-const (
-	ACTION_CREATE     = "create"
-	ACTION_UPDATE     = "update"
-	ACTION_DELETE     = "delete"
-	ACTION_ITEM       = "item"
-	ACTION_COLLECTION = "collection"
-	ACTION_RELATION   = "relation"
-)
-
 type Schema struct {
 	*ast.Schema
 }
@@ -72,12 +63,12 @@ func ParseSchema(schemaRaw string) (*Schema, error) {
 		Input: schemaRaw,
 	}
 
-	schema, err := gqlparser.LoadSchema(source)
+	s, err := gqlparser.LoadSchema(source)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Schema{schema}, nil
+	return &Schema{s}, nil
 }
 
 func LoadSchema(path string) (*Schema, error) {
@@ -86,10 +77,10 @@ func LoadSchema(path string) (*Schema, error) {
 		return nil, err
 	}
 
-	schema, err := ParseSchema(schemaRaw)
+	s, err := ParseSchema(schemaRaw)
 	if err != nil {
 		return nil, err
 	}
 
-	return schema, nil
+	return s, nil
 }

@@ -27,7 +27,7 @@ func generator(name string) (Generator, error) {
 	return nil, fmt.Errorf("'%s' service not implemented", name)
 }
 
-var defaultGenerator = "stub"
+var defaultGenerator = "mssql"
 
 type Config struct {
 	Schema  helper.File

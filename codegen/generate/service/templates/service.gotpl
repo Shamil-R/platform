@@ -22,13 +22,12 @@ type {{ $mutationService }} struct {}
 func New{{ title $mutationService }}() *{{ $mutationService }} {
 	return &{{ $mutationService }}{}
 }
-
-{{- range .Mutations }}
+{{ range .Mutations }}
 func (s *{{ $mutationService }}) {{ template "func" . }} {
 	{{- template "impl" . }}
 }
-{{- end}}
-{{ $queryService :=  lower .Name | printf "%sQueryService"  }}
+{{ end}}
+{{- $queryService :=  lower .Name | printf "%sQueryService"  }}
 type {{ title $queryService }} interface {
 	{{- range .Queries }}
 	{{ template "func" . }}
@@ -40,27 +39,26 @@ type {{ $queryService }} struct {}
 func New{{ title $queryService }}() *{{ $queryService }} {
 	return &{{ $queryService }}{}
 }
-
-{{- range .Queries }}
+{{ range .Queries }}
 func (s *{{ $queryService }}) {{ template "func" . }} {
 	{{- template "impl" . }}
 }
-{{- end}}
-{{ $relationService :=  lower .Name | printf "%sRelationService"  }}
+{{ end}}
+{{- $relationService :=  lower .Name | printf "%sRelationService"  }}
 type {{ $relationService }} interface {
 	{{- range .Relations }}
 	{{ template "func_relation" . }}
 	{{- end}}
 }
-type {{ $relationService }} struct {}
+
+type {{ title $relationService }} struct {}
 
 func New{{ title $relationService }}() *{{ $relationService }} {
 	return &{{ $relationService }}{}
 }
-
-{{- range .Relations }}
+{{ range .Relations }}
 func (s *{{ $relationService }}) {{ template "func_relation" . }} {
 	{{- template "impl" . }}
 }
-{{- end}}
+{{ end}}
 {{- end }}

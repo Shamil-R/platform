@@ -35,42 +35,55 @@ func (d *Definition) Fields() FieldList {
 	return fields
 }
 
-func filterFieldList(def *Definition, checks map[string]bool) FieldList {
-	fields := make(FieldList, 0)
-	if def != nil {
-		for _, field := range def.Fields() {
-			if _, ok := checks[field.Name]; ok {
-				fields = append(fields, field)
-			}
+func (d *Definition) Mutations() ActionList {
+	actions := make(ActionList, 0)
+	mutation := d.schema.Mutation()
+	if mutation == nil {
+		return actions
+	}
+	checks := map[string]string{
+		ACTION_CREATE + d.Name: ACTION_CREATE,
+		ACTION_UPDATE + d.Name: ACTION_UPDATE,
+		ACTION_DELETE + d.Name: ACTION_DELETE,
+	}
+	for _, field := range mutation.Fields() {
+		if act, ok := checks[field.Name]; ok {
+			action := &Action{&FieldDefinition{field.FieldDefinition, d}, act}
+			actions = append(actions, action)
 		}
 	}
-	return fields
+	return actions
 }
 
-func (d *Definition) Mutations() FieldList {
-	checks := map[string]bool{
-		"create" + d.Name: true,
-		"update" + d.Name: true,
-		"delete" + d.Name: true,
+func (d *Definition) Queries() ActionList {
+	actions := make(ActionList, 0)
+	query := d.schema.Query()
+	if query == nil {
+		return actions
 	}
-	return filterFieldList(d.schema.Mutation(), checks)
-}
-
-func (d *Definition) Queries() FieldList {
 	item := xstrings.FirstRuneToLower(d.Name)
 	collection := inflection.Plural(item)
-	checks := map[string]bool{
-		item:       true,
-		collection: true,
+	checks := map[string]string{
+		item:       ACTION_ITEM,
+		collection: ACTION_COLLECTION,
 	}
-	return filterFieldList(d.schema.Query(), checks)
+	for _, field := range query.Fields() {
+		if act, ok := checks[field.Name]; ok {
+			action := &Action{&FieldDefinition{field.FieldDefinition, d}, act}
+			actions = append(actions, action)
+		}
+	}
+	return actions
 }
 
-func (d *Definition) Relations() FieldList {
-	fn := func(field *FieldDefinition) bool {
-		return d.schema.Types().Objects().Contains(field.Type())
+func (d *Definition) Relations() ActionList {
+	acts := make(ActionList, 0)
+	for _, field := range d.Fields() {
+		if field.Type().IsDefinition() {
+			acts = append(acts, &Action{field, ACTION_RELATION})
+		}
 	}
-	return d.Fields().filter(fn)
+	return acts
 }
 
 type DefinitionList []*Definition
@@ -118,4 +131,11 @@ func (l DefinitionList) Enums() DefinitionList {
 		return def.IsEnum()
 	}
 	return l.filter(fn)
+}
+
+func (l DefinitionList) ByName(name string) *Definition {
+	fn := func(def *Definition) bool {
+		return def.Name == name
+	}
+	return l.first(fn)
 }

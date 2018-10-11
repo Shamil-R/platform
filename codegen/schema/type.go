@@ -28,3 +28,7 @@ func (t *Type) Name() string {
 	}
 	return t.Type.Name()
 }
+
+func (t *Type) Definition() *Definition {
+	return t.schema.Types().ByName(t.Name())
+}
