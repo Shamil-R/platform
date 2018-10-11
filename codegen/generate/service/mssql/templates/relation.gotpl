@@ -1,50 +1,28 @@
-	{{- define "table" }}
-	{{- if .IsSlice }}
-	{{- lower .Elem.Name }}
-	{{- else }}
-	{{- lower .Name }}
-	{{- end }}
-	{{- end }}
-
-	{{- define "type" }}
-	{{- if .IsSlice }}[]
-	{{- template "type" .Elem }}
-	{{- else }}
-	{{- if not .NonNull }}*{{ end }}model.{{ .NamedType }}
-	{{- end }}
-	{{- end -}}
+{{- define "relation" }}
+	var res {{ template "type" .Type }}
 
 	tx, err := mssql.Begin(ctx)
 	if err != nil {
-		return nil, err
+		return res, err
 	}
 
 	querySelect := `
-		SELECT * FROM [{{ template "table" .FieldDefinition.Type }}]
+		SELECT *
+		FROM {{ template "table" .Type }}
 		WHERE {{ lower .Definition.Name }}_id = :id
 	`
-
 	argSelect := map[string]interface{}{
 		"id": obj.ID,
 	}
 
 	stmt, err := tx.PrepareNamed(querySelect)
 	if err != nil {
-		return nil, err
+		return res, err
 	}
 
-	resSelect := {{ template "type" .FieldDefinition.Type }}{}
-
-	{{- if .FieldDefinition.Type.IsSlice }}
-	if err := stmt.Select(&resSelect, argSelect); err != nil {
-		return nil, err
+	if err := stmt.{{- if .Type.IsSlice }}Select{{- else }}Get{{- end }}(&res, argSelect); err != nil {
+		return res, err
 	}
 
-	return resSelect, nil
-	{{- else }}
-	if err := stmt.Get(&resSelect, argSelect); err != nil {
-		return nil, err
-	}
-
-	return &resSelect, nil
-	{{- end }}
+	return res, nil
+{{- end }}

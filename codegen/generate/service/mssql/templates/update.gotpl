@@ -1,24 +1,25 @@
-	{{- $model := .Definition.Name }}
-	{{- $table := lower $model}}
-	{{- $fields := .Definition.Fields.ForUpdateInput}}
-	{{- $fieldsLen := len $fields }}
+{{- define "update" }}
 	tx, err := mssql.Begin(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	queryUpdate := `
-		UPDATE [{{ $table }}] SET
-			{{- range $i, $field := $fields }}
-			[{{ .Name }}] = :{{ .Name }}
-			{{- if next $i $fieldsLen }},{{ end }}
+		UPDATE {{ template "table" . }} SET
+			{{- with .Arguments.ByName "data" }}
+			{{- range $i, $arg := .Type.Definition.Fields }}
+			{{- if gt $i 0 }}, {{ end }}
+			{{ template "field" . }} = {{ template "bind" . }}
+			{{- end }}
 			{{- end }}
 		WHERE id = :id
 	`
 
 	argUpdate := map[string]interface{}{
-		{{- range $i, $field := $fields }}
+		{{- with .Arguments.ByName "data" }}
+		{{- range $i, $arg := .Type.Definition.Fields }}
 		"{{ .Name }}": data.{{ title .Name }},
+		{{- end }}
 		{{- end }}
 		"id": where.ID,
 	}
@@ -28,7 +29,8 @@
 	}
 
 	querySelect := `
-		SELECT * FROM [{{ $table }}]
+		SELECT *
+		FROM {{ template "table" . }}
 		WHERE id = :id
 	`
 
@@ -41,10 +43,11 @@
 		return nil, err
 	}
 
-	resSelect := &model.{{ $model }}{}
+	var res {{ template "type" .Type }}
 
-	if err := stmt.Get(resSelect, argSelect); err != nil {
+	if err := stmt.Get(res, &argSelect); err != nil {
 		return nil, err
 	}
 
-	return resSelect, nil
+	return res, nil
+{{- end }}

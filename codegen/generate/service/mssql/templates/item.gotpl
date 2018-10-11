@@ -1,12 +1,12 @@
-	{{- $model := .Definition.Name }}
-	{{- $table := lower $model }}
+{{- define "item" }}
 	tx, err := mssql.Begin(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	querySelect := `
-		SELECT * FROM [{{ $table }}]
+		SELECT *
+		FROM {{ template "table" . }}
 		WHERE id = :id
 	`
 
@@ -19,10 +19,11 @@
 		return nil, err
 	}
 
-	resSelect := &model.{{ $model }}{}
+	var res {{ template "type" .Type }}
 
-	if err := stmt.Get(resSelect, argSelect); err != nil {
+	if err := stmt.Get(res, &argSelect); err != nil {
 		return nil, err
 	}
 
-	return resSelect, nil
+	return res, nil
+{{- end }}

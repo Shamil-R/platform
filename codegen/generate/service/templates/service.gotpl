@@ -17,7 +17,7 @@ type {{ title $mutationService }} interface {
 	{{- end}}
 }
 
-type {{ $mutationService }} struct {}
+type {{ $mutationService }} struct{}
 
 func New{{ title $mutationService }}() *{{ $mutationService }} {
 	return &{{ $mutationService }}{}
@@ -34,7 +34,7 @@ type {{ title $queryService }} interface {
 	{{- end}}
 }
 
-type {{ $queryService }} struct {}
+type {{ $queryService }} struct{}
 
 func New{{ title $queryService }}() *{{ $queryService }} {
 	return &{{ $queryService }}{}
@@ -45,13 +45,13 @@ func (s *{{ $queryService }}) {{ template "func" . }} {
 }
 {{ end}}
 {{- $relationService :=  lower .Name | printf "%sRelationService"  }}
-type {{ $relationService }} interface {
+type {{ title $relationService }} interface {
 	{{- range .Relations }}
 	{{ template "func_relation" . }}
 	{{- end}}
 }
 
-type {{ title $relationService }} struct {}
+type {{ $relationService }} struct{}
 
 func New{{ title $relationService }}() *{{ $relationService }} {
 	return &{{ $relationService }}{}

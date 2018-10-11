@@ -1,0 +1,3 @@
+{{- define "table" -}}
+[{{ lower .Definition.Name }}]
+{{- end }}
