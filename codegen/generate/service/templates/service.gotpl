@@ -44,6 +44,7 @@ func (s *{{ $queryService }}) {{ template "func" . }} {
 	{{- template "impl" . }}
 }
 {{ end}}
+{{- if gt (len .Relations) 0 }}
 {{- $relationService :=  lower .Name | printf "%sRelationService"  }}
 type {{ title $relationService }} interface {
 	{{- range .Relations }}
@@ -61,4 +62,5 @@ func (s *{{ $relationService }}) {{ template "func_relation" . }} {
 	{{- template "impl" . }}
 }
 {{ end}}
+{{- end }}
 {{- end }}

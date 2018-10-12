@@ -5,8 +5,8 @@
 	}
 
 	querySelect := `
-		SELECT *
-		FROM {{ template "table" . }}
+		SELECT {{ template "select" .Type.Definition.Fields }}
+		FROM {{ template "table" .Definition }}
 	`
 
 	argSelect := map[string]interface{}{}
@@ -16,7 +16,7 @@
 		return nil, err
 	}
 
-	var resSelect {{ template "type" .Type }}
+	resSelect := {{ template "new" .Type }}
 
 	if err := stmt.Select(&resSelect, argSelect); err != nil {
 		return nil, err

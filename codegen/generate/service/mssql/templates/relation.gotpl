@@ -1,5 +1,5 @@
 {{- define "relation" }}
-	var resSelect {{ template "type" .Type }}
+	resSelect := {{ template "new" .Type }}
 
 	tx, err := mssql.Begin(ctx)
 	if err != nil {
@@ -8,7 +8,7 @@
 
 	querySelect := `
 		SELECT *
-		FROM {{ template "table" .Type }}
+		FROM {{ template "table" .Type.Definition }}
 		WHERE {{ lower .Definition.Name }}_id = :id
 	`
 	argSelect := map[string]interface{}{

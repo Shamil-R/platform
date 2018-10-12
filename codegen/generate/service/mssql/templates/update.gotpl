@@ -5,7 +5,7 @@
 	}
 
 	queryUpdate := `
-		UPDATE {{ template "table" . }} SET
+		UPDATE {{ template "table" .Definition }} SET
 			{{- with .Arguments.ByName "data" }}
 			{{- range $i, $field := .Type.Definition.Fields }}
 			{{- if gt $i 0 }}, {{ end }}
@@ -29,8 +29,8 @@
 	}
 
 	querySelect := `
-		SELECT *
-		FROM {{ template "table" . }}
+		SELECT {{ template "select" .Type.Definition.Fields }}
+		FROM {{ template "table" .Definition }}
 		WHERE id = :id
 	`
 
@@ -43,7 +43,7 @@
 		return nil, err
 	}
 
-	var resSelect {{ template "type" .Type }}
+	resSelect := {{ template "new" .Type }}
 
 	if err := stmt.Get(resSelect, argSelect); err != nil {
 		return nil, err

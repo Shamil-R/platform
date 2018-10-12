@@ -1,5 +1,5 @@
 {{- define "create" }}
-	var resSelect {{ template "type" .Type }}
+	resSelect := {{ template "new" .Type }}
 
 	tx, err := mssql.Begin(ctx)
 	if err != nil {
@@ -7,7 +7,7 @@
 	}
 
 	queryInsert := `
-		INSERT INTO {{ template "table" . }} (
+		INSERT INTO {{ template "table" .Definition }} (
 			{{- with .Arguments.ByName "data" }}
 			{{- range $i, $field := .Type.Definition.Fields }}
 			{{- if gt $i 0 }}, {{ end }}
@@ -33,8 +33,8 @@
 	}
 
 	querySelect := `
-		SELECT *
-		FROM {{ template "table" . }}
+		SELECT {{ template "select" .Type.Definition.Fields }}
+		FROM {{ template "table" .Definition }}
 		WHERE id = :id
 	`
 
