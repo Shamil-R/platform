@@ -16,11 +16,11 @@ func (f *FieldDefinition) Type() *Type {
 }
 
 func (f *FieldDefinition) Arguments() ArgumentDefinitionList {
-	arguments := make(ArgumentDefinitionList, len(f.FieldDefinition.Arguments))
+	args := make(ArgumentDefinitionList, len(f.FieldDefinition.Arguments))
 	for i, arg := range f.FieldDefinition.Arguments {
-		arguments[i] = &ArgumentDefinition{arg, f}
+		args[i] = &ArgumentDefinition{arg, f}
 	}
-	return arguments
+	return args
 }
 
 func (f *FieldDefinition) Directives() DirectiveList {

@@ -1,6 +1,6 @@
 {{- define "object" }}
 {{- range . }}
-type {{ .Name }} {
+type {{ .Name }}{{ template "directives" .Directives }} {
     {{- range .Fields }}
 	{{- if .Type.IsRelation }}
 	{{ .Name }}(where: {{ .Type.Name }}WhereInput): {{ .Type }}

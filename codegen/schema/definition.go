@@ -35,6 +35,14 @@ func (d *Definition) Fields() FieldList {
 	return fields
 }
 
+func (d *Definition) Directives() DirectiveList {
+	directives := make(DirectiveList, len(d.Definition.Directives))
+	for i, d := range d.Definition.Directives {
+		directives[i] = &Directive{d}
+	}
+	return directives
+}
+
 func (d *Definition) Mutations() ActionList {
 	actions := make(ActionList, 0)
 	mutation := d.schema.Mutation()

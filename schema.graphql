@@ -11,10 +11,17 @@ type User {
 #     access: RoleAccess!
 # }
 
-type Material {
+type Material @table(name: "co_material") {
     id: Int! @primary @identity
     name: String! @validate(min: 10 max: 20)
-    author: User!
+    # author: User!
+}
+
+type Person @table(name: "co_person") {
+  id: Int! @primary @identity
+  name: String
+  surname: String
+  phone: String @field(name: "home_phone")
 }
 
 # """

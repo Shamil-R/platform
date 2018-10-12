@@ -1,6 +1,6 @@
-{{- define "arguments" }}
+{{- define "arguments" -}}
 {{- range $i, $arg := . }}
 {{- if gt $i 0 }}{{ print " " }}{{ end }}
-{{- .Name }}: {{ .Value.Raw }}
+{{- .Name }}: {{ .Value }}
 {{- end }}
 {{- end }}
