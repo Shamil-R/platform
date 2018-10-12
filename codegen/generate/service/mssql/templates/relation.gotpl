@@ -1,9 +1,9 @@
 {{- define "relation" }}
-	var res {{ template "type" .Type }}
+	var resSelect {{ template "type" .Type }}
 
 	tx, err := mssql.Begin(ctx)
 	if err != nil {
-		return res, err
+		return resSelect, err
 	}
 
 	querySelect := `
@@ -17,12 +17,12 @@
 
 	stmt, err := tx.PrepareNamed(querySelect)
 	if err != nil {
-		return res, err
+		return resSelect, err
 	}
 
-	if err := stmt.{{- if .Type.IsSlice }}Select{{- else }}Get{{- end }}(&res, argSelect); err != nil {
-		return res, err
+	if err := stmt.{{- if .Type.IsSlice }}Select{{- else }}Get{{- end }}(&resSelect, argSelect); err != nil {
+		return resSelect, err
 	}
 
-	return res, nil
+	return resSelect, nil
 {{- end }}

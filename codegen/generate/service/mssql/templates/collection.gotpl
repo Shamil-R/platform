@@ -16,11 +16,11 @@
 		return nil, err
 	}
 
-	var res {{ template "type" .Type }}
+	var resSelect {{ template "type" .Type }}
 
-	if err := stmt.Select(&res, &argSelect); err != nil {
+	if err := stmt.Select(&resSelect, argSelect); err != nil {
 		return nil, err
 	}
 
-	return res, nil
+	return resSelect, nil
 {{- end }}
