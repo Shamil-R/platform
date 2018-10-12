@@ -68,7 +68,7 @@ func transform(ctx context.Context) ([]Data, error) {
 
 //todo
 func getActionName(fieldName string) string {
-	actions := [3]string{"create", "update", "delete"}
+	actions := [4]string{"create", "update", "delete", "upsert"}
 
 	for _, action := range actions {
 		if strings.Contains(fieldName, action) {

@@ -42,7 +42,7 @@ func (r role) CheckAccess(ctx context.Context, d []Data) error {
 }
 
 func (r role) getAvailableFields(ctx context.Context, object string, field string) (*[]AvailableFields, error) {
-	action := "update"
+	action := "upsert"
 	userData := auth.GetContext(ctx)
 	return &[]AvailableFields{{object, field, userData.ID, action}}, nil
 }

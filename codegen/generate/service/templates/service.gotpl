@@ -4,6 +4,7 @@ package {{ .Service.Package }}
 
 import (
 	"context"
+	"database/sql"
 
 	model "{{ .Model.Import }}"
 

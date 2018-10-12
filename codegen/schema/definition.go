@@ -53,6 +53,7 @@ func (d *Definition) Mutations() ActionList {
 		ACTION_CREATE + d.Name: ACTION_CREATE,
 		ACTION_UPDATE + d.Name: ACTION_UPDATE,
 		ACTION_DELETE + d.Name: ACTION_DELETE,
+		ACTION_UPSERT + d.Name: ACTION_UPSERT,
 	}
 	for _, field := range mutation.Fields() {
 		if act, ok := checks[field.Name]; ok {

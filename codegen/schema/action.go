@@ -5,6 +5,7 @@ const (
 	ACTION_CREATE     = "create"
 	ACTION_UPDATE     = "update"
 	ACTION_DELETE     = "delete"
+	ACTION_UPSERT     = "upsert"
 	ACTION_ITEM       = "item"
 	ACTION_COLLECTION = "collection"
 	ACTION_RELATION   = "relation"
