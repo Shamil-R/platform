@@ -1,5 +1,5 @@
 {{- define "select" }}
-{{- range $i, $field := . }}
+{{- range $i, $field := .NotRelations }}
 	{{- if gt $i 0 }}, {{ end }}
 	{{- with .Directives.Field }}
 		{{- with .Arguments.ByName "name" }}

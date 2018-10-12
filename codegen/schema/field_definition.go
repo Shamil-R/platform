@@ -70,3 +70,10 @@ func (l FieldList) Relations() FieldList {
 	}
 	return l.filter(fn)
 }
+
+func (l FieldList) NotRelations() FieldList {
+	fn := func(field *FieldDefinition) bool {
+		return !field.Type().IsRelation()
+	}
+	return l.filter(fn)
+}
