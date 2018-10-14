@@ -4,10 +4,23 @@
 		return nil, err
 	}
 
-	querySelect := `
+	var queryFrom string
+	if skip != nil || first != nil || last != nil {
+		queryFrom = `
+			(
+				SELECT {{ template "select" .Type.Definition.Fields }},
+					ROW_NUMBER() OVER (ORDER BY id) AS num
+				FROM {{ template "table" .Definition }}
+			) AS result
+		`
+	} else {
+		queryFrom = "{{ template "table" .Definition }}"
+	}
+
+	querySelect := fmt.Sprintf(`
 		SELECT {{ template "select" .Type.Definition.Fields }}
-		FROM {{ template "table" .Definition }}
-	`
+		FROM %s
+	`, queryFrom)
 
 	argSelect := map[string]interface{}{}
 

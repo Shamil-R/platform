@@ -2,10 +2,6 @@ package service
 
 import (
 	"gitlab/nefco/platform/codegen/generate/service/mssql"
-	"gitlab/nefco/platform/codegen/generate/service/stub"
-	"gitlab/nefco/platform/service/log"
-	"gitlab/nefco/platform/service/role"
-	"gitlab/nefco/platform/service/validate"
 
 	"github.com/99designs/gqlgen/handler"
 	"github.com/spf13/viper"
@@ -13,10 +9,10 @@ import (
 
 func init() {
 	services = []Service{
-		validate.New(),
-		role.New(),
-		log.New(),
-		stub.New(),
+		// validate.New(),
+		// role.New(),
+		// log.New(),
+		// stub.New(),
 		mssql.New(),
 	}
 }

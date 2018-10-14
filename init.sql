@@ -16,9 +16,11 @@ USE platform
 -- создание пользователя бд
 IF NOT EXISTS (SELECT * FROM master.sys.database_principals WHERE name = 'platform')
 BEGIN
-	-- CREATE USER platform FOR LOGIN platform WITH DEFAULT_SCHEMA = dbo
+	CREATE USER platform FOR LOGIN platform WITH DEFAULT_SCHEMA = dbo
 	EXEC sp_addrolemember 'db_owner', 'platform'
 END
+
+USE platform
 
 -- создание таблицы user
 IF OBJECT_ID('user', 'U') IS NOT NULL
@@ -30,5 +32,4 @@ CREATE TABLE [user] (
     name NVARCHAR(50)
 )
 
--- INSERT INTO user (id, name) VALUES(1, 'Test')
--- GO
+INSERT INTO [user] (name) VALUES('Test')

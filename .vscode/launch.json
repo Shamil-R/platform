@@ -15,7 +15,7 @@
             "program": "${workspaceFolder}/platform",
             "cwd": "${workspaceFolder}",
             "env": {},
-            "args": ["codegen"],
+            "args": ["run"],
             "showLog": true
         }
     ]

@@ -31,7 +31,10 @@ func (s *Schema) Query() *Definition {
 func (s *Schema) Types() DefinitionList {
 	definitions := make(DefinitionList, 0, len(s.Schema.Types))
 	for _, def := range s.Schema.Types {
-		if !strings.HasPrefix(def.Name, "__") {
+		isInt := def.Name == "Int"
+		isString := def.Name == "String"
+		if !strings.HasPrefix(def.Name, "__") &&
+			!isInt && !isString {
 			definitions = append(definitions, &Definition{def, s})
 		}
 	}
