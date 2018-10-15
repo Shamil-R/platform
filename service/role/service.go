@@ -2,6 +2,7 @@ package role
 
 import (
 	"context"
+	"gitlab/nefco/platform/service/extension"
 	"strings"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -52,7 +53,8 @@ func transform(ctx context.Context) ([]Data, error) {
 
 	result := []Data{}
 
-	actionName := getActionName(resCtx.Field.Name)
+	action := extension.GetContext(ctx)
+	actionName := action.ActionName
 
 	var err error
 	result, err = walkField(resCtx.Field.SelectionSet, actionName, result)
@@ -86,16 +88,4 @@ func walkField(set ast.SelectionSet, actionName string, data []Data) ([]Data, er
 		}
 	}
 	return data, nil
-}
-
-//todo
-func getActionName(fieldName string) string {
-	actions := [4]string{"create", "update", "delete", "upsert"}
-
-	for _, action := range actions {
-		if strings.Contains(fieldName, action) {
-			return action
-		}
-	}
-	return "read"
 }

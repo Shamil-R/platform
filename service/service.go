@@ -1,18 +1,19 @@
 package service
 
 import (
+	"github.com/99designs/gqlgen/handler"
+	"github.com/spf13/viper"
 	"gitlab/nefco/platform/codegen/generate/service/mssql"
 	"gitlab/nefco/platform/codegen/generate/service/stub"
 	"gitlab/nefco/platform/service/log"
 	"gitlab/nefco/platform/service/role"
 	"gitlab/nefco/platform/service/validate"
-
-	"github.com/99designs/gqlgen/handler"
-	"github.com/spf13/viper"
+	"gitlab/nefco/platform/service/extension"
 )
 
 func init() {
 	services = []Service{
+		extension.New(),
 		validate.New(),
 		role.New(),
 		log.New(),
