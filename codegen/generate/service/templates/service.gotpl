@@ -8,6 +8,7 @@ import (
 
 	model "{{ .Model.Import }}"
 
+	//TODO: переделать импорт на чтение из конфига
 	mssql "gitlab/nefco/platform/codegen/generate/service/mssql"
 )
 {{- with .Definition }}
