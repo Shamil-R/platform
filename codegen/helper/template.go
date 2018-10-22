@@ -2,6 +2,7 @@ package helper
 
 import (
 	"fmt"
+	"github.com/huandu/xstrings"
 	"text/template"
 
 	"github.com/Masterminds/sprig"
@@ -23,6 +24,8 @@ func ReadTemplate(name string, boxes ...packr.Box) (*template.Template, error) {
 
 	funcs := sprig.TxtFuncMap()
 	funcs["plural"] = inflection.Plural
+	funcs["firstRuneToUpper"] = xstrings.FirstRuneToUpper
+	funcs["firstRuneToLower"] = xstrings.FirstRuneToLower
 
 	tmpl := template.New(name + ".gotpl").Funcs(funcs)
 

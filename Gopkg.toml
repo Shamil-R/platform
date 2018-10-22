@@ -69,3 +69,11 @@ required = ["github.com/99designs/gqlgen", "github.com/gobuffalo/packr/packr", "
 [[constraint]]
   name = "github.com/go-ozzo/ozzo-validation"
   version = "3.5.0"
+
+[[constraint]]
+  name = "github.com/Knetic/govaluate"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/casbin/casbin"
+  version = "v1.6.0"

@@ -32,3 +32,45 @@ CREATE TABLE [user] (
 
 -- INSERT INTO user (id, name) VALUES(1, 'Test')
 -- GO
+
+IF OBJECT_ID('object_access', 'U') IS NOT NULL
+BEGIN
+    DROP TABLE [object_access]
+END
+CREATE TABLE [object_access] (
+    id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    user_id INT NOT NULL,
+    object NVARCHAR(50) NOT NULL
+)
+
+INSERT INTO object_access (user_id, object) VALUES(1, 'User')
+
+IF OBJECT_ID('action_object_access', 'U') IS NOT NULL
+BEGIN
+    DROP TABLE [action_object_access]
+END
+CREATE TABLE [action_object_access] (
+    id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    object_id INT NOT NULL,
+    action NVARCHAR(8) NOT NULL
+)
+
+IF OBJECT_ID('field_access', 'U') IS NOT NULL
+BEGIN
+    DROP TABLE [field_access]
+END
+CREATE TABLE [field_access] (
+    id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    object_id INT NOT NULL,
+    field NVARCHAR(50) NOT NULL
+)
+
+IF OBJECT_ID('action_field_access', 'U') IS NOT NULL
+BEGIN
+    DROP TABLE [action_field_access]
+END
+CREATE TABLE [action_field_access] (
+    id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    field_id INT NOT NULL,
+    action NVARCHAR(50) NOT NULL
+)

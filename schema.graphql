@@ -24,6 +24,35 @@ type Person @table(name: "co_person") {
   phone: String @field(name: "home_phone")
 }
 
+
+
+type ObjectAccess @table(name: "object_access") {
+  id: Int! @primary @identity
+  user: Int! @field(name: "user_id")
+  object: String!
+}
+
+type ActionObjectAccess @table(name: "action_object_access") {
+  id: Int! @primary @identity
+  object: [ObjectAccess!]
+  #object: Int! @field(name: "object_id")
+  action: String!
+}
+
+type FieldAccess @table(name: "field_access") {
+  id: Int! @primary @identity
+  object: [ObjectAccess!]
+  #object: Int! @field(name: "object_id")
+  field: String!
+}
+
+type ActionFieldAccess @table(name: "action_field_access") {
+  id: Int! @primary @identity
+  field: [FieldAccess!]
+  #field: Int! @field(name: "field_id")
+  action: String!
+}
+
 # """
 # Уровни доступа
 # """
