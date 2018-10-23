@@ -1,18 +1,20 @@
 package query
 
-import "go/ast"
+import (
+	"github.com/vektah/gqlparser/ast"
+)
 
 type Bind interface {
 	Bind(placeholder string, value interface{})
 }
 
-type Field interface {
+type Input interface {
 	Bind
 	Field() *ast.Field
 }
 
 type Build interface {
-	Build(field Field) string
+	Build(input Input) string
 }
 
 type Arg interface {
@@ -27,6 +29,10 @@ type Query interface {
 type query struct {
 	field *ast.Field
 	arg   map[string]interface{}
+}
+
+func newQuery(field *ast.Field) *query {
+	return &query{field, make(map[string]interface{})}
 }
 
 func (q *query) Bind(placeholder string, value interface{}) {

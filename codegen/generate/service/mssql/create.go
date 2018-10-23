@@ -3,33 +3,33 @@ package mssql
 import (
 	"context"
 	"fmt"
-	"strings"
+	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 
 	"github.com/99designs/gqlgen/graphql"
 )
 
 func Create(ctx context.Context, result interface{}) error {
-	resCtx := graphql.GetResolverContext(ctx)
+	/* resCtx := graphql.GetResolverContext(ctx)
 
 	field := resCtx.Field.Field
 
-	// fmt.Println("field:", field.Name, field.Alias, field.Definition.Type)
+	fmt.Println("field:", field.Name, field.Alias, field.Definition.Type)
 
-	// for _, arg := range field.Arguments {
-	// 	fmt.Println("arg:", arg.Name, arg.Value)
+	for _, arg := range field.Arguments {
+		fmt.Println("arg:", arg.Name, arg.Value)
 
-	// 	def := arg.Value.Definition
-	// 	if def != nil {
-	// 		fmt.Println("def:", def.Name)
-	// 	}
-	// }
+		def := arg.Value.Definition
+		if def != nil {
+			fmt.Println("def:", def.Name)
+		}
+	}
 
-	// for _, sel := range resCtx.Field.Selections {
-	// 	switch sel := sel.(type) {
-	// 	case *ast.Field:
-	// 		fmt.Println("sel:", sel.Name)
-	// 	}
-	// }
+	for _, sel := range resCtx.Field.Selections {
+		switch sel := sel.(type) {
+		case *ast.Field:
+			fmt.Println("sel:", sel.Name)
+		}
+	}
 
 	var queryInsertColumns []string
 	var queryInsertValues []string
@@ -73,5 +73,45 @@ func Create(ctx context.Context, result interface{}) error {
 		"id": id,
 	}
 
-	return itemByArg(ctx, result, arg)
+	return itemByArg(ctx, result, arg) */
+
+	resCtx := graphql.GetResolverContext(ctx)
+
+	q := query.Insert(resCtx.Field.Field)
+
+	tx, err := Begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(q.Query())
+
+	res, err := tx.NamedExec(q.Query(), q.Arg())
+	if err != nil {
+		return err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	q = query.Select(resCtx.Field.Field,
+		map[string]interface{}{
+			"id": id,
+		},
+	)
+
+	fmt.Println(q.Query())
+
+	stmt, err := tx.PrepareNamed(q.Query())
+	if err != nil {
+		return err
+	}
+
+	if err := stmt.Get(result, q.Arg()); err != nil {
+		return err
+	}
+
+	return nil
 }

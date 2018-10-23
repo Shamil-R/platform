@@ -3,6 +3,7 @@ package mssql
 import (
 	"context"
 	"fmt"
+	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 
 	"github.com/99designs/gqlgen/graphql"
 )
@@ -10,17 +11,35 @@ import (
 func Item(ctx context.Context, result interface{}) error {
 	resCtx := graphql.GetResolverContext(ctx)
 
-	field := resCtx.Field.Field
+	query := query.Select(resCtx.Field.Field, map[string]interface{}{})
 
-	arg := map[string]interface{}{}
+	fmt.Println(query.Query())
 
-	if argument := field.Arguments.ForName("where"); argument != nil {
-		for _, child := range argument.Value.Children {
-			arg[child.Name] = child.Value.Raw
-		}
+	tx, err := Begin(ctx)
+	if err != nil {
+		return err
 	}
 
-	return itemByArg(ctx, result, arg)
+	stmt, err := tx.PrepareNamed(query.Query())
+	if err != nil {
+		return err
+	}
+
+	if err := stmt.Get(result, query.Arg()); err != nil {
+		return err
+	}
+
+	return nil
+
+	// arg := map[string]interface{}{}
+
+	// if argument := field.Arguments.ForName("where"); argument != nil {
+	// 	for _, child := range argument.Value.Children {
+	// 		arg[child.Name] = child.Value.Raw
+	// 	}
+	// }
+
+	// return itemByArg(ctx, result, arg)
 }
 
 func itemByArg(ctx context.Context, result interface{}, arg map[string]interface{}) error {

@@ -3,6 +3,7 @@ package mssql
 import (
 	"context"
 	"fmt"
+	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 
 	"github.com/99designs/gqlgen/graphql"
 )
@@ -10,38 +11,22 @@ import (
 func Collection(ctx context.Context, result interface{}) error {
 	resCtx := graphql.GetResolverContext(ctx)
 
-	field := resCtx.Field.Field
+	query := query.Select(resCtx.Field.Field, map[string]interface{}{})
 
-	query, arg := qSelect(field)
-
-	// arg := map[string]interface{}{}
-
-	// query := fmt.Sprintf(
-	// 	"SELECT \n\t%s\nFROM %s",
-	// 	querySelect(field),
-	// 	queryFrom(field),
-	// )
-
-	fmt.Println(query)
+	fmt.Println(query.Query())
 
 	tx, err := Begin(ctx)
 	if err != nil {
 		return err
 	}
 
-	if len(arg) == 0 {
-		if err := tx.Select(result, query); err != nil {
-			return err
-		}
-	} else {
-		stmt, err := tx.PrepareNamed(query)
-		if err != nil {
-			return err
-		}
+	stmt, err := tx.PrepareNamed(query.Query())
+	if err != nil {
+		return err
+	}
 
-		if err := stmt.Select(result, arg); err != nil {
-			return err
-		}
+	if err := stmt.Select(result, query.Arg()); err != nil {
+		return err
 	}
 
 	return nil
