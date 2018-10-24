@@ -7,19 +7,20 @@ import (
 	"github.com/casbin/casbin"
 	"gitlab/nefco/platform/codegen/generate/service/mssql"
 	"gitlab/nefco/platform/service/auth"
+	"github.com/jmoiron/sqlx"
 
+	"gitlab/nefco/platform/app/model"
 	genserv "gitlab/nefco/platform/app/service"
-	model "gitlab/nefco/platform/app/model"
 )
 
 type Data struct {
 	Table  string
-	Field  string
+	Fields []string
 	Action string
 }
 
 type Role interface {
-	CheckAccess(context.Context, []Data) error
+	CheckAccess(context.Context, *Data) error
 }
 
 type role struct{}
@@ -42,7 +43,7 @@ type Object struct {
 	AllowField 		*bool	`json:"allow_field"`
 }
 
-func GetObject(ctx context.Context, table string, field string, UserID int) ([]*Object, error) {
+func GetObject(ctx context.Context, table string, fields []string, UserID int) ([]*Object, error) {
 	tx, err := mssql.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -61,13 +62,23 @@ func GetObject(ctx context.Context, table string, field string, UserID int) ([]*
 		LEFT JOIN [action_object_access] [aoa] ON [aoa].[object_id] = [oa].[id]
 		LEFT JOIN [field_access] [fa] ON [fa].[object_id] = [oa].[id]
 		LEFT JOIN [action_field_access] [afa] ON [afa].[field_id] = [fa].[id]
-		WHERE [oa].[user_id] = :user_id and [oa].[object] = :object and ([fa].[field] = :field or [fa].[field] is null)
+		WHERE [oa].[user_id] = :user_id and [oa].[object] = :object and ([fa].[field] in (?) or [fa].[field] is null)
 	`
+
+	querySelect, args, err := sqlx.In(querySelect, fields)
+	if err != nil {
+		return nil, err
+	}
+
+	querySelect = sqlx.Rebind(sqlx.NAMED, querySelect)
 
 	argSelect := map[string]interface{}{
 		"user_id": fmt.Sprintf("%d", UserID),
 		"object": table,
-		"field": field,
+	}
+
+	for index, arg := range args {
+		argSelect[fmt.Sprintf("arg%d", index+1)] = arg
 	}
 
 	stmt, err := tx.PrepareNamed(querySelect)
@@ -101,35 +112,39 @@ func checkAvailability(args ...interface{}) (interface{}, error) {
 	for _, elem := range obj {
 
 		// приоритет 1 - разрешение на таблицу и на все операции
-		if elem.ActionObject == nil && elem.AllowObject != nil &&  *elem.AllowObject == true {
-			tableAllAct = 1
-		}
-		if elem.ActionObject == nil && elem.AllowObject != nil &&  *elem.AllowObject != true {
-			tableAllAct = -1
+		if elem.ActionObject == nil && elem.AllowObject != nil {
+			if  *elem.AllowObject == true {
+				tableAllAct = 1
+			} else if *elem.AllowObject != true {
+				tableAllAct = -1
+			}
 		}
 
 		// приоритет 2 - разрешение на таблицу и на определенную операцию
-		if elem.ActionObject != nil && *elem.ActionObject == act.Act && elem.AllowObject != nil &&  *elem.AllowObject == true {
-			tableOneAct = 1
-		}
-		if elem.ActionObject != nil && *elem.ActionObject == act.Act && elem.AllowObject != nil &&  *elem.AllowObject != true {
-			tableOneAct = -1
+		if elem.ActionObject != nil && *elem.ActionObject == act.Act && elem.AllowObject != nil {
+			if *elem.AllowObject == true {
+				tableOneAct = 1
+			} else if *elem.AllowObject != true {
+				tableOneAct = -1
+			}
 		}
 
 		// приоритет 3 - разрешение на поле и на все операции
-		if elem.ActionField == nil && elem.AllowField != nil && *elem.AllowField == true {
-			fieldAllAct = 1
-		}
-		if elem.ActionField == nil && elem.AllowField != nil && *elem.AllowField != true {
-			fieldAllAct = -1
+		if elem.ActionField == nil && elem.AllowField != nil {
+			if *elem.AllowField == true {
+				fieldAllAct = 1
+			} else if *elem.AllowField != true {
+				fieldAllAct = -1
+			}
 		}
 
 		// приоритет 4 - разрешение на поле и на определенную операцию
-		if elem.ActionField != nil && *elem.ActionField == act.Act && elem.AllowField != nil &&  *elem.AllowField == true {
-			fieldOneAct = 1
-		}
-		if elem.ActionField != nil && *elem.ActionField == act.Act && elem.AllowField != nil &&  *elem.AllowField != true {
-			fieldOneAct = -1
+		if elem.ActionField != nil && *elem.ActionField == act.Act && elem.AllowField != nil {
+			if  *elem.AllowField == true {
+				fieldOneAct = 1
+			} else if *elem.AllowField != true {
+				fieldOneAct = -1
+			}
 		}
 	}
 
@@ -244,23 +259,27 @@ func FieldAccess(ctx context.Context) (*model.FieldAccess, error) {
 	return &fld, nil
 }
 
-func (r role) CheckAccess(ctx context.Context, d []Data) error {
+func (r role) CheckAccess(ctx context.Context, d *Data) error {
+	if d == nil {
+		return nil
+	}
+
 	e := casbin.NewEnforcer("service/role/abac_model.conf")
 	e.AddFunction("my_func", checkAvailability)
 
 	userData := auth.GetContext(ctx)
 
-	for _, elem := range d {
-		act := Action{elem.Action}
-		sub := Subject{userData.ID}
-		obj, err := GetObject(ctx, elem.Table, elem.Field, userData.ID)
-		if err != nil {
-			return err
-		}
+	sub := Subject{userData.ID}
+	act := Action{d.Action}
 
-		if e.Enforce(sub, obj, act) != true {
-			return errors.New("Вам отказано в доступе к запрашиваемым данным")
-		}
+	obj, err := GetObject(ctx, d.Table, d.Fields, userData.ID)
+	if err != nil {
+		return err
 	}
+
+	if e.Enforce(sub, obj, act) != true {
+		return errors.New("Вам отказано в доступе к запрашиваемым данным")
+	}
+
 	return nil
 }

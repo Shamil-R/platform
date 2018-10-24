@@ -39,7 +39,7 @@ func middleware(role Role) graphql.FieldMiddleware {
 	}
 }
 
-func transform(ctx context.Context) ([]Data, error) {
+func transform(ctx context.Context) (*Data, error) {
 	resCtx := graphql.GetResolverContext(ctx)
 	// фильтр служебных запросов
 	name := resCtx.Field.Name
@@ -51,13 +51,13 @@ func transform(ctx context.Context) ([]Data, error) {
 		return nil, nil
 	}
 
-	result := []Data{}
-
 	action := extension.GetContext(ctx)
 	actionName := action.ActionName
 
+	result := &Data{Action:actionName}
+
 	var err error
-	result, err = walkField(resCtx.Field.SelectionSet, actionName, result)
+	result, err = walkField(resCtx.Field.SelectionSet, result)
 	if err != nil {
 		return nil, err
 	}
@@ -65,16 +65,17 @@ func transform(ctx context.Context) ([]Data, error) {
 	return result, nil
 }
 
-func walkField(set ast.SelectionSet, actionName string, data []Data) ([]Data, error) {
+func walkField(set ast.SelectionSet, data *Data) (*Data, error) {
 	if set != nil {
 		for _, sel := range set {
 			switch sel := sel.(type) {
 			case *ast.Field:
 				if sel.SelectionSet == nil {
-					data = append(data, Data{sel.ObjectDefinition.Name, sel.Name, actionName})
+					data.Table = sel.ObjectDefinition.Name
+					data.Fields = append(data.Fields, sel.Name)
 				} else {
 					var err error
-					data, err = walkField(sel.SelectionSet, actionName, data)
+					data, err = walkField(sel.SelectionSet, data)
 					if err != nil {
 						return nil, err
 					}
