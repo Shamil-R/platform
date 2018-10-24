@@ -1,53 +1,9 @@
 {{- define "update" }}
-	tx, err := mssql.Begin(ctx)
-	if err != nil {
+	res := {{ template "new" .Type }}
+
+	if err := mssql.Update(ctx, res); err != nil {
 		return nil, err
 	}
 
-	queryUpdate := `
-		UPDATE {{ template "table" .Definition }} SET
-			{{- with .Arguments.ByName "data" }}
-			{{- range $i, $field := .Type.Definition.Fields }}
-			{{- if gt $i 0 }}, {{ end }}
-			{{ template "field" . }} = {{ template "bind" . }}
-			{{- end }}
-			{{- end }}
-		WHERE id = :id
-	`
-
-	argUpdate := map[string]interface{}{
-		{{- with .Arguments.ByName "data" }}
-		{{- range $i, $field := .Type.Definition.Fields }}
-		"{{ .Name }}": data.{{ title .Name }},
-		{{- end }}
-		{{- end }}
-		"id": where.ID,
-	}
-
-	if _, err := tx.NamedExec(queryUpdate, argUpdate); err != nil {
-		return nil, err
-	}
-
-	querySelect := `
-		SELECT {{ template "select" .Type.Definition.Fields }}
-		FROM {{ template "table" .Definition }}
-		WHERE id = :id
-	`
-
-	argSelect := map[string]interface{}{
-		"id": where.ID,
-	}
-
-	stmt, err := tx.PrepareNamed(querySelect)
-	if err != nil {
-		return nil, err
-	}
-
-	resSelect := {{ template "new" .Type }}
-
-	if err := stmt.Get(resSelect, argSelect); err != nil {
-		return nil, err
-	}
-
-	return resSelect, nil
+	return res, nil
 {{- end }}

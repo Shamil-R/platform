@@ -1,42 +1,9 @@
 {{- define "delete" }}
-	tx, err := mssql.Begin(ctx)
-	if err != nil {
+	res := {{ template "new" .Type }}
+
+	if err := mssql.Delete(ctx, res); err != nil {
 		return nil, err
 	}
 
-	querySelect := `
-		SELECT {{ template "select" .Type.Definition.Fields }}
-		FROM {{ template "table" .Definition }}
-		WHERE id = :id
-	`
-
-	argSelect := map[string]interface{}{
-		"id": where.ID,
-	}
-
-	stmt, err := tx.PrepareNamed(querySelect)
-	if err != nil {
-		return nil, err
-	}
-
-	resSelect := {{ template "new" .Type }}
-
-	if err := stmt.Get(resSelect, argSelect); err != nil {
-		return nil, err
-	}
-
-	queryDelete := `
-		DELETE FROM {{ template "table" .Definition }}
-		WHERE id = :id
-	`
-
-	argDelete := map[string]interface{}{
-		"id": where.ID,
-	}
-
-	if _, err = tx.NamedExec(queryDelete, argDelete); err != nil {
-		return nil, err
-	}
-
-	return resSelect, nil
+	return res, nil
 {{- end }}

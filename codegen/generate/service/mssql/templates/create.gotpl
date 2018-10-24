@@ -1,55 +1,9 @@
 {{- define "create" }}
-	resSelect := {{ template "new" .Type }}
+	res := {{ template "new" .Type }}
 
-	tx, err := mssql.Begin(ctx)
-	if err != nil {
-		return resSelect, err
+	if err := mssql.Create(ctx, &res); err != nil {
+		return res, err
 	}
 
-	queryInsert := `
-		INSERT INTO {{ template "table" .Definition }} (
-			{{- with .Arguments.ByName "data" }}
-			{{- range $i, $field := .Type.Definition.Fields }}
-			{{- if gt $i 0 }}, {{ end }}
-			{{ template "field" . }}
-			{{- end }}
-		) VALUES (
-			{{- range $i, $field := .Type.Definition.Fields }}
-			{{- if gt $i 0 }}, {{ end }}
-			{{ template "bind" . }}
-			{{- end }}
-			{{- end }}
-		)
-	`
-
-	resInsert, err := tx.NamedExec(queryInsert, &data)
-	if err != nil {
-		return resSelect, err
-	}
-
-	id, err := resInsert.LastInsertId()
-	if err != nil {
-		return resSelect, err
-	}
-
-	querySelect := `
-		SELECT {{ template "select" .Type.Definition.Fields }}
-		FROM {{ template "table" .Definition }}
-		WHERE id = :id
-	`
-
-	argSelect := map[string]interface{}{
-		"id": id,
-	}
-
-	stmt, err := tx.PrepareNamed(querySelect)
-	if err != nil {
-		return resSelect, err
-	}
-
-	if err := stmt.Get(&resSelect, argSelect); err != nil {
-		return resSelect, err
-	}
-
-	return resSelect, nil
+	return res, nil
 {{- end }}
