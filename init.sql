@@ -43,7 +43,7 @@ CREATE TABLE [object_access] (
     object NVARCHAR(50) NOT NULL
 )
 
-INSERT INTO object_access (user_id, object) VALUES(1, 'User')
+--INSERT INTO object_access (user_id, object) VALUES(1, 'User')
 
 IF OBJECT_ID('action_object_access', 'U') IS NOT NULL
 BEGIN
@@ -52,8 +52,11 @@ END
 CREATE TABLE [action_object_access] (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     object_id INT NOT NULL,
-    action NVARCHAR(8) NOT NULL
+    action NVARCHAR(8),
+    allow BIT NOT NULL
 )
+
+--INSERT INTO action_object_access (object_id, allow) VALUES(1, 1)
 
 IF OBJECT_ID('field_access', 'U') IS NOT NULL
 BEGIN
@@ -72,5 +75,6 @@ END
 CREATE TABLE [action_field_access] (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     field_id INT NOT NULL,
-    action NVARCHAR(50) NOT NULL
+    action NVARCHAR(8),
+    allow BIT NOT NULL
 )

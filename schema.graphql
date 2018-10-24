@@ -34,9 +34,10 @@ type ObjectAccess @table(name: "object_access") {
 
 type ActionObjectAccess @table(name: "action_object_access") {
   id: Int! @primary @identity
-  object: [ObjectAccess!]
+  object: ObjectAccess!
   #object: Int! @field(name: "object_id")
-  action: String!
+  action: [String]
+  allow: Boolean!
 }
 
 type FieldAccess @table(name: "field_access") {
@@ -48,9 +49,10 @@ type FieldAccess @table(name: "field_access") {
 
 type ActionFieldAccess @table(name: "action_field_access") {
   id: Int! @primary @identity
-  field: [FieldAccess!]
+  field: FieldAccess!
   #field: Int! @field(name: "field_id")
-  action: String!
+  action: [String]
+  allow: Boolean!
 }
 
 # """
