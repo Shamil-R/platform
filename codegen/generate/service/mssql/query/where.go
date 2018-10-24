@@ -9,6 +9,7 @@ type whereQuery map[string]interface{}
 
 func (q whereQuery) Build(input Input) string {
 	var conditions []string
+
 	if ok, val := argumentValue(input, "where"); ok {
 		conditions = make([]string, 0, len(val.Children))
 		for _, child := range val.Children {
@@ -18,13 +19,16 @@ func (q whereQuery) Build(input Input) string {
 			conditions = append(conditions, condition)
 		}
 	}
+
 	for col, val := range q {
 		input.Bind(col, val)
 		condition := fmt.Sprintf("[%s] = :%s", col, col)
 		conditions = append(conditions, condition)
 	}
+
 	if len(conditions) == 0 {
 		return ""
 	}
-	return fmt.Sprintf("WHERE %s", strings.Join(conditions, " AND"))
+
+	return strings.Join(conditions, " AND")
 }

@@ -13,7 +13,7 @@ func Collection(ctx context.Context, result interface{}) error {
 
 	query := query.Select(resCtx.Field.Field)
 
-	fmt.Println(query.Query())
+	fmt.Println(query.Query(), query.Arg())
 
 	tx, err := Begin(ctx)
 	if err != nil {

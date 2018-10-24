@@ -14,7 +14,7 @@ type deleteQuery struct {
 
 func (q deleteQuery) Query() string {
 	return fmt.Sprintf(
-		"DELETE FROM %s %s",
+		"DELETE FROM %s WHERE %s",
 		q.table.Build(q),
 		q.where.Build(q),
 	)

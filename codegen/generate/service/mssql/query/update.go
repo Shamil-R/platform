@@ -16,7 +16,7 @@ type updateQuery struct {
 
 func (q updateQuery) Query() string {
 	return fmt.Sprintf(
-		"UPDATE %s SET %s %s",
+		"UPDATE %s SET %s WHERE %s",
 		q.table.Build(q),
 		q.columns.Build(q),
 		q.where.Build(q),
