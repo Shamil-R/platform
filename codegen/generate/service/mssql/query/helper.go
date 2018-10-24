@@ -18,11 +18,18 @@ func directiveValue(dl ast.DirectiveList, dname, aname string) (bool, string) {
 	return true, val.Raw
 }
 
-func argumentChildren(input Input, name string) (bool, ast.ChildValueList) {
-	if arg := input.Field().Arguments.ForName(name); arg != nil {
-		if len(arg.Value.Children) > 0 {
-			return true, arg.Value.Children
-		}
+func argumentValue(input Input, name string) (bool, *ast.Value) {
+	arg := input.Field().Arguments.ForName(name)
+	if arg != nil && arg.Value != nil {
+		return true, arg.Value
 	}
 	return false, nil
+}
+
+func columnName(val *ast.Value, child *ast.ChildValue) string {
+	field := val.Definition.Fields.ForName(child.Name)
+	if ok, val := directiveValue(field.Directives, "field", "name"); ok {
+		return val
+	}
+	return child.Name
 }

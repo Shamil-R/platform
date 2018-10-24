@@ -11,6 +11,25 @@ import (
 func Item(ctx context.Context, result interface{}) error {
 	resCtx := graphql.GetResolverContext(ctx)
 
+	/* field := resCtx.Field
+
+	for _, arg := range field.Arguments {
+		fmt.Println(arg.Name)
+		val := arg.Value
+		def := val.Definition
+		fmt.Println(def.Name)
+		for _, child := range val.Children {
+			fmt.Println(child.Name)
+			childVal := child.Value
+			fmt.Println(childVal.Definition.Name)
+			f := def.Fields.ForName(child.Name)
+			fmt.Println(f.Name)
+			for _, d := range f.Directives {
+				fmt.Println(d.Name)
+			}
+		}
+	} */
+
 	query := query.Select(resCtx.Field.Field)
 
 	fmt.Println(query.Query())

@@ -35,14 +35,15 @@ func Update(field *ast.Field) Query {
 type updateColumnsQuery struct{}
 
 func (q updateColumnsQuery) Build(input Input) string {
-	ok, children := argumentChildren(input, "data")
+	ok, val := argumentValue(input, "data")
 	if !ok {
 		return ""
 	}
-	columns := make([]string, 0, len(children))
-	for _, child := range children {
+	columns := make([]string, 0, len(val.Children))
+	for _, child := range val.Children {
 		input.Bind(child.Name, child.Value.Raw)
-		column := fmt.Sprintf("[%s] = :%s", child.Name, child.Name)
+		columnName := columnName(val, child)
+		column := fmt.Sprintf("[%s] = :%s", columnName, child.Name)
 		columns = append(columns, column)
 	}
 	return strings.Join(columns, ", ")

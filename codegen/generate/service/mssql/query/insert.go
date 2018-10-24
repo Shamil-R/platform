@@ -35,14 +35,15 @@ func Insert(field *ast.Field) Query {
 type insertColumnsQuery struct{}
 
 func (q insertColumnsQuery) Build(input Input) string {
-	ok, children := argumentChildren(input, "data")
+	ok, val := argumentValue(input, "data")
 	if !ok {
 		return ""
 	}
-	columns := make([]string, 0, len(children))
-	for _, child := range children {
+	columns := make([]string, 0, len(val.Children))
+	for _, child := range val.Children {
 		input.Bind(child.Name, child.Value.Raw)
-		column := fmt.Sprintf("[%s]", child.Name)
+		columnName := columnName(val, child)
+		column := fmt.Sprintf("[%s]", columnName)
 		columns = append(columns, column)
 	}
 	return strings.Join(columns, ", ")
@@ -51,12 +52,12 @@ func (q insertColumnsQuery) Build(input Input) string {
 type valuesQuery struct{}
 
 func (q valuesQuery) Build(input Input) string {
-	ok, children := argumentChildren(input, "data")
+	ok, val := argumentValue(input, "data")
 	if !ok {
 		return ""
 	}
-	values := make([]string, 0, len(children))
-	for _, child := range children {
+	values := make([]string, 0, len(val.Children))
+	for _, child := range val.Children {
 		input.Bind(child.Name, child.Value.Raw)
 		value := fmt.Sprintf(":%s", child.Name)
 		values = append(values, value)
