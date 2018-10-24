@@ -43,7 +43,15 @@ func buildPagination(input Input) string {
 		order = "DESC"
 	}
 
-	column := fmt.Sprintf("ROW_NUMBER() OVER (ORDER BY [id] %s) AS num", order)
+	numberColumn := fmt.Sprintf(
+		"ROW_NUMBER() OVER (ORDER BY [id] %s) AS num",
+		order,
+	)
+
+	numberQuery := fmt.Sprintf(
+		"WITH Ordered AS (SELECT %s, %s FROM %s %s)",
+		numberColumn,
+	)
 
 	return fmt.Sprintf(
 		"WITH Ordered AS (SELECT %s FROM %s %s) SELECT %s FROM Ordered WHERE %s ORDER BY [id] ASC",
