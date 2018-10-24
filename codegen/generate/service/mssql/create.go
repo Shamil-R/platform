@@ -9,55 +9,18 @@ import (
 )
 
 func Create(ctx context.Context, result interface{}) error {
-	/* resCtx := graphql.GetResolverContext(ctx)
+	resCtx := graphql.GetResolverContext(ctx)
 
-	field := resCtx.Field.Field
-
-	fmt.Println("field:", field.Name, field.Alias, field.Definition.Type)
-
-	for _, arg := range field.Arguments {
-		fmt.Println("arg:", arg.Name, arg.Value)
-
-		def := arg.Value.Definition
-		if def != nil {
-			fmt.Println("def:", def.Name)
-		}
-	}
-
-	for _, sel := range resCtx.Field.Selections {
-		switch sel := sel.(type) {
-		case *ast.Field:
-			fmt.Println("sel:", sel.Name)
-		}
-	}
-
-	var queryInsertColumns []string
-	var queryInsertValues []string
-	arg := map[string]interface{}{}
-
-	if argument := field.Arguments.ForName("data"); argument != nil {
-		for _, child := range argument.Value.Children {
-			queryInsertColumns = append(queryInsertColumns, fmt.Sprintf("[%s]", child.Name))
-			queryInsertValues = append(queryInsertValues, fmt.Sprintf(":%s", child.Name))
-			arg[child.Name] = child.Value.Raw
-		}
-	}
-
-	query := fmt.Sprintf(
-		"INSERT INTO %s (\n%s\n) VALUES (\n%s\n)",
-		queryFrom(field),
-		strings.Join(queryInsertColumns, ",\n\t"),
-		strings.Join(queryInsertValues, ",\n\t"),
-	)
-
-	fmt.Println(query)
+	queryInsert := query.Insert(resCtx.Field.Field)
 
 	tx, err := Begin(ctx)
 	if err != nil {
 		return err
 	}
 
-	res, err := tx.NamedExec(query, arg)
+	fmt.Println(queryInsert.Query())
+
+	res, err := tx.NamedExec(queryInsert.Query(), queryInsert.Arg())
 	if err != nil {
 		return err
 	}
@@ -67,49 +30,20 @@ func Create(ctx context.Context, result interface{}) error {
 		return err
 	}
 
-	fmt.Println(id)
-
-	arg = map[string]interface{}{
+	where := map[string]interface{}{
 		"id": id,
 	}
 
-	return itemByArg(ctx, result, arg) */
+	querySelect := query.SelectWhere(resCtx.Field.Field, where)
 
-	resCtx := graphql.GetResolverContext(ctx)
+	fmt.Println(querySelect.Query())
 
-	q := query.Insert(resCtx.Field.Field)
-
-	tx, err := Begin(ctx)
+	stmt, err := tx.PrepareNamed(querySelect.Query())
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(q.Query())
-
-	res, err := tx.NamedExec(q.Query(), q.Arg())
-	if err != nil {
-		return err
-	}
-
-	id, err := res.LastInsertId()
-	if err != nil {
-		return err
-	}
-
-	q = query.Select(resCtx.Field.Field,
-		map[string]interface{}{
-			"id": id,
-		},
-	)
-
-	fmt.Println(q.Query())
-
-	stmt, err := tx.PrepareNamed(q.Query())
-	if err != nil {
-		return err
-	}
-
-	if err := stmt.Get(result, q.Arg()); err != nil {
+	if err := stmt.Get(result, querySelect.Arg()); err != nil {
 		return err
 	}
 

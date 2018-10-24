@@ -23,7 +23,16 @@ func (q selectQuery) Query() string {
 	)
 }
 
-func Select(field *ast.Field, where map[string]interface{}) Query {
+func Select(field *ast.Field) Query {
+	return &selectQuery{
+		query:   newQuery(field),
+		columns: &selectColumnsQuery{},
+		table:   &tableQuery{},
+		where:   &whereQuery{},
+	}
+}
+
+func SelectWhere(field *ast.Field, where map[string]interface{}) Query {
 	wq := whereQuery(where)
 	return &selectQuery{
 		query:   newQuery(field),
@@ -72,8 +81,7 @@ type whereQuery map[string]interface{}
 
 func (q whereQuery) Build(input Input) string {
 	var conditions []string
-	ok, children := argumentChildren(input, "where")
-	if ok {
+	if ok, children := argumentChildren(input, "where"); ok {
 		conditions = make([]string, 0, len(children))
 		for _, child := range children {
 			input.Bind(child.Name, child.Value.Raw)

@@ -11,7 +11,7 @@ import (
 func Collection(ctx context.Context, result interface{}) error {
 	resCtx := graphql.GetResolverContext(ctx)
 
-	query := query.Select(resCtx.Field.Field, map[string]interface{}{})
+	query := query.Select(resCtx.Field.Field)
 
 	fmt.Println(query.Query())
 

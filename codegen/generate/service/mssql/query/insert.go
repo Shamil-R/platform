@@ -42,7 +42,7 @@ func (q insertColumnsQuery) Build(input Input) string {
 	columns := make([]string, 0, len(children))
 	for _, child := range children {
 		input.Bind(child.Name, child.Value.Raw)
-		column := fmt.Sprintf("%s", child.Name)
+		column := fmt.Sprintf("[%s]", child.Name)
 		columns = append(columns, column)
 	}
 	return strings.Join(columns, ", ")
