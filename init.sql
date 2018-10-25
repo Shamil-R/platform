@@ -1,3 +1,5 @@
+USE master
+
 -- создание логина
 IF NOT EXISTS (SELECT * FROM master.sys.server_principals WHERE name = 'platform')
 BEGIN
@@ -20,9 +22,8 @@ BEGIN
 	EXEC sp_addrolemember 'db_owner', 'platform'
 END
 
-USE platform
-
 -- создание таблицы user
+USE platform
 IF OBJECT_ID('user', 'U') IS NOT NULL
 BEGIN
     DROP TABLE [user]
@@ -33,3 +34,16 @@ CREATE TABLE [user] (
 )
 
 INSERT INTO [user] (name) VALUES('Test')
+
+-- создание таблицы material
+USE platform
+IF OBJECT_ID('material', 'U') IS NOT NULL
+BEGIN
+    DROP TABLE [material]
+END
+CREATE TABLE [material] (
+    id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    name NVARCHAR(50),
+    user_id INT NOT NULL,
+    CONSTRAINT FK_material_user FOREIGN KEY ([id]) REFERENCES [user]([id])
+)

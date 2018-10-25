@@ -1,28 +1,9 @@
 {{- define "relation" }}
-	resSelect := {{ template "new" .Type }}
+	res := {{ template "new" .Type }}
 
-	tx, err := mssql.Begin(ctx)
-	if err != nil {
-		return resSelect, err
+	if err := mssql.Relation(ctx, obj.ID, &res); err != nil {
+		return nil, err
 	}
 
-	querySelect := `
-		SELECT *
-		FROM {{ template "table" .Type.Definition }}
-		WHERE {{ lower .Definition.Name }}_id = :id
-	`
-	argSelect := map[string]interface{}{
-		"id": obj.ID,
-	}
-
-	stmt, err := tx.PrepareNamed(querySelect)
-	if err != nil {
-		return resSelect, err
-	}
-
-	if err := stmt.{{- if .Type.IsSlice }}Select{{- else }}Get{{- end }}(&resSelect, argSelect); err != nil {
-		return resSelect, err
-	}
-
-	return resSelect, nil
+	return res, nil
 {{- end }}

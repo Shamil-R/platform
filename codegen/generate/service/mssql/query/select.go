@@ -59,6 +59,9 @@ func (q selectColumnsQuery) Build(input Input) string {
 	for _, sel := range set {
 		switch sel := sel.(type) {
 		case *ast.Field:
+			if !isScalar(sel) {
+				continue
+			}
 			column := fmt.Sprintf("[%s]", sel.Name)
 			def := sel.ObjectDefinition
 			if ok, val := directiveValue(def.Directives, "field", "name"); ok {

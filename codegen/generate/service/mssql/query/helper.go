@@ -2,6 +2,14 @@ package query
 
 import "github.com/vektah/gqlparser/ast"
 
+func isScalar(field *ast.Field) bool {
+	nt := field.Definition.Type.NamedType
+	if nt == "String" || nt == "Int" {
+		return true
+	}
+	return false
+}
+
 func directiveValue(dl ast.DirectiveList, dname, aname string) (bool, string) {
 	dir := dl.ForName(dname)
 	if dir == nil {

@@ -3,6 +3,7 @@ type User {
     name: String!
     # roles: [RoleObject!]!
     materials: [Material!]!
+    orders: [Order!]!
 }
 
 # type RoleObject {
@@ -15,6 +16,12 @@ type Material {
     id: ID! @unique
     name: String!
     author: User!
+}
+
+type Order {
+  id: ID! @unique
+  count: Int!
+  owner: User!
 }
 
 """

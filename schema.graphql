@@ -11,18 +11,18 @@ type User {
 #     access: RoleAccess!
 # }
 
-type Material @table(name: "co_material") {
+type Material {
     id: Int! @primary @identity
     name: String! @validate(min: 10 max: 20)
     # author: User!
 }
 
-type Person @table(name: "co_person") {
-  id: Int! @primary @identity
-  name: String
-  surname: String
-  phone: String @field(name: "home_phone")
-}
+# type Person @table(name: "co_person") {
+#   id: Int! @primary @identity
+#   name: String
+#   surname: String
+#   phone: String @field(name: "home_phone")
+# }
 
 # """
 # Уровни доступа
