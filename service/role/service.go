@@ -2,6 +2,7 @@ package role
 
 import (
 	"context"
+	"github.com/casbin/casbin"
 	"gitlab/nefco/platform/service/extension"
 	"strings"
 
@@ -22,7 +23,7 @@ func (s service) Name() string {
 }
 
 func (s service) Middleware(v *viper.Viper) (handler.Option, error) {
-	return handler.ResolverMiddleware(middleware(&role{})), nil
+	return handler.ResolverMiddleware(middleware(&role{casbin.NewEnforcer("service/role/abac_model.conf")})), nil
 }
 
 func middleware(role Role) graphql.FieldMiddleware {

@@ -23,7 +23,9 @@ type Role interface {
 	CheckAccess(context.Context, *Data) error
 }
 
-type role struct{}
+type role struct{
+	e *casbin.Enforcer
+}
 
 type Subject struct {
 	UserID int
@@ -264,8 +266,7 @@ func (r role) CheckAccess(ctx context.Context, d *Data) error {
 		return nil
 	}
 
-	e := casbin.NewEnforcer("service/role/abac_model.conf")
-	e.AddFunction("my_func", checkAvailability)
+	r.e.AddFunction("my_func", checkAvailability)
 
 	userData := auth.GetContext(ctx)
 
@@ -277,7 +278,7 @@ func (r role) CheckAccess(ctx context.Context, d *Data) error {
 		return err
 	}
 
-	if e.Enforce(sub, obj, act) != true {
+	if r.e.Enforce(sub, obj, act) != true {
 		return errors.New("Вам отказано в доступе к запрашиваемым данным")
 	}
 
