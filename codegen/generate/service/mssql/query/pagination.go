@@ -14,13 +14,7 @@ func buildPagination(input Input) string {
 		return ""
 	}
 
-	subWhere := whereQuery{}.Build(input)
-
-	if len(subWhere) != 0 {
-		subWhere = fmt.Sprintf("WHERE %s", subWhere)
-	}
-
-	order := "ASC"
+	numberOrder := "ASC"
 
 	var where []string
 
@@ -40,24 +34,31 @@ func buildPagination(input Input) string {
 		v, _ := strconv.Atoi(last.Raw)
 		input.Bind("last", v)
 		where = append(where, "[num] <= :skip + :last")
-		order = "DESC"
+		numberOrder = "DESC"
 	}
 
 	numberColumn := fmt.Sprintf(
 		"ROW_NUMBER() OVER (ORDER BY [id] %s) AS num",
-		order,
+		numberOrder,
 	)
+
+	numberWhere := whereQuery{}.Build(input)
+
+	if len(numberWhere) != 0 {
+		numberWhere = fmt.Sprintf("WHERE %s", numberWhere)
+	}
 
 	numberQuery := fmt.Sprintf(
 		"WITH Ordered AS (SELECT %s, %s FROM %s %s)",
+		selectColumnsQuery{}.Build(input),
 		numberColumn,
+		buildTable(input),
+		numberWhere,
 	)
 
 	return fmt.Sprintf(
-		"WITH Ordered AS (SELECT %s FROM %s %s) SELECT %s FROM Ordered WHERE %s ORDER BY [id] ASC",
-		selectColumnsQuery([]string{column}).Build(input),
-		tableQuery{}.Build(input),
-		subWhere,
+		"%s SELECT %s FROM Ordered WHERE %s ORDER BY [id] ASC",
+		numberQuery,
 		selectColumnsQuery{}.Build(input),
 		strings.Join(where, " AND"),
 	)

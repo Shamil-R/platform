@@ -26,7 +26,7 @@ func (q selectQuery) Query() string {
 	return fmt.Sprintf(
 		"SELECT %s FROM %s %s",
 		selectColumnsQuery{}.Build(q),
-		tableQuery{}.Build(q),
+		buildTable(q),
 		where,
 	)
 }

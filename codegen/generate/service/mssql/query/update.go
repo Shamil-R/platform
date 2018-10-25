@@ -9,7 +9,6 @@ import (
 
 type updateQuery struct {
 	*query
-	table   Build
 	columns Build
 	where   Build
 }
@@ -17,7 +16,7 @@ type updateQuery struct {
 func (q updateQuery) Query() string {
 	return fmt.Sprintf(
 		"UPDATE %s SET %s WHERE %s",
-		q.table.Build(q),
+		buildTable(q),
 		q.columns.Build(q),
 		q.where.Build(q),
 	)
@@ -26,7 +25,6 @@ func (q updateQuery) Query() string {
 func Update(field *ast.Field) Query {
 	return &updateQuery{
 		query:   newQuery(field),
-		table:   &tableQuery{},
 		columns: &updateColumnsQuery{},
 		where:   &whereQuery{},
 	}

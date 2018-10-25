@@ -9,7 +9,6 @@ import (
 
 type insertQuery struct {
 	*query
-	table   Build
 	columns Build
 	values  Build
 }
@@ -17,7 +16,7 @@ type insertQuery struct {
 func (q insertQuery) Query() string {
 	return fmt.Sprintf(
 		"INSERT INTO %s (%s) VALUES (%s)",
-		q.table.Build(q),
+		buildTable(q),
 		q.columns.Build(q),
 		q.values.Build(q),
 	)
@@ -26,7 +25,6 @@ func (q insertQuery) Query() string {
 func Insert(field *ast.Field) Query {
 	return &insertQuery{
 		query:   newQuery(field),
-		table:   &tableQuery{},
 		columns: &insertColumnsQuery{},
 		values:  &valuesQuery{},
 	}

@@ -8,14 +8,13 @@ import (
 
 type deleteQuery struct {
 	*query
-	table Build
 	where Build
 }
 
 func (q deleteQuery) Query() string {
 	return fmt.Sprintf(
 		"DELETE FROM %s WHERE %s",
-		q.table.Build(q),
+		buildTable(q),
 		q.where.Build(q),
 	)
 }
@@ -23,7 +22,6 @@ func (q deleteQuery) Query() string {
 func Delete(field *ast.Field) Query {
 	return &deleteQuery{
 		query: newQuery(field),
-		table: &tableQuery{},
 		where: &whereQuery{},
 	}
 }

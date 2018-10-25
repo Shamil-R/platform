@@ -7,9 +7,7 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
-type tableQuery struct{}
-
-func (q tableQuery) Build(input Input) string {
+func buildTable(input Input) string {
 	var tableName string
 	sel := input.Field().SelectionSet[0]
 	switch sel := sel.(type) {
