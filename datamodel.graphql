@@ -4,6 +4,7 @@ type User {
     # roles: [RoleObject!]!
     materials: [Material!]!
     orders: [Order!]!
+    posts: [Post!]!
 }
 
 # type RoleObject {
@@ -22,6 +23,12 @@ type Order {
   id: ID! @unique
   count: Int!
   owner: User!
+}
+
+type Post {
+  id: ID! @unique
+  text: String!
+  writer: User!
 }
 
 """

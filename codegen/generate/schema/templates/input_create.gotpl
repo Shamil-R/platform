@@ -6,7 +6,7 @@ input {{ .Name }}CreateInput {
 	{{ .Name }}: {{ .Type }}{{ template "directives" .Directives }}
 	{{- end }}
 	{{- if .Relation.IsManyToOne }}
-	{{ .Name }}: {{ .Type.Name }}CreateOneWithout{{ firstRuneToUpper .Relation.Field.Name }}Input!
+	{{ .Name }}: {{ .Type.Name }}CreateOneWithout{{ firstRuneToUpper .Relation.Field.Name }}Input!{{ template "directives" .Directives }}
 	{{- end }}
     {{- end }}
 }

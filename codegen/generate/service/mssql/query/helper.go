@@ -34,6 +34,8 @@ func argumentValue(input Input, name string) (bool, *ast.Value) {
 	return false, nil
 }
 
+// func valueChild(child *ast.ChildValue, name string) (bool, *ast.ChildValue)
+
 func columnName(val *ast.Value, child *ast.ChildValue) string {
 	field := val.Definition.Fields.ForName(child.Name)
 	if ok, val := directiveValue(field.Directives, "field", "name"); ok {

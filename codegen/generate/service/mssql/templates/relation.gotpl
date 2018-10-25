@@ -2,7 +2,7 @@
 	res := {{ template "new" .Type }}
 
 	if err := mssql.Relation(ctx, obj.ID, &res); err != nil {
-		return nil, err
+		return res, err
 	}
 
 	return res, nil

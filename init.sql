@@ -45,5 +45,5 @@ CREATE TABLE [material] (
     id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     name NVARCHAR(50),
     user_id INT NOT NULL,
-    CONSTRAINT FK_material_user FOREIGN KEY ([id]) REFERENCES [user]([id])
+    CONSTRAINT FK_material_user FOREIGN KEY (user_id) REFERENCES [user]([id])
 )

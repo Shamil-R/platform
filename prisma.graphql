@@ -1,11 +1,15 @@
 # source: http://localhost:4466
-# timestamp: Thu Oct 25 2018 09:42:04 GMT+0300 (Moscow Standard Time)
+# timestamp: Thu Oct 25 2018 14:26:24 GMT+0300 (Moscow Standard Time)
 
 type AggregateMaterial {
   count: Int!
 }
 
 type AggregateOrder {
+  count: Int!
+}
+
+type AggregatePost {
   count: Int!
 }
 
@@ -247,21 +251,27 @@ type Mutation {
   createUser(data: UserCreateInput!): User!
   createMaterial(data: MaterialCreateInput!): Material!
   createOrder(data: OrderCreateInput!): Order!
+  createPost(data: PostCreateInput!): Post!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateMaterial(data: MaterialUpdateInput!, where: MaterialWhereUniqueInput!): Material
   updateOrder(data: OrderUpdateInput!, where: OrderWhereUniqueInput!): Order
+  updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
   deleteUser(where: UserWhereUniqueInput!): User
   deleteMaterial(where: MaterialWhereUniqueInput!): Material
   deleteOrder(where: OrderWhereUniqueInput!): Order
+  deletePost(where: PostWhereUniqueInput!): Post
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertMaterial(where: MaterialWhereUniqueInput!, create: MaterialCreateInput!, update: MaterialUpdateInput!): Material!
   upsertOrder(where: OrderWhereUniqueInput!, create: OrderCreateInput!, update: OrderUpdateInput!): Order!
+  upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   updateManyMaterials(data: MaterialUpdateInput!, where: MaterialWhereInput): BatchPayload!
   updateManyOrders(data: OrderUpdateInput!, where: OrderWhereInput): BatchPayload!
+  updateManyPosts(data: PostUpdateInput!, where: PostWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyMaterials(where: MaterialWhereInput): BatchPayload!
   deleteManyOrders(where: OrderWhereInput): BatchPayload!
+  deleteManyPosts(where: PostWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -492,16 +502,238 @@ type PageInfo {
   endCursor: String
 }
 
+type Post implements Node {
+  id: ID!
+  text: String!
+  writer: User!
+}
+
+"""A connection to a list of items."""
+type PostConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PostEdge]!
+  aggregate: AggregatePost!
+}
+
+input PostCreateInput {
+  text: String!
+  writer: UserCreateOneWithoutPostsInput!
+}
+
+input PostCreateManyWithoutWriterInput {
+  create: [PostCreateWithoutWriterInput!]
+  connect: [PostWhereUniqueInput!]
+}
+
+input PostCreateWithoutWriterInput {
+  text: String!
+}
+
+"""An edge in a connection."""
+type PostEdge {
+  """The item at the end of the edge."""
+  node: Post!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum PostOrderByInput {
+  id_ASC
+  id_DESC
+  text_ASC
+  text_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type PostPreviousValues {
+  id: ID!
+  text: String!
+}
+
+type PostSubscriptionPayload {
+  mutation: MutationType!
+  node: Post
+  updatedFields: [String!]
+  previousValues: PostPreviousValues
+}
+
+input PostSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PostSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PostSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PostSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PostWhereInput
+}
+
+input PostUpdateInput {
+  text: String
+  writer: UserUpdateOneRequiredWithoutPostsInput
+}
+
+input PostUpdateManyWithoutWriterInput {
+  create: [PostCreateWithoutWriterInput!]
+  connect: [PostWhereUniqueInput!]
+  disconnect: [PostWhereUniqueInput!]
+  delete: [PostWhereUniqueInput!]
+  update: [PostUpdateWithWhereUniqueWithoutWriterInput!]
+  upsert: [PostUpsertWithWhereUniqueWithoutWriterInput!]
+}
+
+input PostUpdateWithoutWriterDataInput {
+  text: String
+}
+
+input PostUpdateWithWhereUniqueWithoutWriterInput {
+  where: PostWhereUniqueInput!
+  data: PostUpdateWithoutWriterDataInput!
+}
+
+input PostUpsertWithWhereUniqueWithoutWriterInput {
+  where: PostWhereUniqueInput!
+  update: PostUpdateWithoutWriterDataInput!
+  create: PostCreateWithoutWriterInput!
+}
+
+input PostWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PostWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PostWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PostWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  text: String
+
+  """All values that are not equal to given value."""
+  text_not: String
+
+  """All values that are contained in given list."""
+  text_in: [String!]
+
+  """All values that are not contained in given list."""
+  text_not_in: [String!]
+
+  """All values less than the given value."""
+  text_lt: String
+
+  """All values less than or equal the given value."""
+  text_lte: String
+
+  """All values greater than the given value."""
+  text_gt: String
+
+  """All values greater than or equal the given value."""
+  text_gte: String
+
+  """All values containing the given string."""
+  text_contains: String
+
+  """All values not containing the given string."""
+  text_not_contains: String
+
+  """All values starting with the given string."""
+  text_starts_with: String
+
+  """All values not starting with the given string."""
+  text_not_starts_with: String
+
+  """All values ending with the given string."""
+  text_ends_with: String
+
+  """All values not ending with the given string."""
+  text_not_ends_with: String
+  writer: UserWhereInput
+}
+
+input PostWhereUniqueInput {
+  id: ID
+}
+
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   materials(where: MaterialWhereInput, orderBy: MaterialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Material]!
   orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order]!
+  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
   user(where: UserWhereUniqueInput!): User
   material(where: MaterialWhereUniqueInput!): Material
   order(where: OrderWhereUniqueInput!): Order
+  post(where: PostWhereUniqueInput!): Post
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   materialsConnection(where: MaterialWhereInput, orderBy: MaterialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MaterialConnection!
   ordersConnection(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderConnection!
+  postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -514,6 +746,7 @@ type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   material(where: MaterialSubscriptionWhereInput): MaterialSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
+  post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
 }
 
 type User implements Node {
@@ -521,6 +754,7 @@ type User implements Node {
   name: String!
   materials(where: MaterialWhereInput, orderBy: MaterialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Material!]
   orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order!]
+  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
 }
 
 """A connection to a list of items."""
@@ -537,6 +771,7 @@ input UserCreateInput {
   name: String!
   materials: MaterialCreateManyWithoutAuthorInput
   orders: OrderCreateManyWithoutOwnerInput
+  posts: PostCreateManyWithoutWriterInput
 }
 
 input UserCreateOneWithoutMaterialsInput {
@@ -549,14 +784,27 @@ input UserCreateOneWithoutOrdersInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutPostsInput {
+  create: UserCreateWithoutPostsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateWithoutMaterialsInput {
   name: String!
   orders: OrderCreateManyWithoutOwnerInput
+  posts: PostCreateManyWithoutWriterInput
 }
 
 input UserCreateWithoutOrdersInput {
   name: String!
   materials: MaterialCreateManyWithoutAuthorInput
+  posts: PostCreateManyWithoutWriterInput
+}
+
+input UserCreateWithoutPostsInput {
+  name: String!
+  materials: MaterialCreateManyWithoutAuthorInput
+  orders: OrderCreateManyWithoutOwnerInput
 }
 
 """An edge in a connection."""
@@ -627,6 +875,7 @@ input UserUpdateInput {
   name: String
   materials: MaterialUpdateManyWithoutAuthorInput
   orders: OrderUpdateManyWithoutOwnerInput
+  posts: PostUpdateManyWithoutWriterInput
 }
 
 input UserUpdateOneRequiredWithoutMaterialsInput {
@@ -643,14 +892,29 @@ input UserUpdateOneRequiredWithoutOrdersInput {
   upsert: UserUpsertWithoutOrdersInput
 }
 
+input UserUpdateOneRequiredWithoutPostsInput {
+  create: UserCreateWithoutPostsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutPostsDataInput
+  upsert: UserUpsertWithoutPostsInput
+}
+
 input UserUpdateWithoutMaterialsDataInput {
   name: String
   orders: OrderUpdateManyWithoutOwnerInput
+  posts: PostUpdateManyWithoutWriterInput
 }
 
 input UserUpdateWithoutOrdersDataInput {
   name: String
   materials: MaterialUpdateManyWithoutAuthorInput
+  posts: PostUpdateManyWithoutWriterInput
+}
+
+input UserUpdateWithoutPostsDataInput {
+  name: String
+  materials: MaterialUpdateManyWithoutAuthorInput
+  orders: OrderUpdateManyWithoutOwnerInput
 }
 
 input UserUpsertWithoutMaterialsInput {
@@ -661,6 +925,11 @@ input UserUpsertWithoutMaterialsInput {
 input UserUpsertWithoutOrdersInput {
   update: UserUpdateWithoutOrdersDataInput!
   create: UserCreateWithoutOrdersInput!
+}
+
+input UserUpsertWithoutPostsInput {
+  update: UserUpdateWithoutPostsDataInput!
+  create: UserCreateWithoutPostsInput!
 }
 
 input UserWhereInput {
@@ -758,6 +1027,9 @@ input UserWhereInput {
   orders_every: OrderWhereInput
   orders_some: OrderWhereInput
   orders_none: OrderWhereInput
+  posts_every: PostWhereInput
+  posts_some: PostWhereInput
+  posts_none: PostWhereInput
 }
 
 input UserWhereUniqueInput {

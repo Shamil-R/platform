@@ -56,9 +56,20 @@ func (q valuesQuery) Build(input Input) string {
 	}
 	values := make([]string, 0, len(val.Children))
 	for _, child := range val.Children {
-		input.Bind(child.Name, child.Value.Raw)
-		value := fmt.Sprintf(":%s", child.Name)
-		values = append(values, value)
+		var (
+			placeholder string
+			value       *ast.Value
+		)
+		if connect := child.Value.Children.ForName("connect"); connect != nil {
+			placeholder = "id"
+			value = connect.Children.ForName(placeholder)
+		} else {
+			placeholder = child.Name
+			value = child.Value
+		}
+		input.Bind(placeholder, value.Raw)
+		val := fmt.Sprintf(":%s", placeholder)
+		values = append(values, val)
 	}
 	return strings.Join(values, ", ")
 }
