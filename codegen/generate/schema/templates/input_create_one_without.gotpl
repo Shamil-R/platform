@@ -1,0 +1,8 @@
+{{- define "input_create_one_without" }}
+{{- $name := .Name }}
+{{- range .Fields.Relations.OneToMany }}
+input {{ $name }}CreateOneWithout{{ firstRuneToUpper .Name }}Input {
+	connect: {{ $name }}WhereUniqueInput
+}
+{{- end }}
+{{- end }}

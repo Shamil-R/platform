@@ -4,5 +4,6 @@
 {{ template "input_update" . }}
 {{ template "input_where_unique" . }}
 {{ template "input_where" . }}
+{{ template "input_create_one_without" . }}
 {{- end }}
 {{- end }}

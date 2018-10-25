@@ -7,12 +7,9 @@ type Type struct {
 	schema *Schema
 }
 
+// TODO: проверить на необходимост данной функции
 func (t *Type) IsDefinition() bool {
 	return t.schema.Types().Contains(t)
-}
-
-func (t *Type) IsRelation() bool {
-	return t.schema.Types().Objects().Contains(t)
 }
 
 func (t *Type) IsSlice() bool {
@@ -33,6 +30,6 @@ func (t *Type) Name() string {
 	return t.Type.Name()
 }
 
-func (t *Type) Definition() *Definition {
-	return t.schema.Types().ByName(t.Name())
-}
+// func (t *Type) Definition() *Definition {
+// 	return t.schema.Types().ByName(t.Name())
+// }

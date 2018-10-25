@@ -1,7 +1,7 @@
 {{- define "input_update" }}
 input {{ .Name }}UpdateInput {
     {{- range .Fields }}
-    {{- if and (not .Type.IsRelation) (not .Directives.HasIndentity) }}
+    {{- if and (not .IsRelation) (not .Directives.HasIndentity) }}
 	{{ .Name }}: {{ .Type }}{{ template "directives" .Directives }}
 	{{- end }}
     {{- end }}

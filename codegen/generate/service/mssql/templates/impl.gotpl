@@ -6,8 +6,8 @@
 	{{- else if eq .Action "delete" }}
 	{{- template "delete" . }}
 	{{- else if eq .Action "upsert" }}
-	{{- template "upsert" . }}
-	{{- else if eq .Action "item" }}
+	{{/*- template "upsert" . }}
+	{{- else if eq .Action "item" */}}
 	{{- template "item" . }}
 	{{- else if eq .Action "collection" }}
 	{{- template "collection" . }}

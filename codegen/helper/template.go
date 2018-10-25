@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"text/template"
 
+	"github.com/huandu/xstrings"
+
 	"github.com/Masterminds/sprig"
 	"github.com/gobuffalo/packr"
 	"github.com/jinzhu/inflection"
@@ -23,6 +25,8 @@ func ReadTemplate(name string, boxes ...packr.Box) (*template.Template, error) {
 
 	funcs := sprig.TxtFuncMap()
 	funcs["plural"] = inflection.Plural
+	funcs["firstRuneToUpper"] = xstrings.FirstRuneToUpper
+	funcs["firstRuneToLower"] = xstrings.FirstRuneToLower
 
 	tmpl := template.New(name + ".gotpl").Funcs(funcs)
 

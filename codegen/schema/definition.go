@@ -146,3 +146,10 @@ func (l DefinitionList) ByName(name string) *Definition {
 	}
 	return l.first(fn)
 }
+
+func (l DefinitionList) ByType(t *Type) *Definition {
+	fn := func(def *Definition) bool {
+		return def.Name == t.Name()
+	}
+	return l.first(fn)
+}

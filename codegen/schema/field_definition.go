@@ -1,6 +1,8 @@
 package schema
 
-import "github.com/vektah/gqlparser/ast"
+import (
+	"github.com/vektah/gqlparser/ast"
+)
 
 type FieldDefinition struct {
 	*ast.FieldDefinition
@@ -31,6 +33,14 @@ func (f *FieldDefinition) Directives() DirectiveList {
 	return directives
 }
 
+func (f *FieldDefinition) Relation() *Relation {
+	return &Relation{f}
+}
+
+func (f *FieldDefinition) IsRelation() bool {
+	return f.Relation().IsRelation()
+}
+
 type FieldList []*FieldDefinition
 
 type fieldListFilter func(field *FieldDefinition) bool
@@ -57,23 +67,89 @@ func (l FieldList) first(filter fieldListFilter) *FieldDefinition {
 	return r[0]
 }
 
-func (l FieldList) HasRelation() bool {
+func (l FieldList) HasRelations() bool {
 	fn := func(field *FieldDefinition) bool {
-		return field.Type().IsRelation()
+		return field.IsRelation()
 	}
 	return l.filter(fn).size() > 0
 }
 
-func (l FieldList) Relations() FieldList {
+func (l FieldList) Relations() RelationList {
 	fn := func(field *FieldDefinition) bool {
-		return field.Type().IsRelation()
+		return field.IsRelation()
 	}
-	return l.filter(fn)
+	return RelationList(l.filter(fn))
 }
 
 func (l FieldList) NotRelations() FieldList {
 	fn := func(field *FieldDefinition) bool {
-		return !field.Type().IsRelation()
+		return !field.IsRelation()
 	}
 	return l.filter(fn)
+}
+
+func (l FieldList) ByNameType(name string) *FieldDefinition {
+	fn := func(field *FieldDefinition) bool {
+		return field.Type().Name() == name
+	}
+	return l.first(fn)
+}
+
+func hasRelation(field *FieldDefinition) bool {
+	t := field.Type()
+	return t.schema.Types().Objects().Contains(t)
+}
+
+type Relation struct {
+	*FieldDefinition
+}
+
+func (r *Relation) Field() *FieldDefinition {
+	def := r.definition.schema.Types().ByType(r.Type())
+	if def == nil {
+		return nil
+	}
+	return def.Fields().ByNameType(r.definition.Name)
+}
+
+func (r *Relation) IsOneToMany() bool {
+	if !r.Type().IsSlice() {
+		return false
+	}
+	field := r.Field()
+	if field == nil {
+		return false
+	}
+	return !field.Type().IsSlice()
+}
+
+func (r *Relation) IsManyToOne() bool {
+	if r.Type().IsSlice() {
+		return false
+	}
+	field := r.Field()
+	if field == nil {
+		return false
+	}
+	return field.Type().IsSlice()
+}
+
+func (r *Relation) IsRelation() bool {
+	return r.IsOneToMany() || r.IsManyToOne()
+}
+
+type RelationList FieldList
+
+func (l RelationList) OneToMany() FieldList {
+	fn := func(field *FieldDefinition) bool {
+		return field.Relation().IsOneToMany()
+	}
+	return FieldList(l).filter(fn)
+}
+
+func (l RelationList) ManyToOne() FieldList {
+	fn := func(field *FieldDefinition) bool {
+		return field.Relation().IsManyToOne()
+	}
+	return FieldList(l).filter(fn)
 }

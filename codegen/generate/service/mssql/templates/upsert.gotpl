@@ -1,4 +1,4 @@
-{{- define "upsert" }}
+{{- define "upsert_old" }}
 	res := {{ template "new" .Type }}
 
 	tx, err := mssql.Begin(ctx)
