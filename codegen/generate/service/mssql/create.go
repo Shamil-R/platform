@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	"gitlab/nefco/platform/codegen/schema"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/jmoiron/sqlx"
@@ -60,7 +61,7 @@ func createOne(ctx context.Context, result interface{}) error {
 
 	resCtx := graphql.GetResolverContext(ctx)
 
-	if data := argumentValue(resCtx.Field.Field, "data"); data != nil {
+	if data := argument(resCtx.Field.Field, "data"); data != nil {
 		for _, child := range data.Children {
 			if child.Value.Kind == ast.ObjectValue {
 
@@ -73,9 +74,9 @@ func createOne(ctx context.Context, result interface{}) error {
 	return nil
 }
 
-func createOneWithout(tx *sqlx.Tx, child *ast.ChildValue) (int, error) {
-	if relType := dirArg(child, "relation", "type"); relType != nil {
-		for _, relChild := range child.Value.Children {
+func createOneWithout(tx *sqlx.Tx, cv *ast.ChildValue) (int, error) {
+	if relType := directive(cv, "relation", "type"); relType != nil {
+		for _, relChild := range cv.Value.Children {
 			switch relChild.Name {
 			case "create":
 			case "connect":
@@ -85,14 +86,32 @@ func createOneWithout(tx *sqlx.Tx, child *ast.ChildValue) (int, error) {
 	return 0, nil
 }
 
-func argumentValue(field *ast.Field, name string) *ast.Value {
+func connectOne(tx *sqlx.Tx, cv *schema.ChildValue) (int, error) {
+	// tableName := directive(cv, "table", "name")
+
+	// if tableName == nil {
+	// 	return 0, errors.New("no directive table")
+	// }
+
+	// for _, child := range tableName.Children {
+	// 	fieldName := directive(child, "field", "name")
+	// }
+
+	return 0, nil
+}
+
+func argument(field *ast.Field, name string) *ast.Value {
 	if arg := field.Arguments.ForName(name); arg != nil {
 		return arg.Value
 	}
 	return nil
 }
 
-func dirArg(child *ast.ChildValue, dirName, argName string) *ast.Value {
+func dir(child *ast.ChildValue, name string) *ast.Directive {
+	return child.Value.Definition.Directives.ForName(name)
+}
+
+func directive(child *ast.ChildValue, dirName, argName string) *ast.Value {
 	if dir := child.Value.Definition.Directives.ForName(dirName); dir != nil {
 		if arg := dir.Arguments.ForName(argName); arg != nil {
 			return arg.Value

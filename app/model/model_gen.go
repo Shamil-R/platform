@@ -3,12 +3,14 @@
 package model
 
 type Material struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Author User   `json:"author"`
 }
 
 type MaterialCreateInput struct {
-	Name string `json:"name"`
+	Name   string                             `json:"name"`
+	Author UserCreateOneWithoutMaterialsInput `json:"author"`
 }
 
 type MaterialUpdateInput struct {
@@ -23,33 +25,6 @@ type MaterialWhereUniqueInput struct {
 	ID int `json:"id"`
 }
 
-type Person struct {
-	ID      int     `json:"id"`
-	Name    *string `json:"name"`
-	Surname *string `json:"surname"`
-	Phone   *string `json:"phone"`
-}
-
-type PersonCreateInput struct {
-	Name    *string `json:"name"`
-	Surname *string `json:"surname"`
-	Phone   *string `json:"phone"`
-}
-
-type PersonUpdateInput struct {
-	Name    *string `json:"name"`
-	Surname *string `json:"surname"`
-	Phone   *string `json:"phone"`
-}
-
-type PersonWhereInput struct {
-	ID int `json:"id"`
-}
-
-type PersonWhereUniqueInput struct {
-	ID int `json:"id"`
-}
-
 type User struct {
 	ID        int        `json:"id"`
 	Name      string     `json:"name"`
@@ -58,6 +33,10 @@ type User struct {
 
 type UserCreateInput struct {
 	Name string `json:"name"`
+}
+
+type UserCreateOneWithoutMaterialsInput struct {
+	Connect *UserWhereUniqueInput `json:"connect"`
 }
 
 type UserUpdateInput struct {

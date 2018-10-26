@@ -43,6 +43,7 @@ func (d *Definition) Directives() DirectiveList {
 	return directives
 }
 
+// TODO: переделать получение мутаций из Schema
 func (d *Definition) Mutations() ActionList {
 	actions := make(ActionList, 0)
 	mutation := d.schema.Mutation()
@@ -64,6 +65,7 @@ func (d *Definition) Mutations() ActionList {
 	return actions
 }
 
+// TODO: переделать получение запросов из Schema
 func (d *Definition) Queries() ActionList {
 	actions := make(ActionList, 0)
 	query := d.schema.Query()
