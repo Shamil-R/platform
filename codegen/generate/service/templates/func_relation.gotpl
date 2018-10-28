@@ -1,3 +1,3 @@
 {{- define "func_relation" }}
-{{- title .Name }}(ctx context.Context, obj *model.{{ .Definition.Name }}, {{ template "args" .Arguments }}) ({{ template "type" .Type }}, error)
+{{- title .Name }}(ctx context.Context, obj *model.{{ .Parent.Name }}, {{ template "args" .Arguments }}) ({{ template "type" .Type }}, error)
 {{- end }}

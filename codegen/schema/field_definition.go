@@ -6,15 +6,16 @@ import (
 
 type FieldDefinition struct {
 	*ast.FieldDefinition
-	definition *Definition
+	parent   *Definition
+	relation *FieldDefinition
 }
 
-func (f *FieldDefinition) Definition() *Definition {
-	return f.definition
+func (f *FieldDefinition) Parent() *Definition {
+	return f.parent
 }
 
 func (f *FieldDefinition) Type() *Type {
-	return &Type{f.FieldDefinition.Type, f.definition.schema}
+	return &Type{f.FieldDefinition.Type, f.parent.schema}
 }
 
 func (f *FieldDefinition) Arguments() ArgumentDefinitionList {
@@ -33,123 +34,93 @@ func (f *FieldDefinition) Directives() DirectiveList {
 	return directives
 }
 
-func (f *FieldDefinition) Relation() *Relation {
-	return &Relation{f}
-}
-
-func (f *FieldDefinition) IsRelation() bool {
-	return f.Relation().IsRelation()
+func (f *FieldDefinition) Relation() *FieldDefinition {
+	if f.relation == nil {
+		def := f.parent.schema.Types().ByType(f.Type())
+		f.relation = def.Fields().ByNameType(f.parent.Name)
+	}
+	return f.relation
 }
 
 type FieldList []*FieldDefinition
 
-type fieldListFilter func(field *FieldDefinition) bool
-
-func (l FieldList) size() int {
-	return len(l)
+func (l FieldList) HasRelations() bool {
+	return hasField(l, isRelation)
 }
 
-func (l FieldList) filter(filter fieldListFilter) FieldList {
-	fields := make(FieldList, 0, len(l))
-	for _, field := range l {
+func (l FieldList) RelationsOneToMany() FieldList {
+	return filterFields(l, isOneToManyRelation)
+}
+
+func (l FieldList) RelationsManyToOne() FieldList {
+	return filterFields(l, isManyToOneRelation)
+}
+
+func (l FieldList) Relations() FieldList {
+	return filterFields(l, isRelation)
+}
+
+func (l FieldList) NotRelations() FieldList {
+	return filterFields(l, notRelation)
+}
+
+// TODO: переименовать ByNameType в ByType
+func (l FieldList) ByNameType(name string) *FieldDefinition {
+	fn := func(field *FieldDefinition) bool {
+		return field.Type().Name() == name
+	}
+	return firstField(l, fn)
+}
+
+func isOneToManyRelation(field *FieldDefinition) bool {
+	if !field.Type().IsSlice() {
+		return false
+	}
+	if field.Relation() == nil {
+		return false
+	}
+	return !field.Relation().Type().IsSlice()
+}
+
+func isManyToOneRelation(field *FieldDefinition) bool {
+	if field.Type().IsSlice() {
+		return false
+	}
+	if field.Relation() == nil {
+		return false
+	}
+	return field.Relation().Type().IsSlice()
+}
+
+func isRelation(field *FieldDefinition) bool {
+	return isOneToManyRelation(field) || isManyToOneRelation(field)
+}
+
+func notRelation(field *FieldDefinition) bool {
+	return !isRelation(field)
+}
+
+type fieldFilter func(field *FieldDefinition) bool
+
+func hasField(list FieldList, filter fieldFilter) bool {
+	return firstField(list, filter) != nil
+}
+
+func firstField(list FieldList, filter fieldFilter) *FieldDefinition {
+	for _, field := range list {
+		if filter(field) {
+			return field
+		}
+	}
+	return nil
+}
+
+func filterFields(list FieldList, filter fieldFilter) FieldList {
+	fields := make(FieldList, 0, len(list))
+	for _, field := range list {
 		if filter(field) {
 			fields = append(fields, field)
 		}
 	}
 	return fields
-}
-
-func (l FieldList) first(filter fieldListFilter) *FieldDefinition {
-	r := l.filter(filter)
-	if r.size() == 0 {
-		return nil
-	}
-	return r[0]
-}
-
-func (l FieldList) HasRelations() bool {
-	fn := func(field *FieldDefinition) bool {
-		return field.IsRelation()
-	}
-	return l.filter(fn).size() > 0
-}
-
-func (l FieldList) Relations() RelationList {
-	fn := func(field *FieldDefinition) bool {
-		return field.IsRelation()
-	}
-	return RelationList(l.filter(fn))
-}
-
-func (l FieldList) NotRelations() FieldList {
-	fn := func(field *FieldDefinition) bool {
-		return !field.IsRelation()
-	}
-	return l.filter(fn)
-}
-
-func (l FieldList) ByNameType(name string) *FieldDefinition {
-	fn := func(field *FieldDefinition) bool {
-		return field.Type().Name() == name
-	}
-	return l.first(fn)
-}
-
-func hasRelation(field *FieldDefinition) bool {
-	t := field.Type()
-	return t.schema.Types().Objects().Contains(t)
-}
-
-type Relation struct {
-	*FieldDefinition
-}
-
-func (r *Relation) Field() *FieldDefinition {
-	def := r.definition.schema.Types().ByType(r.Type())
-	if def == nil {
-		return nil
-	}
-	return def.Fields().ByNameType(r.definition.Name)
-}
-
-func (r *Relation) IsOneToMany() bool {
-	if !r.Type().IsSlice() {
-		return false
-	}
-	field := r.Field()
-	if field == nil {
-		return false
-	}
-	return !field.Type().IsSlice()
-}
-
-func (r *Relation) IsManyToOne() bool {
-	if r.Type().IsSlice() {
-		return false
-	}
-	field := r.Field()
-	if field == nil {
-		return false
-	}
-	return field.Type().IsSlice()
-}
-
-func (r *Relation) IsRelation() bool {
-	return r.IsOneToMany() || r.IsManyToOne()
-}
-
-type RelationList FieldList
-
-func (l RelationList) OneToMany() FieldList {
-	fn := func(field *FieldDefinition) bool {
-		return field.Relation().IsOneToMany()
-	}
-	return FieldList(l).filter(fn)
-}
-
-func (l RelationList) ManyToOne() FieldList {
-	fn := func(field *FieldDefinition) bool {
-		return field.Relation().IsManyToOne()
-	}
-	return FieldList(l).filter(fn)
 }

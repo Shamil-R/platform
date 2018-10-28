@@ -6,6 +6,14 @@ import (
 
 type Argument struct {
 	*ast.Argument
+	value *Value
+}
+
+func (a *Argument) Value() *Value {
+	if a.value == nil {
+		a.value = &Value{Value: a.Argument.Value}
+	}
+	return a.value
 }
 
 type ArgumentList []*Argument

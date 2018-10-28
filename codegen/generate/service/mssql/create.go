@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
+	"strings"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/jmoiron/sqlx"
@@ -54,10 +55,10 @@ func Create(ctx context.Context, result interface{}) error {
 }
 
 func createOne(ctx context.Context, result interface{}) error {
-	tx, err := Begin(ctx)
-	if err != nil {
-		return err
-	}
+	// tx, err := Begin(ctx)
+	// if err != nil {
+	// 	return err
+	// }
 
 	resCtx := graphql.GetResolverContext(ctx)
 
@@ -66,7 +67,7 @@ func createOne(ctx context.Context, result interface{}) error {
 			if child.Value.Kind == ast.ObjectValue {
 
 			} else {
-				createOneWithout(tx, child)
+				// createOneWithout(tx, child)
 			}
 		}
 	}
@@ -74,30 +75,63 @@ func createOne(ctx context.Context, result interface{}) error {
 	return nil
 }
 
-func createOneWithout(tx *sqlx.Tx, cv *ast.ChildValue) (int, error) {
-	if relType := directive(cv, "relation", "type"); relType != nil {
-		for _, relChild := range cv.Value.Children {
-			switch relChild.Name {
-			case "create":
-			case "connect":
-			}
-		}
+func createOneWithout(tx *sqlx.Tx, v *schema.ChildValue) (int, error) {
+	// create := v.Children().Create()
+	connect := v.Children().Connect()
+
+	if connect != nil {
+		connectOne(tx, connect)
 	}
+
+	// if relType := directive(cv, "relation", "type"); relType != nil {
+	// 	for _, relChild := range cv.Value.Children {
+	// 		switch relChild.Name {
+	// 		case "create":
+	// 		case "connect":
+	// 		}
+	// 	}
+	// }
 	return 0, nil
 }
 
-func connectOne(tx *sqlx.Tx, cv *schema.ChildValue) (int, error) {
-	// tableName := directive(cv, "table", "name")
+func connectOne(tx *sqlx.Tx, v *schema.ChildValue) (int, error) {
+	table := v.Directives().Table()
 
-	// if tableName == nil {
-	// 	return 0, errors.New("no directive table")
-	// }
+	var (
+		sel   []string
+		where []string
+		arg   map[string]interface{} = make(map[string]interface{})
+	)
 
-	// for _, child := range tableName.Children {
-	// 	fieldName := directive(child, "field", "name")
-	// }
+	for _, child := range v.Children() {
+		field := child.Directives().Field()
 
-	return 0, nil
+		sel = append(sel, field.Name())
+
+		w := fmt.Sprintf("%s = :%s", field.Name(), field.Name())
+		where = append(where, w)
+
+		arg[field.Name()] = child.Value().Raw
+	}
+
+	query := fmt.Sprintf(
+		"SELECT id FROM %s WHERE %s",
+		// strings.Join(sel, ", "),
+		table.Name,
+		strings.Join(where, " AND"),
+	)
+
+	stmt, err := tx.PrepareNamed(query)
+	if err != nil {
+		return 0, err
+	}
+
+	var id int
+	if err := stmt.Get(&id, arg); err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }
 
 func argument(field *ast.Field, name string) *ast.Value {

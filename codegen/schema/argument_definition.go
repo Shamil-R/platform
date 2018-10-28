@@ -8,7 +8,7 @@ type ArgumentDefinition struct {
 }
 
 func (a *ArgumentDefinition) Type() *Type {
-	return &Type{a.ArgumentDefinition.Type, a.fieldDefinition.definition.schema}
+	return &Type{a.ArgumentDefinition.Type, a.fieldDefinition.parent.schema}
 }
 
 type ArgumentDefinitionList []*ArgumentDefinition

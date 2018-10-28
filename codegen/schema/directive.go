@@ -43,9 +43,33 @@ func (d *Directive) IsField() bool {
 func (f *Directive) Arguments() ArgumentList {
 	args := make(ArgumentList, len(f.Directive.Arguments))
 	for i, arg := range f.Directive.Arguments {
-		args[i] = &Argument{arg}
+		args[i] = &Argument{Argument: arg}
 	}
 	return args
+}
+
+type TableDirective struct {
+	*Directive
+	name *string
+}
+
+func (d *TableDirective) Name() string {
+	if d.name == nil {
+		d.name = &d.Arguments().ByName("name").Value().Raw
+	}
+	return *d.name
+}
+
+type FieldDirective struct {
+	*Directive
+	name *string
+}
+
+func (d *FieldDirective) Name() string {
+	if d.name == nil {
+		d.name = &d.Arguments().ByName("name").Value().Raw
+	}
+	return *d.name
 }
 
 type DirectiveList []*Directive
@@ -74,13 +98,19 @@ func (l DirectiveList) HasField() bool {
 	return hasDirective(l, isFieldDirective)
 }
 
-func (l DirectiveList) Table() *Directive {
-	return firstDirective(l, isTableDirective)
+func (l DirectiveList) Table() *TableDirective {
+	return &TableDirective{Directive: firstDirective(l, isTableDirective)}
 }
 
-func (l DirectiveList) Field() *Directive {
-	return firstDirective(l, isFieldDirective)
+func (l DirectiveList) Field() *FieldDirective {
+	return &FieldDirective{Directive: firstDirective(l, isFieldDirective)}
 }
+
+func (l DirectiveList) ByName(name string) *Directive {
+	return firstDirective(l, byNameDirective(name))
+}
+
+type directiveFilter func(directive *Directive) bool
 
 func isPrimaryDirective(directive *Directive) bool {
 	return directive.Name == DIRECTIVE_PRIMARY
@@ -110,7 +140,11 @@ func isRelationDirective(directive *Directive) bool {
 	return directive.Name == DIRECTIVE_RELATION
 }
 
-type directiveFilter func(directive *Directive) bool
+func byNameDirective(name string) directiveFilter {
+	return func(directive *Directive) bool {
+		return directive.Name == name
+	}
+}
 
 func hasDirective(list DirectiveList, filter directiveFilter) bool {
 	for _, directive := range list {

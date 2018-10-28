@@ -4,14 +4,18 @@ import "github.com/vektah/gqlparser/ast"
 
 type Value struct {
 	*ast.Value
+	children ChildValueList
 }
 
 func (v *Value) Children() ChildValueList {
-	list := make(ChildValueList, 0, len(v.Value.Children))
-	for _, child := range v.Value.Children {
-		list = append(list, &ChildValue{child})
+	if v.children != nil {
+		return v.children
 	}
-	return list
+	v.children = make(ChildValueList, 0, len(v.Value.Children))
+	for _, child := range v.Value.Children {
+		v.children = append(v.children, &ChildValue{ChildValue: child})
+	}
+	return v.children
 }
 
 func (v *Value) Definition() *Definition {

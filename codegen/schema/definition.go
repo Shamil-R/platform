@@ -8,7 +8,8 @@ import (
 
 type Definition struct {
 	*ast.Definition
-	schema *Schema
+	directives DirectiveList
+	schema     *Schema // TODO: возможно нужно убрать
 }
 
 func (d *Definition) IsMutation() bool {
@@ -36,11 +37,14 @@ func (d *Definition) Fields() FieldList {
 }
 
 func (d *Definition) Directives() DirectiveList {
-	directives := make(DirectiveList, len(d.Definition.Directives))
-	for i, d := range d.Definition.Directives {
-		directives[i] = &Directive{d}
+	if d.directives != nil {
+		return d.directives
 	}
-	return directives
+	d.directives = make(DirectiveList, 0, len(d.Definition.Directives))
+	for _, directive := range d.Definition.Directives {
+		d.directives = append(d.directives, &Directive{Directive: directive})
+	}
+	return d.directives
 }
 
 // TODO: переделать получение мутаций из Schema

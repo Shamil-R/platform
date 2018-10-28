@@ -1,0 +1,16 @@
+{{- define "directive" }}
+{{/* {{- $directives := .Directives }}
+{{- $name := .Name }} */}}
+{{- $arguments := dict }}
+{{- if hasKey . "Arguments" }}
+{{- $arguments = .Arguments }}
+{{- end }}
+{{- with .Directives.ByName .Name }}
+{{- range .Arguments }}
+{{- $_ := set $arguments .Name .Value.Raw }}
+{{- end }}
+{{- end }}
+@{{ .Name }}
+{{- range $k, $v := $arguments }}
+{{- end }}
+{{- end }}

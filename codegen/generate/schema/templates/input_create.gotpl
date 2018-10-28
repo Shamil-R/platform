@@ -1,13 +1,13 @@
 {{- define "input_create" }}
 {{- $name := .Name }}
 input {{ .Name }}CreateInput {
-    {{- range .Fields }}
-    {{- if and (not .IsRelation) (not .Directives.HasIndentity) }}
+    {{- range .Fields.NotRelations }}
+    {{- if not .Directives.HasIndentity }}
 	{{ .Name }}: {{ .Type }}{{ template "directives" .Directives }}
 	{{- end }}
-	{{- if .Relation.IsManyToOne }}
-	{{ .Name }}: {{ .Type.Name }}CreateOneWithout{{ firstRuneToUpper .Relation.Field.Name }}Input!{{ template "directives" .Directives }}
-	{{- end }}
     {{- end }}
+	{{- range .Fields.RelationsManyToOne }}
+	{{ .Name }}: {{ .Type.Name }}CreateOneWithout{{ firstRuneToUpper .Relation.Name }}Input!{{ template "directives" .Directives }}
+	{{- end }}
 }
 {{- end }}

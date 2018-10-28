@@ -18,14 +18,14 @@ func (s *Schema) Mutation() *Definition {
 	if s.Schema.Mutation == nil {
 		return nil
 	}
-	return &Definition{s.Schema.Mutation, s}
+	return &Definition{Definition: s.Schema.Mutation, schema: s}
 }
 
 func (s *Schema) Query() *Definition {
 	if s.Schema.Query == nil {
 		return nil
 	}
-	return &Definition{s.Schema.Query, s}
+	return &Definition{Definition: s.Schema.Query, schema: s}
 }
 
 func (s *Schema) Types() DefinitionList {
@@ -35,7 +35,7 @@ func (s *Schema) Types() DefinitionList {
 		isString := def.Name == "String"
 		if !strings.HasPrefix(def.Name, "__") &&
 			!isInt && !isString {
-			definitions = append(definitions, &Definition{def, s})
+			definitions = append(definitions, &Definition{Definition: def, schema: s})
 		}
 	}
 	return definitions

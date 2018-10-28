@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"text/template"
 
-	"github.com/huandu/xstrings"
-
 	"github.com/Masterminds/sprig"
 	"github.com/gobuffalo/packr"
+	"github.com/huandu/xstrings"
 	"github.com/jinzhu/inflection"
 )
 
