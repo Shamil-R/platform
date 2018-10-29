@@ -1,4 +1,4 @@
-{{- define "defdir" -}}
+{{- define "defaultdirectives" -}}
 	{{- $defaultArg := .Args }}
 	{{- $dirName := .DirName }}
 	{{- $directives := .Directives }}
