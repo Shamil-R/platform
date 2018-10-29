@@ -1,17 +1,19 @@
-{{- define "table" }}
-	{{- $defaultArg := dict "name" (lower .Name) }}
-	{{- with .Directives }}
+{{- define "defdir" -}}
+	{{- $defaultArg := .Args }}
+	{{- $dirName := .DirName }}
+	{{- $directives := .Directives }}
+	{{- with $directives }}
 		{{- range . }}
-			{{- if eq .Name "table" }}
+			{{- if eq .Name $dirName }}
 				{{- range $i, $arg := .Arguments }}
 					{{- $_ := unset $defaultArg .Name }}
 					{{- $_ := set $defaultArg .Name .Value }}
 				{{- end }}
 			{{- end }}
 		{{- end }}
-		@{{- "table" }}(
+		@{{- $dirName }}(
 			{{- range $i, $arg := $defaultArg }}
-				{{- if ne $i "name" }}{{ print " " }}{{ end }}
+				{{- print " " }}
 				{{- $i }}: {{ $arg }}
 			{{- end -}}
 		)
