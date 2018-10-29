@@ -12,6 +12,7 @@ import (
 
 type Schema struct {
 	*ast.Schema
+	types DefinitionList
 }
 
 func (s *Schema) Mutation() *Definition {
@@ -29,16 +30,19 @@ func (s *Schema) Query() *Definition {
 }
 
 func (s *Schema) Types() DefinitionList {
-	definitions := make(DefinitionList, 0, len(s.Schema.Types))
+	if s.types != nil {
+		return s.types
+	}
+	s.types = make(DefinitionList, 0, len(s.Schema.Types))
 	for _, def := range s.Schema.Types {
 		isInt := def.Name == "Int"
 		isString := def.Name == "String"
 		if !strings.HasPrefix(def.Name, "__") &&
 			!isInt && !isString {
-			definitions = append(definitions, &Definition{Definition: def, schema: s})
+			s.types = append(s.types, &Definition{Definition: def, schema: s})
 		}
 	}
-	return definitions
+	return s.types
 }
 
 func LoadSchemaRaw(path string) (string, error) {
@@ -71,7 +75,7 @@ func ParseSchema(schemaRaw string) (*Schema, error) {
 		return nil, err
 	}
 
-	return &Schema{s}, nil
+	return &Schema{Schema: s}, nil
 }
 
 func LoadSchema(path string) (*Schema, error) {
