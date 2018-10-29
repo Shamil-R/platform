@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"fmt"
+
 	"github.com/huandu/xstrings"
 	"github.com/jinzhu/inflection"
 	"github.com/vektah/gqlparser/ast"
@@ -29,9 +31,10 @@ func (d *Definition) IsEnum() bool {
 }
 
 func (d *Definition) Fields() FieldList {
+	fmt.Println(d.Definition)
 	fields := make(FieldList, len(d.Definition.Fields))
 	for i, field := range d.Definition.Fields {
-		fields[i] = &FieldDefinition{field, d}
+		fields[i] = &FieldDefinition{FieldDefinition: field, parent: d}
 	}
 	return fields
 }
@@ -62,7 +65,7 @@ func (d *Definition) Mutations() ActionList {
 	}
 	for _, field := range mutation.Fields() {
 		if act, ok := checks[field.Name]; ok {
-			action := &Action{&FieldDefinition{field.FieldDefinition, d}, act}
+			action := &Action{&FieldDefinition{FieldDefinition: field.FieldDefinition, parent: d}, act}
 			actions = append(actions, action)
 		}
 	}
@@ -84,7 +87,7 @@ func (d *Definition) Queries() ActionList {
 	}
 	for _, field := range query.Fields() {
 		if act, ok := checks[field.Name]; ok {
-			action := &Action{&FieldDefinition{field.FieldDefinition, d}, act}
+			action := &Action{&FieldDefinition{FieldDefinition: field.FieldDefinition, parent: d}, act}
 			actions = append(actions, action)
 		}
 	}
