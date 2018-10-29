@@ -1,0 +1,5 @@
+{{- define "object_directives" }}
+	{{- template "table" . }}
+	{{- template "timestamp" . }}
+	{{- template "softDelete" . }}
+{{- end -}}
