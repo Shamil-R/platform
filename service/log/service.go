@@ -2,13 +2,12 @@ package log
 
 import (
 	"context"
-	"strings"
+	"fmt"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/spf13/viper"
-	"github.com/vektah/gqlparser/ast"
 )
 
 type service struct{}
@@ -22,11 +21,11 @@ func (s service) Name() string {
 }
 
 func (s service) Middleware(v *viper.Viper) (handler.Option, error) {
-	return handler.RequestMiddleware(middleware(&log{})), nil
+	return handler.ResolverMiddleware(middleware(&log{})), nil
 }
 
-func middleware(log Log) graphql.RequestMiddleware {
-	return func(ctx context.Context, next func(ctx context.Context) []byte) []byte {
+func middleware(log Log) graphql.FieldMiddleware {
+	return func(ctx context.Context, next graphql.Resolver) (interface{}, error) {
 		data, err := transform(ctx)
 		if err != nil {
 			panic(err)
@@ -39,41 +38,20 @@ func middleware(log Log) graphql.RequestMiddleware {
 	}
 }
 
-func transform(ctx context.Context) ([]Data, error) {
-	reqCtx := graphql.GetRequestContext(ctx)
+func transform(ctx context.Context) (Data, error) {
+	resCtx := graphql.GetResolverContext(ctx)
 
-	result := []Data{}
+	result := Data{}
 
-	for _, operation := range reqCtx.Doc.Operations {
-		if operation.Operation != "mutation" {
-			continue
-		}
-
-		for _, selection := range operation.SelectionSet {
-
-			name := selection.(*ast.Field).Name
-			if strings.HasPrefix(name, "__") {
-				continue
-			}
-
-			actionName := getActionName(name)
-
-			for _, arg := range selection.(*ast.Field).Arguments {
-				result = append(result, Data{arg.Value.String(), time.Now(), actionName})
-			}
-		}
+	if resCtx.Parent.Object != "Mutation" {
+		return result, nil
 	}
-	return result, nil
-}
 
-//todo
-func getActionName(fieldName string) string {
-	actions := [4]string{"create", "update", "delete", "upsert"}
+	var object string
 
-	for _, action := range actions {
-		if strings.Contains(fieldName, action) {
-			return action
-		}
+	for key, arg := range resCtx.Parent.Args {
+		object +=  key +  fmt.Sprintf(":%v ", arg)
 	}
-	return "read"
+
+	return Data{object, time.Now()}, nil
 }

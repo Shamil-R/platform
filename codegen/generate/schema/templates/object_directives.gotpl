@@ -1,0 +1,16 @@
+{{- define "object_directives" }}
+	{{- $args := dict "name" (lower .Name) }}
+	{{- $dirName := "table" }}
+	{{- $object := dict "Directives" .Directives "DirName" $dirName "Args" $args }}
+	{{- template "defdir" $object -}}
+
+	{{- $args := dict "disable" false "createField" `"created_at"` "updateField" `"updated_at"` }}
+	{{- $dirName := "timestamp" }}
+	{{- $object := dict "Directives" .Directives "DirName" $dirName "Args" $args }}
+	{{- template "defdir" $object -}}
+
+	{{- $args := dict "disable" false "deleteField" `"deleted_at"` }}
+	{{- $dirName := "softDelete" }}
+	{{- $object := dict "Directives" .Directives "DirName" $dirName "Args" $args }}
+	{{- template "defdir" $object }}
+{{- end -}}

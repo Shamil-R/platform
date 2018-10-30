@@ -16,3 +16,14 @@ directive @table(
 directive @field(
   name: String
 ) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @timestamp(
+  disable: Boolean
+  createField: String
+  updateField: String
+) on OBJECT
+
+directive @softDelete(
+  disable: Boolean
+  delteField: String
+) on OBJECT

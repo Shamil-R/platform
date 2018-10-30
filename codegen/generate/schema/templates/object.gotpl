@@ -1,14 +1,14 @@
 {{- define "object" }}
 {{- range . }}
-type {{ .Name }}{{ template "directives" .Directives }} {
-    {{- range .Fields.NotRelations }}
-	{{ .Name }}: {{ .Type }}
-	{{- template "directives" .Directives }}
-	{{- end }}
-	{{- range .Fields.Relations }}
-	{{ .Name }}(where: {{ .Type.Name }}WhereInput): {{ .Type }}
-	{{- template "directives" .Directives }}
-	{{- end }}
+type {{ .Name }}{{ print " " }}{{ template "object_directives" . }} {
+    {{- range .Fields }}
+		{{- if .Type.IsRelation }}
+			{{ .Name }}(where: {{ .Type.Name }}WhereInput): {{ .Type }}
+		{{- else }}
+			{{ .Name }}: {{ .Type }}
+		{{- end }}
+		{{- template "directives" .Directives }}
+    {{- end }}
 }
 {{ end }}
 {{- end }}

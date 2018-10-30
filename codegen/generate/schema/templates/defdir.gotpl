@@ -1,0 +1,21 @@
+{{- define "defdir" -}}
+	{{- $defaultArg := .Args }}
+	{{- $dirName := .DirName }}
+	{{- $directives := .Directives }}
+	{{- with $directives }}
+		{{- range . }}
+			{{- if eq .Name $dirName }}
+				{{- range $i, $arg := .Arguments }}
+					{{- $_ := unset $defaultArg .Name }}
+					{{- $_ := set $defaultArg .Name .Value }}
+				{{- end }}
+			{{- end }}
+		{{- end }}
+		@{{- $dirName }}(
+			{{- range $i, $arg := $defaultArg }}
+				{{- print " " }}
+				{{- $i }}: {{ $arg }}
+			{{- end -}}
+		)
+	{{- end }}
+{{- end }}
