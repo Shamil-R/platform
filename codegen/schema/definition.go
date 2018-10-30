@@ -6,11 +6,15 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
+var defaultFields map[string]bool = map[string]bool{
+	"createdAt": true,
+	"updatedAt": true,
+	"deletedAt": true,
+}
+
 type Definition struct {
 	*ast.Definition
-	directives DirectiveList
-	fields     FieldList
-	schema     *Schema // TODO: возможно нужно убрать
+	schema *Schema
 }
 
 func (d *Definition) IsMutation() bool {
@@ -30,28 +34,25 @@ func (d *Definition) IsEnum() bool {
 }
 
 func (d *Definition) Fields() FieldList {
-	if d.fields != nil {
-		return d.fields
-	}
-	d.fields = make(FieldList, 0, len(d.Definition.Fields))
+	fields := make(FieldList, 0, len(d.Definition.Fields))
 	for _, field := range d.Definition.Fields {
-		d.fields = append(d.fields, &FieldDefinition{FieldDefinition: field, parent: d})
+		if defaultFields[field.Name] == true {
+			continue
+		}
+		fields = append(fields, &FieldDefinition{FieldDefinition: field, parent: d})
 	}
-	return d.fields
+	return fields
 }
 
 func (d *Definition) Directives() DirectiveList {
-	if d.directives != nil {
-		return d.directives
+	directives := make(DirectiveList, len(d.Definition.Directives))
+
+	for i, d := range d.Definition.Directives {
+		directives[i] = &Directive{d}
 	}
-	d.directives = make(DirectiveList, 0, len(d.Definition.Directives))
-	for _, directive := range d.Definition.Directives {
-		d.directives = append(d.directives, &Directive{Directive: directive})
-	}
-	return d.directives
+	return directives
 }
 
-// TODO: переделать получение мутаций из Schema
 func (d *Definition) Mutations() ActionList {
 	actions := make(ActionList, 0)
 	mutation := d.schema.Mutation()
@@ -73,7 +74,6 @@ func (d *Definition) Mutations() ActionList {
 	return actions
 }
 
-// TODO: переделать получение запросов из Schema
 func (d *Definition) Queries() ActionList {
 	actions := make(ActionList, 0)
 	query := d.schema.Query()

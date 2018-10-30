@@ -1,0 +1,18 @@
+{{- define "defaultfields" -}}
+	{{ $temp := dict "createField" "create_field" }}
+
+	{{ with .Directives.ByName "timestamp" }}
+		{{ with .Arguments.ByName "createField" }}
+			{{ $_ := set $temp "createField" .Value }}
+		{{ end }}
+		{{ with .Arguments.ByName "disable" }}
+			{{ if eq .Value.Raw "true" }}
+				{{ $_ := unset $temp "createField" }}
+			{{ end }}
+		{{ end }}
+	{{ end }}
+	{{ with $temp.createField }}
+	createdAt: String @field(name: "{{ . }}")
+	{{ end }}
+
+{{- end }}
