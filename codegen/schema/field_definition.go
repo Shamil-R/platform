@@ -36,8 +36,9 @@ func (f *FieldDefinition) Directives() DirectiveList {
 
 func (f *FieldDefinition) Relation() *FieldDefinition {
 	if f.relation == nil {
-		def := f.parent.schema.Types().ByType(f.Type())
-		f.relation = def.Fields().ByNameType(f.parent.Name)
+		if def := f.parent.schema.Types().ByType(f.Type()); def != nil {
+			f.relation = def.Fields().ByNameType(f.parent.Name)
+		}
 	}
 	return f.relation
 }

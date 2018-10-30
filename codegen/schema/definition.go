@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"fmt"
-
 	"github.com/huandu/xstrings"
 	"github.com/jinzhu/inflection"
 	"github.com/vektah/gqlparser/ast"
@@ -11,6 +9,7 @@ import (
 type Definition struct {
 	*ast.Definition
 	directives DirectiveList
+	fields     FieldList
 	schema     *Schema // TODO: возможно нужно убрать
 }
 
@@ -31,12 +30,14 @@ func (d *Definition) IsEnum() bool {
 }
 
 func (d *Definition) Fields() FieldList {
-	fmt.Println(d.Definition)
-	fields := make(FieldList, len(d.Definition.Fields))
-	for i, field := range d.Definition.Fields {
-		fields[i] = &FieldDefinition{FieldDefinition: field, parent: d}
+	if d.fields != nil {
+		return d.fields
 	}
-	return fields
+	d.fields = make(FieldList, 0, len(d.Definition.Fields))
+	for _, field := range d.Definition.Fields {
+		d.fields = append(d.fields, &FieldDefinition{FieldDefinition: field, parent: d})
+	}
+	return d.fields
 }
 
 func (d *Definition) Directives() DirectiveList {
