@@ -1,18 +1,27 @@
 {{- define "defaultfields" -}}
-	{{ $temp := dict "createField" "create_field" }}
-
-	{{ with .Directives.ByName "timestamp" }}
-		{{ with .Arguments.ByName "createField" }}
-			{{ $_ := set $temp "createField" .Value }}
-		{{ end }}
-		{{ with .Arguments.ByName "disable" }}
-			{{ if eq .Value.Raw "true" }}
-				{{ $_ := unset $temp "createField" }}
-			{{ end }}
-		{{ end }}
-	{{ end }}
-	{{ with $temp.createField }}
+	{{- $deff := dict "createField" "created_at" "updateField" "updated_at" }}
+	{{- with .Directives.ByName "timestamp" }}
+			{{- with .Arguments.ByName "createField" }}
+				{{- $_ := set $deff "createField" .Value }}
+			{{- end }}
+			{{- with .Arguments.ByName "disable" }}
+				{{- if eq .Value.Raw "true" }}
+					{{- $_ := unset $deff "createField" }}
+				{{- end }}
+			{{- end }}
+			{{- with .Arguments.ByName "updateField" }}
+				{{- $_ := set $deff "updateField" .Value }}
+			{{- end }}
+			{{- with .Arguments.ByName "disable" }}
+				{{- if eq .Value.Raw "true" }}
+					{{- $_ := unset $deff "updateField" }}
+				{{- end }}
+			{{- end }}
+	{{- end }}
+	{{- with $deff.createField }}
 	createdAt: String @field(name: "{{ . }}")
-	{{ end }}
-
+	{{- end }}
+	{{- with $deff.updateField }}
+	updatedAt: String @field(name: "{{ . }}")
+	{{- end }}
 {{- end }}

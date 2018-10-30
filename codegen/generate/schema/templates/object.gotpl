@@ -12,6 +12,7 @@ type {{ .Name }}{{ template "object_directives" . }} {
 	{{- range .Fields.RelationsManyToOne }}
 	{{ .Name }}: {{ .Type }}
 	{{- end }}
+	{{- template "defaultfields" . }}
 }
 {{ end }}
 {{- end }}
