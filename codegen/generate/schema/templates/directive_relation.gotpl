@@ -1,0 +1,6 @@
+{{- define "directive_relation" }}
+	{{- $name := "relation" }}
+	{{- $args := dict }}
+	{{- $data := dict "Directives" .Directives "Name" $name "Args" $args }}
+	{{- template "directive" $data }}
+{{- end }}

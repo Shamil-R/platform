@@ -7,10 +7,14 @@ type {{ .Name }}{{ template "object_directives" . }} {
 	{{- template "directive_validate" . }}
 	{{- end }}
 	{{- range .Fields.RelationsOneToMany }}
-	{{ .Name }}(where: {{ .Type.Name }}WhereInput): {{ .Type }}
+	{{- /* {{ .Name }}(where: {{ .Type.Name }}WhereInput): {{ .Type }} */}}
+	{{ .Name }}: {{ .Type }}
+	{{- template "directive_relation" . }}
 	{{- end }}
 	{{- range .Fields.RelationsManyToOne }}
 	{{ .Name }}: {{ .Type }}
+	{{- template "directive_field" . }}
+	{{- template "directive_relation" . }}
 	{{- end }}
 }
 {{ end }}

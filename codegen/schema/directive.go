@@ -99,11 +99,19 @@ func (l DirectiveList) HasField() bool {
 }
 
 func (l DirectiveList) Table() *TableDirective {
-	return &TableDirective{Directive: firstDirective(l, isTableDirective)}
+	directive := firstDirective(l, isTableDirective)
+	if directive == nil {
+		return nil
+	}
+	return &TableDirective{Directive: directive}
 }
 
 func (l DirectiveList) Field() *FieldDirective {
-	return &FieldDirective{Directive: firstDirective(l, isFieldDirective)}
+	directive := firstDirective(l, isFieldDirective)
+	if directive == nil {
+		return nil
+	}
+	return &FieldDirective{Directive: directive}
 }
 
 func (l DirectiveList) ByName(name string) *Directive {
