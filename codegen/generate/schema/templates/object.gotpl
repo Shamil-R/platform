@@ -9,6 +9,7 @@ type {{ .Name }}{{ print " " }}{{ template "object_directives" . }} {
 		{{- end }}
 		{{- template "directives" .Directives }}
     {{- end }}
+    {{ template "defaultfields" . }}
 }
 {{ end }}
 {{- end }}

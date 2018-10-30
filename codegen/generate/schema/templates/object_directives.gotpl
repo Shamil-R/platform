@@ -1,5 +1,5 @@
 {{- define "object_directives" }}
-	{{- $args := dict "name" (lower .Name) }}
+	{{- $args := dict "name" (quote (lower .Name)) }}
 	{{- $dirName := "table" }}
 	{{- $object := dict "Directives" .Directives "DirName" $dirName "Args" $args }}
 	{{- template "defaultdirectives" $object -}}

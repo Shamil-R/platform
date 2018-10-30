@@ -6,6 +6,12 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
+var defaultFields map[string]bool = map[string]bool{
+	"createdAt": true,
+	"updatedAt": true,
+	"deletedAt": true,
+}
+
 type Definition struct {
 	*ast.Definition
 	schema *Schema
@@ -28,15 +34,19 @@ func (d *Definition) IsEnum() bool {
 }
 
 func (d *Definition) Fields() FieldList {
-	fields := make(FieldList, len(d.Definition.Fields))
-	for i, field := range d.Definition.Fields {
-		fields[i] = &FieldDefinition{field, d}
+	fields := make(FieldList, 0, len(d.Definition.Fields))
+	for _, field := range d.Definition.Fields {
+		if defaultFields[field.Name] == true {
+			continue
+		}
+		fields = append(fields, &FieldDefinition{field, d})
 	}
 	return fields
 }
 
 func (d *Definition) Directives() DirectiveList {
 	directives := make(DirectiveList, len(d.Definition.Directives))
+
 	for i, d := range d.Definition.Directives {
 		directives[i] = &Directive{d}
 	}
