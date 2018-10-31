@@ -1,27 +1,51 @@
 {{- define "defaultfields" -}}
-	{{- $deff := dict "createField" "created_at" "updateField" "updated_at" }}
-	{{- with .Directives.ByName "timestamp" }}
-			{{- with .Arguments.ByName "createField" }}
-				{{- $_ := set $deff "createField" .Value }}
+	{{- $tsfields := dict "createField" `"created_at"` "updateField" `"updated_at"` }}
+	{{- $sdfields := dict "deleteField" `"deleted_at"` }}
+	{{- with .Directives.ByName "timestamp" -}}
+
+		{{- with .Arguments.ByName "createField" }}
+			{{- $_ := set $tsfields "createField" .Value }}
+		{{- end }}
+		{{- with .Arguments.ByName "disable" }}
+			{{- if eq .Value.Raw "true" }}
+				{{- $_ := unset $tsfields "createField" }}
 			{{- end }}
-			{{- with .Arguments.ByName "disable" }}
-				{{- if eq .Value.Raw "true" }}
-					{{- $_ := unset $deff "createField" }}
-				{{- end }}
+		{{- end }}
+
+		{{- with .Arguments.ByName "updateField" }}
+			{{- $_ := set $tsfields "updateField" .Value }}
+		{{- end }}
+		{{- with .Arguments.ByName "disable" }}
+			{{- if eq .Value.Raw "true" }}
+				{{- $_ := unset $tsfields "updateField" }}
 			{{- end }}
-			{{- with .Arguments.ByName "updateField" }}
-				{{- $_ := set $deff "updateField" .Value }}
-			{{- end }}
-			{{- with .Arguments.ByName "disable" }}
-				{{- if eq .Value.Raw "true" }}
-					{{- $_ := unset $deff "updateField" }}
-				{{- end }}
-			{{- end }}
+		{{- end }}
 	{{- end }}
-	{{- with $deff.createField }}
-	createdAt: String @field(name: "{{ . }}")
+
+	{{- with .Directives.ByName "softDelete" -}}
+
+		{{- with .Arguments.ByName "deleteField" }}
+			{{- $_ := set $sdfields "deleteField" .Value }}
+		{{- end }}
+		{{- with .Arguments.ByName "disable" }}
+			{{- if eq .Value.Raw "true" }}
+				{{- $_ := unset $sdfields "deleteField" }}
+			{{- end }}
+		{{- end }}
+
 	{{- end }}
-	{{- with $deff.updateField }}
-	updatedAt: String @field(name: "{{ . }}")
-	{{- end }}
+
+  {{- with $tsfields.createField }}
+  createdAt: String!
+  @field(name: {{ . }})
+  {{- end }}
+  {{- with $tsfields.updateField }}
+  updatedAt: String
+  @field(name: {{ . }})
+  {{- end }}
+  {{- with $sdfields.deleteField }}
+  deletedAt: String
+  @field(name: {{ . }})
+  {{- end }}
 {{- end }}
+

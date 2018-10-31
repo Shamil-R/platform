@@ -25,5 +25,5 @@ directive @timestamp(
 
 directive @softDelete(
   disable: Boolean
-  delteField: String
+  deleteField: String
 ) on OBJECT
