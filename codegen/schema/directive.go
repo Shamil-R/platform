@@ -48,6 +48,10 @@ func (f *Directive) Arguments() ArgumentList {
 	return args
 }
 
+type ValidateDirective struct {
+	*Directive
+}
+
 type TableDirective struct {
 	*Directive
 	argName *string
@@ -70,6 +74,18 @@ func (d *FieldDirective) ArgName() string {
 		d.argName = &d.Arguments().ByName("name").Value().Raw
 	}
 	return *d.argName
+}
+
+type RelationDirective struct {
+	*Directive
+	argObject *string
+}
+
+func (d *RelationDirective) ArgObject() string {
+	if d.argObject == nil {
+		d.argObject = &d.Arguments().ByName("object").Value().Raw
+	}
+	return *d.argObject
 }
 
 type DirectiveList []*Directive
@@ -98,6 +114,14 @@ func (l DirectiveList) HasField() bool {
 	return hasDirective(l, isFieldDirective)
 }
 
+func (l DirectiveList) Validate() *ValidateDirective {
+	directive := firstDirective(l, isValidateDirective)
+	if directive == nil {
+		return nil
+	}
+	return &ValidateDirective{Directive: directive}
+}
+
 func (l DirectiveList) Table() *TableDirective {
 	directive := firstDirective(l, isTableDirective)
 	if directive == nil {
@@ -112,6 +136,14 @@ func (l DirectiveList) Field() *FieldDirective {
 		return nil
 	}
 	return &FieldDirective{Directive: directive}
+}
+
+func (l DirectiveList) Relation() *RelationDirective {
+	directive := firstDirective(l, isRelationDirective)
+	if directive == nil {
+		return nil
+	}
+	return &RelationDirective{Directive: directive}
 }
 
 func (l DirectiveList) ByName(name string) *Directive {

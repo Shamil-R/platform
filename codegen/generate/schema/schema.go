@@ -48,6 +48,22 @@ func Generate(cfg Config) error {
 		return err
 	}
 
+	tmpl, err = helper.ReadTemplate("schema", box)
+	if err != nil {
+		return err
+	}
+
+	s, err = schema.ParseSchemaWithDirectives(buf.String())
+	if err != nil {
+		return err
+	}
+
+	buf = bytes.NewBufferString("")
+
+	if err := tmpl.Execute(buf, s); err != nil {
+		return err
+	}
+
 	if err := helper.WriteFile(cfg.Out.Path, buf); err != nil {
 		return err
 	}
