@@ -16,7 +16,7 @@ type Config struct {
 func Generate(cfg Config) error {
 	box := packr.NewBox("./templates")
 
-	tmpl, err := helper.ReadTemplate("schema_object", box)
+	tmpl, err := helper.ReadTemplate("schema_directive", box)
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	tmpl, err = helper.ReadTemplate("schema", box)
+	tmpl, err = helper.ReadTemplate("schema_relation", box)
 	if err != nil {
 		return err
 	}
@@ -41,6 +41,8 @@ func Generate(cfg Config) error {
 	if err != nil {
 		return err
 	}
+
+	buf = bytes.NewBufferString("")
 
 	if err := tmpl.Execute(buf, s); err != nil {
 		return err

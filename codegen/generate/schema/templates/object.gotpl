@@ -9,12 +9,12 @@ type {{ .Name }}{{ template "object_directives" . }} {
 	{{- range .Fields.RelationsOneToMany }}
 	{{- /* {{ .Name }}(where: {{ .Type.Name }}WhereInput): {{ .Type }} */}}
 	{{ .Name }}: {{ .Type }}
-	{{- template "directive_relation" . }}
+	{{- template "directive_relation_one_to_many" . }}
 	{{- end }}
 	{{- range .Fields.RelationsManyToOne }}
 	{{ .Name }}: {{ .Type }}
 	{{- template "directive_field" . }}
-	{{- template "directive_relation" . }}
+	{{- template "directive_relation_many_to_one" . }}
 	{{- end }}
 }
 {{ end }}

@@ -1,0 +1,10 @@
+{{- define "directive_relation_many_to_one" }}
+	{{- $type := quote "many_to_one" }}
+	{{- $object := quote .Type.Name }}
+	{{- $table := quote .Relation.Definition.Directives.Table.ArgName }}
+	{{- $foreignKey := quote .Directives.Field.ArgName }}
+	{{- $ownerKey := quote .Relation.Definition.Fields.Primary.Directives.Field.ArgName }}
+	{{- $args := dict "type" $type "object" $object "table" $table "foreignKey" $foreignKey "ownerKey" $ownerKey }}
+	{{- $data := dict "Directives" .Directives "Name" "relation"  "Args" $args }}
+	{{- template "directive" $data }}
+{{- end }}

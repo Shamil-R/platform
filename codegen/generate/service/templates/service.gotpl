@@ -10,7 +10,7 @@ import (
 	//TODO: переделать импорт на чтение из конфига
 	mssql "gitlab/nefco/platform/codegen/generate/service/mssql"
 )
-{{- with .Parent }}
+{{- with .Definition }}
 {{ $mutationService :=  lower .Name | printf "%sMutationService"  }}
 type {{ title $mutationService }} interface {
 	{{- range .Mutations }}

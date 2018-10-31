@@ -106,12 +106,12 @@ func connectOne(tx *sqlx.Tx, v *schema.ChildValue) (int, error) {
 	for _, child := range v.Children() {
 		field := child.Directives().Field()
 
-		sel = append(sel, field.Name())
+		sel = append(sel, field.ArgName())
 
-		w := fmt.Sprintf("%s = :%s", field.Name(), field.Name())
+		w := fmt.Sprintf("%s = :%s", field.ArgName(), field.ArgName())
 		where = append(where, w)
 
-		arg[field.Name()] = child.Value().Raw
+		arg[field.ArgName()] = child.Value().Raw
 	}
 
 	query := fmt.Sprintf(

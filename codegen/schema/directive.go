@@ -50,26 +50,26 @@ func (f *Directive) Arguments() ArgumentList {
 
 type TableDirective struct {
 	*Directive
-	name *string
+	argName *string
 }
 
-func (d *TableDirective) Name() string {
-	if d.name == nil {
-		d.name = &d.Arguments().ByName("name").Value().Raw
+func (d *TableDirective) ArgName() string {
+	if d.argName == nil {
+		d.argName = &d.Arguments().ByName("name").Value().Raw
 	}
-	return *d.name
+	return *d.argName
 }
 
 type FieldDirective struct {
 	*Directive
-	name *string
+	argName *string
 }
 
-func (d *FieldDirective) Name() string {
-	if d.name == nil {
-		d.name = &d.Arguments().ByName("name").Value().Raw
+func (d *FieldDirective) ArgName() string {
+	if d.argName == nil {
+		d.argName = &d.Arguments().ByName("name").Value().Raw
 	}
-	return *d.name
+	return *d.argName
 }
 
 type DirectiveList []*Directive

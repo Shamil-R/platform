@@ -3,7 +3,7 @@
 		{{- range .Arguments }}
 			{{- $_ := set $.Args .Name .Value }}
 		{{- end }}
-	{{- end}}
+	{{- end -}}
 	@{{ .Name }}
 	{{- $c := sub (len $.Args) 1 }}
 	{{- if ge $c 0 }}(

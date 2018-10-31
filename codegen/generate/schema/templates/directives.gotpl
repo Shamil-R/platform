@@ -1,5 +1,5 @@
-{{- define "directives" -}}
-{{- range . }} @{{ .Name }}
-{{- if .Arguments.IsNotEmpty }}({{ template "arguments" .Arguments }}){{ end }}
-{{- end }}
+{{- define "directives" }}
+	{{- range .Directives }}
+		{{- template "copy_directive" . }}
+	{{- end }}
 {{- end }}
