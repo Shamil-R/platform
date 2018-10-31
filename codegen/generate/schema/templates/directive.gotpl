@@ -8,7 +8,7 @@
 	{{- $c := sub (len $.Args) 1 }}
 	{{- if ge $c 0 }}(
 		{{- range $name, $value := $.Args }}
-			{{- $s := list $name $value |join ": " }}
+			{{- $s := list $name $value | join ": " }}
 			{{- $_ := set $.Args $name $s }}
 		{{- end }}
 		{{- $vals := values $.Args }}

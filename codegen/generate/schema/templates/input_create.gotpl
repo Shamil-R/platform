@@ -9,7 +9,7 @@ input {{ .Name }}CreateInput
 	{{- end }}
 	{{- end }}
 	{{- range .Fields.RelationsManyToOne }}
-	{{ .Name }}: {{ .Directives.Relation.ArgObject }}CreateOneWithout{{ firstRuneToUpper .Relation.Name }}Input!
+	{{ .Name }}: {{ .Directives.Relation.ArgObject }}CreateOneWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input!
 	{{- end }}
 }
 {{- end }}

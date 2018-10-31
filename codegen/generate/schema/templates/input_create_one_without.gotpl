@@ -1,8 +1,8 @@
 {{- define "input_create_one_without" }}
-{{- $name := .Name }}
-{{- range .Fields.RelationsOneToMany }}
-input {{ $name }}CreateOneWithout{{ firstRuneToUpper .Name }}Input {
-	connect: {{ $name }}WhereUniqueInput
+{{- range .Fields.RelationsManyToOne }}
+input {{ .Directives.Relation.ArgObject }}CreateOneWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input {
+	create: {{ .Directives.Relation.ArgObject }}CreateWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input
+	connect: {{ .Directives.Relation.ArgObject }}WhereUniqueInput
 }
 {{- end }}
 {{- end }}

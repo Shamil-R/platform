@@ -79,6 +79,7 @@ func (d *FieldDirective) ArgName() string {
 type RelationDirective struct {
 	*Directive
 	argObject *string
+	argField  *string
 }
 
 func (d *RelationDirective) ArgObject() string {
@@ -86,6 +87,13 @@ func (d *RelationDirective) ArgObject() string {
 		d.argObject = &d.Arguments().ByName("object").Value().Raw
 	}
 	return *d.argObject
+}
+
+func (d *RelationDirective) ArgField() string {
+	if d.argField == nil {
+		d.argField = &d.Arguments().ByName("field").Value().Raw
+	}
+	return *d.argField
 }
 
 type DirectiveList []*Directive
