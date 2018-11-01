@@ -3,13 +3,13 @@ package schema
 import "github.com/vektah/gqlparser/ast"
 
 const (
-	DIRECTIVE_PRIMARY   = "primary"
-	DIRECTIVE_UNIQUE    = "unique"
-	DIRECTIVE_INDENTITY = "identity"
-	DIRECTIVE_VALIDATE  = "validate"
-	DIRECTIVE_TABLE     = "table"
-	DIRECTIVE_FIELD     = "field"
-	DIRECTIVE_RELATION  = "relation"
+	DirectivePrimary  = "primary"
+	DirectiveUnique   = "unique"
+	DirectiveIdentity = "identity"
+	DirectiveValidate = "validate"
+	DirectiveTable    = "table"
+	DirectiveField    = "field"
+	DirectiveRelation = "relation"
 )
 
 type Directive struct {
@@ -25,7 +25,7 @@ func (d *Directive) IsUnique() bool {
 }
 
 func (d *Directive) IsIndentity() bool {
-	return isIndentityDirective(d)
+	return isIdentityDirective(d)
 }
 
 func (d *Directive) IsValidate() bool {
@@ -107,7 +107,7 @@ func (l DirectiveList) HasUnique() bool {
 }
 
 func (l DirectiveList) HasIndentity() bool {
-	return hasDirective(l, isIndentityDirective)
+	return hasDirective(l, isIdentityDirective)
 }
 
 func (l DirectiveList) HasValidate() bool {
@@ -120,6 +120,18 @@ func (l DirectiveList) HasTable() bool {
 
 func (l DirectiveList) HasField() bool {
 	return hasDirective(l, isFieldDirective)
+}
+
+func (l DirectiveList) Primary() *Directive {
+	return firstDirective(l, isPrimaryDirective)
+}
+
+func (l DirectiveList) Unique() *Directive {
+	return firstDirective(l, isUniqueDirective)
+}
+
+func (l DirectiveList) Identity() *Directive {
+	return firstDirective(l, isIdentityDirective)
 }
 
 func (l DirectiveList) Validate() *ValidateDirective {
@@ -161,31 +173,31 @@ func (l DirectiveList) ByName(name string) *Directive {
 type directiveFilter func(directive *Directive) bool
 
 func isPrimaryDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_PRIMARY
+	return directive.Name == DirectivePrimary
 }
 
 func isUniqueDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_UNIQUE
+	return directive.Name == DirectiveUnique
 }
 
-func isIndentityDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_INDENTITY
+func isIdentityDirective(directive *Directive) bool {
+	return directive.Name == DirectiveIdentity
 }
 
 func isValidateDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_VALIDATE
+	return directive.Name == DirectiveValidate
 }
 
 func isTableDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_TABLE
+	return directive.Name == DirectiveTable
 }
 
 func isFieldDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_FIELD
+	return directive.Name == DirectiveField
 }
 
 func isRelationDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_RELATION
+	return directive.Name == DirectiveRelation
 }
 
 func byNameDirective(name string) directiveFilter {

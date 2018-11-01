@@ -4,10 +4,10 @@ type {{ .Name }}
 	{{ template "object_directives" . }} {
 	{{- range .Fields }}
 	{{ template "field" . }}
-	{{- template "copy_directive" .Directives.ByName "primary" }}
-	{{- template "copy_directive" .Directives.ByName "unique" }}
-	{{- template "copy_directive" .Directives.ByName "identity" }}
-	{{- template "copy_directive" .Directives.ByName "validate" }}
+	{{- template "copy_directive" .Directives.Primary }}
+	{{- template "copy_directive" .Directives.Unique }}
+	{{- template "copy_directive" .Directives.Identity }}
+	{{- template "copy_directive" .Directives.Validate }}
 	{{ template "directive_field" . }}
 	{{- end }}
 }
