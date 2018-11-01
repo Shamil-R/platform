@@ -1,9 +1,12 @@
 {{- define "input_update" }}
-input {{ .Name }}UpdateInput {
-    {{- range .Fields.NotRelations }}
-    {{- if not .Directives.HasIndentity }}
-	{{ .Name }}: {{ .Type }}{{ template "directives" .Directives }}
+input {{ .Name }}UpdateInput
+    {{- template "copy_directive" .Directives.Table }} {
+	{{- range .Fields.NotRelations }}
+	{{- if not .Directives.HasIndentity }}
+	{{ template "field" . }}
+	{{- template "copy_directive" .Directives.Validate }}
+	{{- template "copy_directive" .Directives.Field }}
 	{{- end }}
-    {{- end }}
+	{{- end }}
 }
 {{- end }}

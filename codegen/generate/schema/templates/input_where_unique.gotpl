@@ -1,5 +1,6 @@
 {{- define "input_where_unique" }}
-input {{ .Name }}WhereUniqueInput {
+input {{ .Name }}WhereUniqueInput
+	{{- template "copy_directive" .Directives.Table }} {
     {{- with .Fields.Primary }}
 	{{ template "field" . }}
 	{{- template "copy_directive" .Directives.Validate }}

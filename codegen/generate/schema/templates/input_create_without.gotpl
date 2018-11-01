@@ -1,7 +1,7 @@
 {{- define "input_create_without" }}
 {{- range .Fields.RelationsOneToMany }}
 input {{ $.Name }}CreateWithout{{ firstRuneToUpper .Name }}Input
-	{{- template "copy_directive" .Directives.Table }} {
+	{{- template "copy_directive" $.Directives.Table }} {
 	{{- range $.Fields.NotRelations }}
 	{{- if not .Directives.HasIndentity }}
 	{{ template "field" . }}
