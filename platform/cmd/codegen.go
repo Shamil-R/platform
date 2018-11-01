@@ -33,7 +33,12 @@ var codegenCmd = &cobra.Command{
 	Short: "codegen",
 	Long:  `codegen`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if genSchema {
+		if genClean {
+			if err := codegen.Clean(); err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+		} else if genSchema {
 			if err := codegen.GenerateSchema(viper.GetViper()); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
@@ -50,11 +55,6 @@ var codegenCmd = &cobra.Command{
 			}
 		} else if genServer {
 			if err := codegen.GenerateServer(viper.GetViper()); err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-		} else if genClean {
-			if err := codegen.Clean(); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
