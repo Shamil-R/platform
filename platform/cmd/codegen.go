@@ -38,7 +38,8 @@ var codegenCmd = &cobra.Command{
 				fmt.Println(err)
 				os.Exit(1)
 			}
-		} else if genSchema {
+		}
+		if genSchema {
 			if err := codegen.GenerateSchema(viper.GetViper()); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
