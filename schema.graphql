@@ -4,7 +4,7 @@ type User @timestamp(disable: true createField: "created_at" updateField: "updat
     # roles: [RoleObject!]!
     materials: [Material!]
     # завести скалярный тип Datetime
-    createdAt: String
+    # createdAt: String
 }
 
 # type RoleObject @softDelete(disable: true delteField: "delted_at") {

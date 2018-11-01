@@ -69,6 +69,13 @@ func (l FieldList) NotRelations() FieldList {
 	return filterFields(l, notRelation)
 }
 
+func (l FieldList) ByName(name string) *FieldDefinition {
+	fn := func(field *FieldDefinition) bool {
+		return field.Name == name
+	}
+	return firstField(l, fn)
+}
+
 func (l FieldList) ByType(name string) *FieldDefinition {
 	fn := func(field *FieldDefinition) bool {
 		return field.Type().Name() == name

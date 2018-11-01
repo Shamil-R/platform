@@ -3,17 +3,24 @@ package mssql
 import (
 	"context"
 	"fmt"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
-	"strings"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/jmoiron/sqlx"
-	"github.com/vektah/gqlparser/ast"
 )
 
 func Create(ctx context.Context, result interface{}) error {
 	resCtx := graphql.GetResolverContext(ctx)
+
+	tx, err := Begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	value := &schema.Value{Value: resCtx.Field.Field.Arguments.ForName("data").Value}
+
+	return create(tx, value, result)
+	/* resCtx := graphql.GetResolverContext(ctx)
 
 	queryInsert := query.Insert(resCtx.Field.Field)
 
@@ -51,10 +58,51 @@ func Create(ctx context.Context, result interface{}) error {
 		return err
 	}
 
+	return nil */
+}
+
+func create(tx *sqlx.Tx, v *schema.Value, result interface{}) error {
+	for _, child := range v.Children() {
+		input := child.Value().Definition().Directives().Input()
+		if input != nil && input.IsCreateOneWithout() {
+			if err := createOneWithout(tx, child.Value()); err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }
 
-func createOne(ctx context.Context, result interface{}) error {
+func createOneWithout(tx *sqlx.Tx, v *schema.Value) error {
+	if connect := v.Children().Connect(); connect != nil {
+		if err := connectOne(tx, connect.Value()); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func connectOne(tx *sqlx.Tx, v *schema.Value) error {
+	def := v.Definition()
+	table := def.Directives().Table()
+	fmt.Println(table.Name, table.ArgName(), v.Definition().Name)
+	// t := v.Definition().Fields()
+	// fmt.Println(t)
+	// for _, f := range t {
+	// 	fmt.Println(f)
+	// }
+	for _, child := range v.Children() {
+		field := def.Fields().ByName(child.Name)
+
+		if primary := field.Directives().Primary(); primary != nil {
+
+		}
+		fmt.Println("$", field.Directives().Field().ArgName())
+	}
+	return nil
+}
+
+/* func createOne(ctx context.Context, result interface{}) error {
 	// tx, err := Begin(ctx)
 	// if err != nil {
 	// 	return err
@@ -152,4 +200,4 @@ func directive(child *ast.ChildValue, dirName, argName string) *ast.Value {
 		}
 	}
 	return nil
-}
+} */

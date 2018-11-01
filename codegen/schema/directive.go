@@ -10,6 +10,9 @@ const (
 	DirectiveTable    = "table"
 	DirectiveField    = "field"
 	DirectiveRelation = "relation"
+	DirectiveInput    = "input"
+
+	InputDirectiveCreateOneWithout = "create_one_without"
 )
 
 type Directive struct {
@@ -96,6 +99,14 @@ func (d *RelationDirective) ArgField() string {
 	return *d.argField
 }
 
+type InputDirective struct {
+	*Directive
+}
+
+func (d *InputDirective) IsCreateOneWithout() bool {
+	return d.Arguments().ByName("name").Value().Raw == InputDirectiveCreateOneWithout
+}
+
 type DirectiveList []*Directive
 
 func (l DirectiveList) HasPrimary() bool {
@@ -166,6 +177,14 @@ func (l DirectiveList) Relation() *RelationDirective {
 	return &RelationDirective{Directive: directive}
 }
 
+func (l DirectiveList) Input() *InputDirective {
+	directive := firstDirective(l, isInputDirective)
+	if directive == nil {
+		return nil
+	}
+	return &InputDirective{Directive: directive}
+}
+
 func (l DirectiveList) ByName(name string) *Directive {
 	return firstDirective(l, byNameDirective(name))
 }
@@ -198,6 +217,10 @@ func isFieldDirective(directive *Directive) bool {
 
 func isRelationDirective(directive *Directive) bool {
 	return directive.Name == DirectiveRelation
+}
+
+func isInputDirective(directive *Directive) bool {
+	return directive.Name == DirectiveInput
 }
 
 func byNameDirective(name string) directiveFilter {

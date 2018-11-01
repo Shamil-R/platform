@@ -19,9 +19,9 @@ func (v *ChildValue) Value() *Value {
 	return v.value
 }
 
-func (v *ChildValue) Children() ChildValueList {
-	return v.Value().Children()
-}
+// func (v *ChildValue) Children() ChildValueList {
+// 	return v.Value().Children()
+// }
 
 func (v *ChildValue) Directives() DirectiveList {
 	return v.Value().Definition().Directives()
@@ -29,9 +29,9 @@ func (v *ChildValue) Directives() DirectiveList {
 
 type ChildValueList []*ChildValue
 
-func (l ChildValueList) Create() *ChildValue {
+/* func (l ChildValueList) Create() *ChildValue {
 	return firstChildValue(l, isCreateChildValue)
-}
+} */
 
 func (l ChildValueList) Connect() *ChildValue {
 	return firstChildValue(l, isConnectChildValue)
