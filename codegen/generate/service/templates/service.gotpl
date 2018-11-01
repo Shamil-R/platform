@@ -45,7 +45,7 @@ func (s *{{ $queryService }}) {{ template "func" . }} {
 	{{- template "impl" . }}
 }
 {{ end}}
-{{- if .HasRelations }}
+{{- if .Fields.HasRelations }}
 {{- $relationService :=  lower .Name | printf "%sRelationService"  }}
 type {{ title $relationService }} interface {
 	{{- range .Relations }}
