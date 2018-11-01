@@ -1,9 +1,10 @@
 {{- define "input_where_unique" }}
-input {{ .Name }}WhereUniqueInput {
-    {{- range .Fields }}
-    {{- if .Directives.HasIndentity }}
-	{{ .Name }}: {{ .Type }}{{ template "directives" .Directives }}
-	{{- end }}
+input {{ .Name }}WhereUniqueInput
+	{{- template "copy_directive" .Directives.Table }} {
+    {{- with .Fields.Primary }}
+	{{ template "field" . }}
+	{{- template "copy_directive" .Directives.Validate }}
+	{{- template "copy_directive" .Directives.Field }}
     {{- end }}
 }
 {{- end }}

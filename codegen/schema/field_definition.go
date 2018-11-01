@@ -10,7 +10,7 @@ type FieldDefinition struct {
 	relation *FieldDefinition
 }
 
-func (f *FieldDefinition) Parent() *Definition {
+func (f *FieldDefinition) Definition() *Definition {
 	return f.parent
 }
 
@@ -37,7 +37,7 @@ func (f *FieldDefinition) Directives() DirectiveList {
 func (f *FieldDefinition) Relation() *FieldDefinition {
 	if f.relation == nil {
 		if def := f.parent.schema.Types().ByType(f.Type()); def != nil {
-			f.relation = def.Fields().ByNameType(f.parent.Name)
+			f.relation = def.Fields().ByType(f.parent.Name)
 		}
 	}
 	return f.relation
@@ -47,6 +47,10 @@ type FieldList []*FieldDefinition
 
 func (l FieldList) HasRelations() bool {
 	return hasField(l, isRelation)
+}
+
+func (l FieldList) Primary() *FieldDefinition {
+	return firstField(l, isPrimaryField)
 }
 
 func (l FieldList) RelationsOneToMany() FieldList {
@@ -65,12 +69,15 @@ func (l FieldList) NotRelations() FieldList {
 	return filterFields(l, notRelation)
 }
 
-// TODO: переименовать ByNameType в ByType
-func (l FieldList) ByNameType(name string) *FieldDefinition {
+func (l FieldList) ByType(name string) *FieldDefinition {
 	fn := func(field *FieldDefinition) bool {
 		return field.Type().Name() == name
 	}
 	return firstField(l, fn)
+}
+
+func isPrimaryField(field *FieldDefinition) bool {
+	return field.Directives().HasPrimary()
 }
 
 func isOneToManyRelation(field *FieldDefinition) bool {

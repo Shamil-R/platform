@@ -15,6 +15,7 @@ var (
 	genGqlgen  = false
 	genService = false
 	genServer  = false
+	genClean   = false
 )
 
 func init() {
@@ -22,6 +23,7 @@ func init() {
 	codegenCmd.Flags().BoolVar(&genGqlgen, "gqlgen", false, "generate gqlgen")
 	codegenCmd.Flags().BoolVar(&genService, "service", false, "generate service")
 	codegenCmd.Flags().BoolVar(&genServer, "server", false, "generate server")
+	codegenCmd.Flags().BoolVar(&genClean, "clean", false, "generate clean")
 
 	rootCmd.AddCommand(codegenCmd)
 }
@@ -31,6 +33,12 @@ var codegenCmd = &cobra.Command{
 	Short: "codegen",
 	Long:  `codegen`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if genClean {
+			if err := codegen.Clean(); err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+		}
 		if genSchema {
 			if err := codegen.GenerateSchema(viper.GetViper()); err != nil {
 				fmt.Println(err)

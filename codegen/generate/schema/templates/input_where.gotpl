@@ -1,9 +1,14 @@
 {{- define "input_where" }}
-input {{ .Name }}WhereInput {
-    {{- range .Fields }}
-    {{- if .Directives.HasIndentity }}
-	{{ .Name }}: {{ .Type }}{{ template "directives" .Directives }}
+{{ $conds := list "Not" "Lt" "Lte" "Gt" "Gte" "Contains" "NotContains" "StartsWith" "NotStartsWith" "EndsWith" "NotEndsWith" }}
+input {{ .Name }}WhereInput
+	{{- template "copy_directive" .Directives.Table }} {
+{{- range $_, $field := .Fields.NotRelations }}
+	{{ $field.Name }}: {{ $field.Type.Name }}
+	{{- template "copy_directive" $field.Directives.Field }}
+	{{- range $_, $cond := $conds }}
+	{{ $field.Name }}{{ $cond }}: {{ $field.Type.Name }}
+	{{- template "copy_directive" $field.Directives.Field }}
 	{{- end }}
-    {{- end }}
+{{- end }}
 }
 {{- end }}

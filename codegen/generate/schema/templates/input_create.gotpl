@@ -1,13 +1,15 @@
 {{- define "input_create" }}
-{{- $name := .Name }}
-input {{ .Name }}CreateInput {
-    {{- range .Fields.NotRelations }}
-    {{- if not .Directives.HasIndentity }}
-	{{ .Name }}: {{ .Type }}{{ template "directives" .Directives }}
+input {{ .Name }}CreateInput
+	{{- template "copy_directive" .Directives.Table }} {
+	{{- range .Fields.NotRelations }}
+	{{- if not .Directives.HasIndentity }}
+	{{ template "field" . }}
+	{{- template "copy_directive" .Directives.Validate }}
+	{{- template "copy_directive" .Directives.Field }}
 	{{- end }}
-    {{- end }}
+	{{- end }}
 	{{- range .Fields.RelationsManyToOne }}
-	{{ .Name }}: {{ .Type.Name }}CreateOneWithout{{ firstRuneToUpper .Relation.Name }}Input!{{ template "directives" .Directives }}
+	{{ .Name }}: {{ .Directives.Relation.ArgObject }}CreateOneWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input!
 	{{- end }}
 }
 {{- end }}

@@ -1,5 +1,0 @@
-{{- define "directive_validate" }}
-	{{- $name := "validate"}}
-	{{- $data := dict "Directives" .Directives "Name" $name }}
-	{{- template "copy_directive" $data }}
-{{- end }}

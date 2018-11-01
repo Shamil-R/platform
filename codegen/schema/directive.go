@@ -3,13 +3,13 @@ package schema
 import "github.com/vektah/gqlparser/ast"
 
 const (
-	DIRECTIVE_PRIMARY   = "primary"
-	DIRECTIVE_UNIQUE    = "unique"
-	DIRECTIVE_INDENTITY = "identity"
-	DIRECTIVE_VALIDATE  = "validate"
-	DIRECTIVE_TABLE     = "table"
-	DIRECTIVE_FIELD     = "field"
-	DIRECTIVE_RELATION  = "relation"
+	DirectivePrimary  = "primary"
+	DirectiveUnique   = "unique"
+	DirectiveIdentity = "identity"
+	DirectiveValidate = "validate"
+	DirectiveTable    = "table"
+	DirectiveField    = "field"
+	DirectiveRelation = "relation"
 )
 
 type Directive struct {
@@ -25,7 +25,7 @@ func (d *Directive) IsUnique() bool {
 }
 
 func (d *Directive) IsIndentity() bool {
-	return isIndentityDirective(d)
+	return isIdentityDirective(d)
 }
 
 func (d *Directive) IsValidate() bool {
@@ -48,28 +48,52 @@ func (f *Directive) Arguments() ArgumentList {
 	return args
 }
 
-type TableDirective struct {
+type ValidateDirective struct {
 	*Directive
-	name *string
 }
 
-func (d *TableDirective) Name() string {
-	if d.name == nil {
-		d.name = &d.Arguments().ByName("name").Value().Raw
+type TableDirective struct {
+	*Directive
+	argName *string
+}
+
+func (d *TableDirective) ArgName() string {
+	if d.argName == nil {
+		d.argName = &d.Arguments().ByName("name").Value().Raw
 	}
-	return *d.name
+	return *d.argName
 }
 
 type FieldDirective struct {
 	*Directive
-	name *string
+	argName *string
 }
 
-func (d *FieldDirective) Name() string {
-	if d.name == nil {
-		d.name = &d.Arguments().ByName("name").Value().Raw
+func (d *FieldDirective) ArgName() string {
+	if d.argName == nil {
+		d.argName = &d.Arguments().ByName("name").Value().Raw
 	}
-	return *d.name
+	return *d.argName
+}
+
+type RelationDirective struct {
+	*Directive
+	argObject *string
+	argField  *string
+}
+
+func (d *RelationDirective) ArgObject() string {
+	if d.argObject == nil {
+		d.argObject = &d.Arguments().ByName("object").Value().Raw
+	}
+	return *d.argObject
+}
+
+func (d *RelationDirective) ArgField() string {
+	if d.argField == nil {
+		d.argField = &d.Arguments().ByName("field").Value().Raw
+	}
+	return *d.argField
 }
 
 type DirectiveList []*Directive
@@ -83,7 +107,7 @@ func (l DirectiveList) HasUnique() bool {
 }
 
 func (l DirectiveList) HasIndentity() bool {
-	return hasDirective(l, isIndentityDirective)
+	return hasDirective(l, isIdentityDirective)
 }
 
 func (l DirectiveList) HasValidate() bool {
@@ -98,12 +122,48 @@ func (l DirectiveList) HasField() bool {
 	return hasDirective(l, isFieldDirective)
 }
 
+func (l DirectiveList) Primary() *Directive {
+	return firstDirective(l, isPrimaryDirective)
+}
+
+func (l DirectiveList) Unique() *Directive {
+	return firstDirective(l, isUniqueDirective)
+}
+
+func (l DirectiveList) Identity() *Directive {
+	return firstDirective(l, isIdentityDirective)
+}
+
+func (l DirectiveList) Validate() *ValidateDirective {
+	directive := firstDirective(l, isValidateDirective)
+	if directive == nil {
+		return nil
+	}
+	return &ValidateDirective{Directive: directive}
+}
+
 func (l DirectiveList) Table() *TableDirective {
-	return &TableDirective{Directive: firstDirective(l, isTableDirective)}
+	directive := firstDirective(l, isTableDirective)
+	if directive == nil {
+		return nil
+	}
+	return &TableDirective{Directive: directive}
 }
 
 func (l DirectiveList) Field() *FieldDirective {
-	return &FieldDirective{Directive: firstDirective(l, isFieldDirective)}
+	directive := firstDirective(l, isFieldDirective)
+	if directive == nil {
+		return nil
+	}
+	return &FieldDirective{Directive: directive}
+}
+
+func (l DirectiveList) Relation() *RelationDirective {
+	directive := firstDirective(l, isRelationDirective)
+	if directive == nil {
+		return nil
+	}
+	return &RelationDirective{Directive: directive}
 }
 
 func (l DirectiveList) ByName(name string) *Directive {
@@ -113,31 +173,31 @@ func (l DirectiveList) ByName(name string) *Directive {
 type directiveFilter func(directive *Directive) bool
 
 func isPrimaryDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_PRIMARY
+	return directive.Name == DirectivePrimary
 }
 
 func isUniqueDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_UNIQUE
+	return directive.Name == DirectiveUnique
 }
 
-func isIndentityDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_INDENTITY
+func isIdentityDirective(directive *Directive) bool {
+	return directive.Name == DirectiveIdentity
 }
 
 func isValidateDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_VALIDATE
+	return directive.Name == DirectiveValidate
 }
 
 func isTableDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_TABLE
+	return directive.Name == DirectiveTable
 }
 
 func isFieldDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_FIELD
+	return directive.Name == DirectiveField
 }
 
 func isRelationDirective(directive *Directive) bool {
-	return directive.Name == DIRECTIVE_RELATION
+	return directive.Name == DirectiveRelation
 }
 
 func byNameDirective(name string) directiveFilter {

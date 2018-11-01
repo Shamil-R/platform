@@ -17,6 +17,11 @@ directive @field(
   name: String
 ) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
+directive @relation(
+  object: String
+  type: String
+) on FIELD_DEFINITION
+
 directive @timestamp(
   disable: Boolean
   createField: String

@@ -45,12 +45,23 @@ func (s *Schema) Types() DefinitionList {
 	return s.types
 }
 
-func LoadSchemaRaw(path string) (string, error) {
+func writeDirectives(buf *bytes.Buffer) error {
 	box := packr.NewBox("./graphql")
 
 	directivesRaw := box.Bytes("directives.graphql")
 
-	buf := bytes.NewBuffer(directivesRaw)
+	if _, err := buf.Write(directivesRaw); err != nil {
+		return err
+	}
+	return nil
+}
+
+func LoadSchemaRaw(path string) (string, error) {
+	buf := bytes.NewBufferString("")
+
+	if err := writeDirectives(buf); err != nil {
+		return "", err
+	}
 
 	schemaRaw, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -76,6 +87,25 @@ func ParseSchema(schemaRaw string) (*Schema, error) {
 	}
 
 	return &Schema{Schema: s}, nil
+}
+
+func ParseSchemaWithDirectives(schemaRaw string) (*Schema, error) {
+	buf := bytes.NewBufferString("")
+
+	if err := writeDirectives(buf); err != nil {
+		return nil, err
+	}
+
+	if _, err := buf.WriteString(schemaRaw); err != nil {
+		return nil, err
+	}
+
+	s, err := ParseSchema(buf.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return s, nil
 }
 
 func LoadSchema(path string) (*Schema, error) {
