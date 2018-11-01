@@ -15,6 +15,11 @@ var defaultFields map[string]bool = map[string]bool{
 type Definition struct {
 	*ast.Definition
 	schema *Schema
+	fields FieldList
+	directives DirectiveList
+	mutations ActionList
+	queries ActionList
+	relations ActionList
 }
 
 func (d *Definition) IsMutation() bool {
@@ -34,30 +39,40 @@ func (d *Definition) IsEnum() bool {
 }
 
 func (d *Definition) Fields() FieldList {
-	fields := make(FieldList, 0, len(d.Definition.Fields))
+	if d.fields != nil {
+		return d.fields
+	}
+	d.fields = make(FieldList, 0, len(d.Definition.Fields))
 	for _, field := range d.Definition.Fields {
 		if defaultFields[field.Name] == true {
 			continue
 		}
-		fields = append(fields, &FieldDefinition{FieldDefinition: field, parent: d})
+		d.fields = append(d.fields, &FieldDefinition{FieldDefinition: field, parent: d})
 	}
-	return fields
+
+	return d.fields
 }
 
 func (d *Definition) Directives() DirectiveList {
-	directives := make(DirectiveList, len(d.Definition.Directives))
-
-	for i, d := range d.Definition.Directives {
-		directives[i] = &Directive{d}
+	if d.directives != nil {
+		return d.directives
 	}
-	return directives
+	d.directives = make(DirectiveList, len(d.Definition.Directives))
+	for i, d := range d.Definition.Directives {
+		d.directives[i] = &Directive{d, nil}
+	}
+	return d.directives
 }
 
 func (d *Definition) Mutations() ActionList {
-	actions := make(ActionList, 0)
+	if d.mutations != nil {
+		return d.mutations
+	}
+
+	d.mutations = make(ActionList, 0)
 	mutation := d.schema.Mutation()
 	if mutation == nil {
-		return actions
+		return d.mutations
 	}
 	checks := map[string]string{
 		ACTION_CREATE + d.Name: ACTION_CREATE,
@@ -68,17 +83,22 @@ func (d *Definition) Mutations() ActionList {
 	for _, field := range mutation.Fields() {
 		if act, ok := checks[field.Name]; ok {
 			action := &Action{&FieldDefinition{FieldDefinition: field.FieldDefinition, parent: d}, act}
-			actions = append(actions, action)
+			d.mutations = append(d.mutations, action)
 		}
 	}
-	return actions
+
+	return d.mutations
 }
 
 func (d *Definition) Queries() ActionList {
-	actions := make(ActionList, 0)
+	if d.queries != nil {
+		return d.queries
+	}
+
+	d.queries = make(ActionList, 0)
 	query := d.schema.Query()
 	if query == nil {
-		return actions
+		return d.queries
 	}
 	item := xstrings.FirstRuneToLower(d.Name)
 	collection := inflection.Plural(item)
@@ -89,18 +109,24 @@ func (d *Definition) Queries() ActionList {
 	for _, field := range query.Fields() {
 		if act, ok := checks[field.Name]; ok {
 			action := &Action{&FieldDefinition{FieldDefinition: field.FieldDefinition, parent: d}, act}
-			actions = append(actions, action)
+			d.queries = append(d.queries, action)
 		}
 	}
-	return actions
+
+	return d.queries
 }
 
 func (d *Definition) Relations() ActionList {
-	acts := make(ActionList, 0)
-	for _, field := range d.Fields().Relations() {
-		acts = append(acts, &Action{field, ACTION_RELATION})
+	if d.relations != nil {
+		return d.relations
 	}
-	return acts
+
+	d.relations = make(ActionList, 0)
+	for _, field := range d.Fields().Relations() {
+		d.relations = append(d.relations, &Action{field, ACTION_RELATION})
+	}
+
+	return d.relations
 }
 
 type DefinitionList []*Definition
