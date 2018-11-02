@@ -101,9 +101,23 @@ type TimestampDirective struct {
 	argName *string
 }
 
-func (d *TimestampDirective) ArgName() string {
+func (d *TimestampDirective) ArgDisable() string {
 	if d.argName == nil {
-		d.argName = &d.Arguments().ByName("name").Value().Raw
+		d.argName = &d.Arguments().ByName("disable").Value().Raw
+	}
+	return *d.argName
+}
+
+func (d *TimestampDirective) ArgCreateField() string {
+	if d.argName == nil {
+		d.argName = &d.Arguments().ByName("createField").Value().Raw
+	}
+	return *d.argName
+}
+
+func (d *TimestampDirective) ArgUpdateField() string {
+	if d.argName == nil {
+		d.argName = &d.Arguments().ByName("updateField").Value().Raw
 	}
 	return *d.argName
 }
@@ -113,9 +127,16 @@ type SoftDeleteDirective struct {
 	argName *string
 }
 
-func (d *SoftDeleteDirective) ArgName() string {
+func (d *SoftDeleteDirective) ArgDisable() string {
 	if d.argName == nil {
-		d.argName = &d.Arguments().ByName("name").Value().Raw
+		d.argName = &d.Arguments().ByName("disable").Value().Raw
+	}
+	return *d.argName
+}
+
+func (d *SoftDeleteDirective) ArgDeleteField() string {
+	if d.argName == nil {
+		d.argName = &d.Arguments().ByName("deleteField").Value().Raw
 	}
 	return *d.argName
 }
