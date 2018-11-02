@@ -2,6 +2,7 @@ package mssql
 
 import (
 	"fmt"
+	"go.uber.org/zap"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -48,6 +49,10 @@ func (s *mssql) Middleware(v *viper.Viper) (handler.Option, error) {
 	if err := v.UnmarshalKey("app.service.mssql", &cfg); err != nil {
 		return nil, err
 	}
+
+	logger := zap.L().Named("mssql")
+	logger.Info("mssql config", zap.Any("cfg", cfg))
+
 	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s",
 		cfg.Username,
 		cfg.Password,

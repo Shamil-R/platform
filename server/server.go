@@ -8,6 +8,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 type Config struct {
@@ -23,6 +24,9 @@ func Run(v *viper.Viper, exec graphql.ExecutableSchema) error {
 	if err := v.UnmarshalKey("app", &cfg); err != nil {
 		return err
 	}
+
+	logger := zap.L().Named("server")
+	logger.Info("server config", zap.Any("cfg", cfg))
 
 	middlewares := service.Middlewares()
 
