@@ -98,47 +98,50 @@ func (d *RelationDirective) ArgField() string {
 
 type TimestampDirective struct {
 	*Directive
-	argName *string
+	argDisable *string
+	argCreateField *string
+	argUpdateField *string
 }
 
 func (d *TimestampDirective) ArgDisable() string {
-	if d.argName == nil {
-		d.argName = &d.Arguments().ByName("disable").Value().Raw
+	if d.argDisable == nil {
+		d.argDisable = &d.Arguments().ByName("disable").Value().Raw
 	}
-	return *d.argName
+	return *d.argDisable
 }
 
 func (d *TimestampDirective) ArgCreateField() string {
-	if d.argName == nil {
-		d.argName = &d.Arguments().ByName("createField").Value().Raw
+	if d.argCreateField == nil {
+		d.argCreateField = &d.Arguments().ByName("createField").Value().Raw
 	}
-	return *d.argName
+	return *d.argCreateField
 }
 
 func (d *TimestampDirective) ArgUpdateField() string {
-	if d.argName == nil {
-		d.argName = &d.Arguments().ByName("updateField").Value().Raw
+	if d.argUpdateField == nil {
+		d.argUpdateField = &d.Arguments().ByName("updateField").Value().Raw
 	}
-	return *d.argName
+	return *d.argUpdateField
 }
 
 type SoftDeleteDirective struct {
 	*Directive
-	argName *string
+	argDisable *string
+	argDeleteField *string
 }
 
 func (d *SoftDeleteDirective) ArgDisable() string {
-	if d.argName == nil {
-		d.argName = &d.Arguments().ByName("disable").Value().Raw
+	if d.argDisable == nil {
+		d.argDisable = &d.Arguments().ByName("disable").Value().Raw
 	}
-	return *d.argName
+	return *d.argDisable
 }
 
 func (d *SoftDeleteDirective) ArgDeleteField() string {
-	if d.argName == nil {
-		d.argName = &d.Arguments().ByName("deleteField").Value().Raw
+	if d.argDeleteField == nil {
+		d.argDeleteField = &d.Arguments().ByName("deleteField").Value().Raw
 	}
-	return *d.argName
+	return *d.argDeleteField
 }
 
 type DirectiveList []*Directive
