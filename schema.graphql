@@ -15,7 +15,7 @@ type User @timestamp(disable: true createField: "created_at" updateField: "updat
 
 type Material {
     id: Int! @primary @identity
-    name: String! @validate(min: 10 max: 20) @field(name: "last_name")
+    name: String! @validate(min: 10 max: 20)
     author: User! @field(name: "user_id")
 }
 

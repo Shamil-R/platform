@@ -238,6 +238,14 @@
   version = "v0.8.0"
 
 [[projects]]
+  digest = "1:3265b6b251e076aa31b46c3b58cf55670818be301024d29bc5de35f1ca9790c7"
+  name = "github.com/sanity-io/litter"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ae543b7ba8fd6af63e4976198f146e1348ae53c1"
+  version = "v1.1.0"
+
+[[projects]]
   digest = "1:6a4a11ba764a56d2758899ec6f3848d24698d48442ebce85ee7a3f63284526cd"
   name = "github.com/spf13/afero"
   packages = [
@@ -437,6 +445,7 @@
     "github.com/jmoiron/sqlx",
     "github.com/jmoiron/sqlx/reflectx",
     "github.com/mitchellh/go-homedir",
+    "github.com/sanity-io/litter",
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
     "github.com/vektah/gqlparser",

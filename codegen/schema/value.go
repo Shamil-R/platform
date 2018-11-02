@@ -1,6 +1,10 @@
 package schema
 
-import "github.com/vektah/gqlparser/ast"
+import (
+	"strconv"
+
+	"github.com/vektah/gqlparser/ast"
+)
 
 type Value struct {
 	*ast.Value
@@ -21,4 +25,13 @@ func (v *Value) Children() ChildValueList {
 func (v *Value) Definition() *Definition {
 	// TODO: убрать Definition:
 	return &Definition{Definition: v.Value.Definition}
+}
+
+func (v *Value) Conv() interface{} {
+	switch v.Kind {
+	case ast.IntValue:
+		n, _ := strconv.Atoi(v.Raw)
+		return n
+	}
+	return v.Raw
 }

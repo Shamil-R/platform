@@ -49,7 +49,7 @@ func Generate(cfg Config) error {
 			Filename: cfg.Resolver.Path,
 			Type:     cfg.Resolver.Type,
 		},
-		Models: models,
+		// Models: models,
 	}
 
 	if err := codegen.Generate(c); err != nil {

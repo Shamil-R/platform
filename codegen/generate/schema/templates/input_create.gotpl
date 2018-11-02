@@ -10,6 +10,7 @@ input {{ .Name }}CreateInput
 	{{- end }}
 	{{- range .Fields.RelationsManyToOne }}
 	{{ .Name }}: {{ .Directives.Relation.ArgObject }}CreateOneWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input!
+	{{- template "copy_directive" .Directives.Field }}
 	{{- end }}
 }
 {{- end }}

@@ -2,8 +2,10 @@ package mssql
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"gitlab/nefco/platform/codegen/schema"
+	"strings"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/jmoiron/sqlx"
@@ -61,45 +63,193 @@ func Create(ctx context.Context, result interface{}) error {
 	return nil */
 }
 
+type columns []string
+
+func (c columns) Add(column string) {
+	col := fmt.Sprintf("[%s]", column)
+	c = append(c, col)
+}
+
+func (c columns) String() string {
+	return strings.Join(c, ", ")
+}
+
+type insertQuery struct {
+	table  string
+	values map[string]interface{}
+}
+
+func (q *insertQuery) SetTable(table string) {
+	q.table = table
+}
+
+func (q *insertQuery) AddValue(column string, value interface{}) {
+	if q.values == nil {
+		q.values = map[string]interface{}{}
+	}
+	q.values[column] = value
+}
+
+func (q *insertQuery) Query() string {
+	columns := make([]string, 0, len(q.values))
+	values := make([]string, 0, len(q.values))
+	for col, _ := range q.values {
+		column := fmt.Sprintf("[%s]", col)
+		columns = append(columns, column)
+		value := fmt.Sprintf(":%s", col)
+		values = append(values, value)
+	}
+
+	query := fmt.Sprintf(
+		"INSERT INTO [%s] (%s) VALUES (%s)",
+		q.table,
+		strings.Join(columns, ", "),
+		strings.Join(values, ", "),
+	)
+	return query
+}
+
+func (q *insertQuery) Arg() map[string]interface{} {
+	return q.values
+}
+
 func create(tx *sqlx.Tx, v *schema.Value, result interface{}) error {
+	query := new(insertQuery)
+
+	def := v.Definition()
+	table := def.Directives().Table().ArgName()
+
+	query.SetTable(table)
+
 	for _, child := range v.Children() {
+		fieldDef := def.Fields().ByName(child.Name)
+
+		field := fieldDef.Directives().Field().ArgName()
+
+		// fmt.Println(child.Name)
+		// for _, d := range child.Directives() {
+		// 	fmt.Println("d", d.Name)
+		// }
 		input := child.Value().Definition().Directives().Input()
 		if input != nil && input.IsCreateOneWithout() {
-			if err := createOneWithout(tx, child.Value()); err != nil {
+			id, err := createOneWithout(tx, child.Value())
+			if err != nil {
 				return err
 			}
+			query.AddValue(field, id)
+		} else {
+			query.AddValue(field, child.Value().Conv())
 		}
 	}
+
+	fmt.Println(query.Query(), query.Arg())
+
+	res, err := tx.NamedExec(query.Query(), query.Arg())
+	if err != nil {
+		return err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(id)
+
 	return nil
 }
 
-func createOneWithout(tx *sqlx.Tx, v *schema.Value) error {
+func createOneWithout(tx *sqlx.Tx, v *schema.Value) (int, error) {
 	if connect := v.Children().Connect(); connect != nil {
-		if err := connectOne(tx, connect.Value()); err != nil {
-			return err
+		id, err := connectOne(tx, connect.Value())
+		if err != nil {
+			return 0, err
 		}
+		return id, nil
 	}
-	return nil
+	return 0, errors.New("create one failed")
 }
 
-func connectOne(tx *sqlx.Tx, v *schema.Value) error {
+type selectQuery struct {
+	table   string
+	columns []string
+	where   map[string]interface{}
+}
+
+func (q *selectQuery) SetTable(table string) {
+	q.table = table
+}
+
+func (q *selectQuery) AddColumn(column string) {
+	q.columns = append(q.columns, column)
+}
+
+func (q *selectQuery) AddWhere(column string, value interface{}) {
+	if q.where == nil {
+		q.where = map[string]interface{}{}
+	}
+	q.where[column] = value
+}
+
+func (q *selectQuery) Query() string {
+	columns := make([]string, 0, len(q.columns))
+	for _, column := range q.columns {
+		col := fmt.Sprintf("[%s]", column)
+		columns = append(columns, col)
+	}
+
+	var where string
+	if len(q.where) > 0 {
+		var conds []string
+		for column, _ := range q.where {
+			cond := fmt.Sprintf("[%s] = :%s", column, column)
+			conds = append(conds, cond)
+		}
+		where = fmt.Sprintf(
+			"WHERE %s",
+			strings.Join(conds, " AND"),
+		)
+	}
+	query := fmt.Sprintf(
+		"SELECT %s FROM [%s] %s",
+		strings.Join(columns, ", "),
+		q.table,
+		where,
+	)
+	return query
+}
+
+func (q *selectQuery) Arg() map[string]interface{} {
+	return q.where
+}
+
+func connectOne(tx *sqlx.Tx, v *schema.Value) (int, error) {
 	def := v.Definition()
 	table := def.Directives().Table()
-	fmt.Println(table.Name, table.ArgName(), v.Definition().Name)
-	// t := v.Definition().Fields()
-	// fmt.Println(t)
-	// for _, f := range t {
-	// 	fmt.Println(f)
-	// }
+
+	query := new(selectQuery)
+	query.SetTable(table.ArgName())
+
 	for _, child := range v.Children() {
-		field := def.Fields().ByName(child.Name)
-
-		if primary := field.Directives().Primary(); primary != nil {
-
+		fieldDef := def.Fields().ByName(child.Name)
+		if fieldDef.Directives().Primary() != nil {
+			field := fieldDef.Directives().Field()
+			query.AddColumn(field.ArgName())
+			query.AddWhere(field.ArgName(), child.Value().Conv())
 		}
-		fmt.Println("$", field.Directives().Field().ArgName())
 	}
-	return nil
+
+	stmt, err := tx.PrepareNamed(query.Query())
+	if err != nil {
+		return 0, err
+	}
+
+	var id int
+	if err := stmt.Get(&id, query.Arg()); err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }
 
 /* func createOne(ctx context.Context, result interface{}) error {
