@@ -96,6 +96,30 @@ func (d *RelationDirective) ArgField() string {
 	return *d.argField
 }
 
+type TimestampDirective struct {
+	*Directive
+	argName *string
+}
+
+func (d *TimestampDirective) ArgName() string {
+	if d.argName == nil {
+		d.argName = &d.Arguments().ByName("name").Value().Raw
+	}
+	return *d.argName
+}
+
+type SoftDeleteDirective struct {
+	*Directive
+	argName *string
+}
+
+func (d *SoftDeleteDirective) ArgName() string {
+	if d.argName == nil {
+		d.argName = &d.Arguments().ByName("name").Value().Raw
+	}
+	return *d.argName
+}
+
 type DirectiveList []*Directive
 
 func (l DirectiveList) HasPrimary() bool {
@@ -156,6 +180,22 @@ func (l DirectiveList) Field() *FieldDirective {
 		return nil
 	}
 	return &FieldDirective{Directive: directive}
+}
+
+func (l DirectiveList) Timestamp() *TimestampDirective {
+	directive := firstDirective(l, isFieldDirective)
+	if directive == nil {
+		return nil
+	}
+	return &TimestampDirective{Directive: directive}
+}
+
+func (l DirectiveList) SoftDelete() *SoftDeleteDirective {
+	directive := firstDirective(l, isFieldDirective)
+	if directive == nil {
+		return nil
+	}
+	return &SoftDeleteDirective{Directive: directive}
 }
 
 func (l DirectiveList) Relation() *RelationDirective {
