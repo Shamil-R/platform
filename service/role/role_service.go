@@ -3,7 +3,7 @@ package role
 import (
 	"context"
 	"fmt"
-	"gitlab/nefco/auction/errors"
+	"errors"
 	"gitlab/nefco/platform/service/auth"
 )
 
