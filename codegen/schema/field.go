@@ -4,9 +4,20 @@ import "github.com/vektah/gqlparser/ast"
 
 type Field struct {
 	*ast.Field
+	arguments        ArgumentList
 	selectionSet     *SelectionSet
 	definition       *FieldDefinition
 	objectDefinition *Definition
+}
+
+func (f *Field) Arguments() ArgumentList {
+	if f.arguments == nil {
+		f.arguments = make(ArgumentList, 0, len(f.Field.Arguments))
+		for _, arg := range f.Field.Arguments {
+			f.arguments = append(f.arguments, &Argument{Argument: arg})
+		}
+	}
+	return f.arguments
 }
 
 func (f *Field) SelectionSet() *SelectionSet {

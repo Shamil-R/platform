@@ -1,4 +1,4 @@
-package query
+package query_old
 
 import "github.com/vektah/gqlparser/ast"
 

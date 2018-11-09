@@ -3,46 +3,33 @@ package query
 import (
 	"fmt"
 	"strings"
-
-	"github.com/vektah/gqlparser/ast"
 )
 
-type updateQuery struct {
-	*query
-	columns Build
-	where   Build
+type Update struct {
+	condition
+	values []string
 }
 
-func (q updateQuery) Query() string {
-	return fmt.Sprintf(
-		"UPDATE %s SET %s WHERE %s",
-		buildTable(q),
-		q.columns.Build(q),
-		q.where.Build(q),
+func (q *Update) block() string {
+	values := make([]string, 0, len(q.values))
+	for _, col := range q.values {
+		val := fmt.Sprintf("[%s] = :%s", col, col)
+		values = append(values, val)
+	}
+	return strings.Join(values, ", ")
+}
+
+func (q *Update) AddValue(column string, value interface{}) {
+	q.values = append(q.values, column)
+	q.addArg(column, value)
+}
+
+func (q *Update) Query() string {
+	query := fmt.Sprintf(
+		"UPDATE %s SET %s %s",
+		q.query.block(),
+		q.block(),
+		q.condition.block(),
 	)
-}
-
-func Update(field *ast.Field) Query {
-	return &updateQuery{
-		query:   newQuery(field),
-		columns: &updateColumnsQuery{},
-		where:   &whereQuery{},
-	}
-}
-
-type updateColumnsQuery struct{}
-
-func (q updateColumnsQuery) Build(input Input) string {
-	ok, val := argumentValue(input, "data")
-	if !ok {
-		return ""
-	}
-	columns := make([]string, 0, len(val.Children))
-	for _, child := range val.Children {
-		input.Bind(child.Name, child.Value.Raw)
-		columnName := columnName(val, child)
-		column := fmt.Sprintf("[%s] = :%s", columnName, child.Name)
-		columns = append(columns, column)
-	}
-	return strings.Join(columns, ", ")
+	return query
 }

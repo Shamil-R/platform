@@ -52,3 +52,11 @@ func (l ArgumentList) ByName(name string) *Argument {
 	}
 	return l.first(fn)
 }
+
+func (l ArgumentList) Data() *Argument {
+	return l.ByName("data")
+}
+
+func (l ArgumentList) Where() *Argument {
+	return l.ByName("where")
+}
