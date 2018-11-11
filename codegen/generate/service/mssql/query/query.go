@@ -14,36 +14,36 @@ type Table interface {
 	SetTable(table string)
 }
 
-type Condition interface {
+type Conditions interface {
 	AddСondition(column string, value interface{})
 }
 
-type Value interface {
+type Values interface {
 	AddValue(column string, value interface{})
 }
 
-type query struct {
-	table string
-	arg   map[string]interface{}
+type Columns interface {
+	AddColumn(column string)
 }
 
-func (q *query) addArg(key string, value interface{}) {
+type query struct {
+	arg   map[string]interface{}
+	table string
+}
+
+func (q *query) setArg(key string, value interface{}) {
 	if q.arg == nil {
 		q.arg = map[string]interface{}{}
 	}
 	q.arg[key] = value
 }
 
-func (q *query) block() string {
-	return q.table
+func (q *query) Arg() map[string]interface{} {
+	return q.arg
 }
 
 func (q *query) SetTable(table string) {
 	q.table = fmt.Sprintf("[%s]", table)
-}
-
-func (q *query) Arg() map[string]interface{} {
-	return q.arg
 }
 
 type condition struct {
@@ -62,15 +62,5 @@ func (q *condition) block() string {
 func (q *condition) AddСondition(column string, value interface{}) {
 	cond := fmt.Sprintf("[%s] = :%s", column, column)
 	q.conditions = append(q.conditions, cond)
-	q.addArg(column, value)
+	q.setArg(column, value)
 }
-
-/* type value struct {
-	condition
-	values []string
-}
-
-func (q *value) AddValue(column string, value interface{}) {
-	q.values = append(q.values, column)
-	q.addArg(column, value)
-} */

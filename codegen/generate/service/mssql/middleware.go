@@ -3,9 +3,8 @@ package mssql
 import (
 	"context"
 
-	"github.com/jmoiron/sqlx"
-
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/jmoiron/sqlx"
 )
 
 type SQLContext struct {

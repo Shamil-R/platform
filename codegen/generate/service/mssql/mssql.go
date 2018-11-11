@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jmoiron/sqlx"
-	"github.com/jmoiron/sqlx/reflectx"
-
 	"github.com/99designs/gqlgen/handler"
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/gobuffalo/packr"
+	"github.com/jmoiron/sqlx"
+	"github.com/jmoiron/sqlx/reflectx"
 	"github.com/spf13/viper"
 )
 
