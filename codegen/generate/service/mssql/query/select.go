@@ -10,8 +10,8 @@ type Select struct {
 	columns []string
 }
 
-func (q *Select) AddColumn(column string) {
-	col := fmt.Sprintf("[%s]", column)
+func (q *Select) AddColumn(column, alias string) {
+	col := fmt.Sprintf("[%s] AS %s", column, alias)
 	q.columns = append(q.columns, col)
 }
 

@@ -23,7 +23,7 @@ type Values interface {
 }
 
 type Columns interface {
-	AddColumn(column string)
+	AddColumn(column, alias string)
 }
 
 type query struct {

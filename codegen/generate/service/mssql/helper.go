@@ -50,7 +50,7 @@ func fillColumns(ctx context.Context, query query.Columns) error {
 		relation := sel.Definition().Directives().Relation()
 		if relation == nil {
 			field := sel.Definition().Directives().Field().ArgName()
-			query.AddColumn(field)
+			query.AddColumn(field, sel.Name)
 		} else {
 		}
 	}
@@ -102,7 +102,7 @@ func useColumns(query query.Columns, value *schema.Value) error {
 	for _, child := range value.Children() {
 		fieldDef := def.Fields().ByName(child.Name)
 		col := fieldDef.Directives().Field().ArgName()
-		query.AddColumn(col)
+		query.AddColumn(col, child.Name)
 	}
 	return nil
 }
