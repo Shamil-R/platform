@@ -4,6 +4,10 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
+type Arguments interface {
+	Arguments() ArgumentList
+}
+
 type Argument struct {
 	*ast.Argument
 	value *Value

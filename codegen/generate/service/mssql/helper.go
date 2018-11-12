@@ -133,6 +133,19 @@ func getPrimaryColumn(ctx context.Context) (string, error) {
 	return col, nil
 }
 
+func getRelationColumn(ctx context.Context) (string, error) {
+	field, err := extractField(ctx)
+	if err != nil {
+		return "", err
+	}
+	relation := field.Definition().Directives().Relation()
+	if relation == nil {
+		return "", errors.New("relation directive in field does not exist")
+	}
+	col := relation.ArgForeignKey()
+	return col, nil
+}
+
 func logQuery(query query.Query) {
 	fmt.Println(query.Query())
 	fmt.Println(query.Arg())

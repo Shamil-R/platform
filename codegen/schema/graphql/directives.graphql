@@ -18,8 +18,12 @@ directive @field(
 ) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
 directive @relation(
-  object: String
   type: String
+  object: String
+  field: String
+  table: String
+  foreignKey: String
+  localKey: String
 ) on FIELD_DEFINITION
 
 directive @timestamp(

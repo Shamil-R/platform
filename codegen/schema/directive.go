@@ -15,6 +15,10 @@ const (
 	InputDirectiveCreateOneWithout = "create_one_without"
 )
 
+type Directives interface {
+	Directives() DirectiveList
+}
+
 type Directive struct {
 	*ast.Directive
 }
@@ -81,8 +85,9 @@ func (d *FieldDirective) ArgName() string {
 
 type RelationDirective struct {
 	*Directive
-	argObject *string
-	argField  *string
+	argObject     *string
+	argField      *string
+	argForeignKey *string
 }
 
 func (d *RelationDirective) ArgObject() string {
@@ -97,6 +102,13 @@ func (d *RelationDirective) ArgField() string {
 		d.argField = &d.Arguments().ByName("field").Value().Raw
 	}
 	return *d.argField
+}
+
+func (d *RelationDirective) ArgForeignKey() string {
+	if d.argForeignKey == nil {
+		d.argForeignKey = &d.Arguments().ByName("foreignKey").Value().Raw
+	}
+	return *d.argForeignKey
 }
 
 type InputDirective struct {

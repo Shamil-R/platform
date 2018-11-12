@@ -40,10 +40,10 @@ func (r *resolver) Query() graph.QueryResolver {
 	}
 }
 
-{{/* {{- range $i, $def := .Types.Objects }}
+{{- range $i, $def := .Types.Objects }}
 {{- if .Fields.HasRelations }}
 func (r *resolver) {{ $def.Name }}() graph.{{ $def.Name }}Resolver {
 	return service.New{{ $def.Name }}RelationService()
 }
 {{- end }}
-{{ end }} */}}
+{{ end }}
