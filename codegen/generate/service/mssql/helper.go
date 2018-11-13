@@ -7,15 +7,33 @@ import (
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
 
+	"github.com/joomcode/errorx"
+
 	"github.com/99designs/gqlgen/graphql"
+)
+
+var (
+	Erorrs = errorx.NewNamespace("mssql")
+
+	IllegalState = Erorrs.NewType("illegal_state")
+
+	DoesNotExist = IllegalState.NewSubtype("does_not_exist")
+
+	FieldDoesNotExist     = DoesNotExist.New("field")
+	SelectionDoesNotExist = DoesNotExist.New("selection")
+	DirectiveDoesNotExist = DoesNotExist.NewSubtype("directive")
+	ArgumentDoesNotExist  = DoesNotExist.NewSubtype("argument")
 )
 
 func extractField(ctx context.Context) (*schema.Field, error) {
 	resCtx := graphql.GetResolverContext(ctx)
 	if resCtx.Field.Field == nil {
-		return nil, errors.New("field in context does not exist")
+		return nil, FieldDoesNotExist
 	}
-	return &schema.Field{Field: resCtx.Field.Field}, nil
+
+	field := &schema.Field{Field: resCtx.Field.Field}
+
+	return field, nil
 }
 
 func extractArgument(ctx context.Context, name string) (*schema.Value, error) {
@@ -35,9 +53,26 @@ func fillTable(ctx context.Context, query query.Table) error {
 	if err != nil {
 		return err
 	}
-	sel := field.SelectionSet().Fields()[0]
-	table := sel.ObjectDefinition().Directives().Table().ArgName()
-	query.SetTable(table)
+
+	sels := field.SelectionSet().Fields()
+	if len(sels) == 0 {
+		return SelectionDoesNotExist
+	}
+
+	def := sels[0].ObjectDefinition()
+
+	table := def.Directives().Table()
+	if table == nil {
+		return DirectiveDoesNotExist.New("table")
+	}
+
+	name := table.ArgName()
+	if name == nil {
+		return ArgumentDoesNotExist.New("name")
+	}
+
+	query.SetTable(*name)
+
 	return nil
 }
 
@@ -46,14 +81,17 @@ func fillColumns(ctx context.Context, query query.Columns) error {
 	if err != nil {
 		return err
 	}
+
 	for _, sel := range field.SelectionSet().Fields() {
-		relation := sel.Definition().Directives().Relation()
+		directives := sel.Definition().Directives()
+		relation := directives.Relation()
 		if relation == nil {
-			field := sel.Definition().Directives().Field().ArgName()
+			field := directives.Field().ArgName()
 			query.AddColumn(field, sel.Name)
 		} else {
 		}
 	}
+
 	return nil
 }
 
@@ -92,8 +130,19 @@ func fillValues(ctx context.Context, query query.Values) error {
 
 func useTable(query query.Table, value *schema.Value) error {
 	def := value.Definition()
-	table := def.Directives().Table().ArgName()
-	query.SetTable(table)
+
+	table := def.Directives().Table()
+	if table == nil {
+		return DirectiveDoesNotExist.New("table")
+	}
+
+	name := table.ArgName()
+	if name == nil {
+		return ArgumentDoesNotExist.New("name")
+	}
+
+	query.SetTable(*name)
+
 	return nil
 }
 

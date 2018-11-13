@@ -40,3 +40,7 @@ directive @softDelete(
 directive @input(
   name: String
 ) on INPUT_OBJECT
+
+directive @condition(
+  type: String!
+) on INPUT_FIELD_DEFINITION

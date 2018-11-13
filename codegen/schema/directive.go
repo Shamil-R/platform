@@ -64,11 +64,19 @@ type TableDirective struct {
 	argName *string
 }
 
-func (d *TableDirective) ArgName() string {
+func (d *TableDirective) ArgName() *string {
 	if d.argName == nil {
-		d.argName = &d.Arguments().ByName("name").Value().Raw
+		arg := d.Arguments().ByName("name")
+		if arg == nil {
+			return nil
+		}
+		val := arg.Value()
+		if val == nil {
+			return nil
+		}
+		d.argName = &val.Raw
 	}
-	return *d.argName
+	return d.argName
 }
 
 type FieldDirective struct {
