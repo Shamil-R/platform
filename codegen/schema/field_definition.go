@@ -8,6 +8,8 @@ type FieldDefinition struct {
 	*ast.FieldDefinition
 	parent   *Definition
 	relation *FieldDefinition
+	arguments ArgumentDefinitionList
+	directives DirectiveList
 }
 
 func (f *FieldDefinition) Definition() *Definition {
@@ -19,19 +21,29 @@ func (f *FieldDefinition) Type() *Type {
 }
 
 func (f *FieldDefinition) Arguments() ArgumentDefinitionList {
-	args := make(ArgumentDefinitionList, len(f.FieldDefinition.Arguments))
-	for i, arg := range f.FieldDefinition.Arguments {
-		args[i] = &ArgumentDefinition{arg, f}
+	if f.arguments != nil {
+		return f.arguments
 	}
-	return args
+
+	f.arguments = make(ArgumentDefinitionList, len(f.FieldDefinition.Arguments))
+	for i, arg := range f.FieldDefinition.Arguments {
+		f.arguments[i] = &ArgumentDefinition{arg, f}
+	}
+
+	return f.arguments
 }
 
 func (f *FieldDefinition) Directives() DirectiveList {
-	directives := make(DirectiveList, len(f.FieldDefinition.Directives))
-	for i, directive := range f.FieldDefinition.Directives {
-		directives[i] = &Directive{directive}
+	if f.directives == nil {
+		return f.directives
 	}
-	return directives
+
+	f.directives = make(DirectiveList, len(f.FieldDefinition.Directives))
+	for i, directive := range f.FieldDefinition.Directives {
+		f.directives[i] = &Directive{directive, nil}
+	}
+
+	return f.directives
 }
 
 func (f *FieldDefinition) Relation() *FieldDefinition {

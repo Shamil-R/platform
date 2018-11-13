@@ -21,6 +21,7 @@ type Directives interface {
 
 type Directive struct {
 	*ast.Directive
+	arguments ArgumentList
 }
 
 func (d *Directive) IsPrimary() bool {
@@ -48,11 +49,16 @@ func (d *Directive) IsField() bool {
 }
 
 func (f *Directive) Arguments() ArgumentList {
-	args := make(ArgumentList, len(f.Directive.Arguments))
-	for i, arg := range f.Directive.Arguments {
-		args[i] = &Argument{Argument: arg}
+	if f.arguments != nil {
+		return f.arguments
 	}
-	return args
+
+	f.arguments = make(ArgumentList, len(f.Directive.Arguments))
+	for i, arg := range f.Directive.Arguments {
+		f.arguments[i] = &Argument{Argument: arg}
+	}
+
+	return f.arguments
 }
 
 type ValidateDirective struct {
