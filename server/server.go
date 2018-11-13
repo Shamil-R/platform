@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"gitlab/nefco/platform/service"
+	"gitlab/nefco/platform/service/winauth"
 	"net/http"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -37,6 +38,8 @@ func Run(v *viper.Viper, exec graphql.ExecutableSchema) error {
 	}
 
 	http.Handle("/", handler.Playground("Platform", "/query"))
+	http.Handle("/login", winauth.MiddlewareLogin())
+	//http.Handle("/query", winauth.MiddlewareAuth(handler.GraphQL(exec, options...)))
 	// http.Handle("/login", auth.MiddlewareLogin())
 	// http.Handle("/query", auth.MiddlewareAuth(handler.GraphQL(exec, options...)))
 	http.Handle("/query", handler.GraphQL(exec, options...))
