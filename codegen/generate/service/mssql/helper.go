@@ -66,12 +66,7 @@ func fillTable(ctx context.Context, query query.Table) error {
 		return DirectiveDoesNotExist.New("table")
 	}
 
-	name := table.ArgName()
-	if name == nil {
-		return ArgumentDoesNotExist.New("name")
-	}
-
-	query.SetTable(*name)
+	query.SetTable(table.ArgName())
 
 	return nil
 }
@@ -87,7 +82,7 @@ func fillColumns(ctx context.Context, query query.Columns) error {
 		relation := directives.Relation()
 		if relation == nil {
 			field := directives.Field().ArgName()
-			query.AddColumn(*field, sel.Name)
+			query.AddColumn(field, sel.Name)
 		} else {
 		}
 	}
@@ -108,7 +103,7 @@ func fillConditions(ctx context.Context, query query.Conditions) error {
 		fieldDef := def.Fields().ByName(child.Name)
 		col := fieldDef.Directives().Field().ArgName()
 		val := child.Value().Conv()
-		query.AddСondition(*col, val)
+		query.AddСondition(col, val)
 	}
 	return nil
 }
@@ -123,7 +118,7 @@ func fillValues(ctx context.Context, query query.Values) error {
 		fieldDef := def.Fields().ByName(child.Name)
 		col := fieldDef.Directives().Field().ArgName()
 		val := child.Value().Conv()
-		query.AddValue(*col, val)
+		query.AddValue(col, val)
 	}
 	return nil
 }
@@ -136,12 +131,7 @@ func useTable(query query.Table, value *schema.Value) error {
 		return DirectiveDoesNotExist.New("table")
 	}
 
-	name := table.ArgName()
-	if name == nil {
-		return ArgumentDoesNotExist.New("name")
-	}
-
-	query.SetTable(*name)
+	query.SetTable(table.ArgName())
 
 	return nil
 }
@@ -151,7 +141,7 @@ func useColumns(query query.Columns, value *schema.Value) error {
 	for _, child := range value.Children() {
 		fieldDef := def.Fields().ByName(child.Name)
 		col := fieldDef.Directives().Field().ArgName()
-		query.AddColumn(*col, child.Name)
+		query.AddColumn(col, child.Name)
 	}
 	return nil
 }
@@ -165,7 +155,7 @@ func useConditions(query query.Conditions, value *schema.Value) error {
 		fieldDef := def.Fields().ByName(child.Name)
 		col := fieldDef.Directives().Field().ArgName()
 		val := child.Value().Conv()
-		query.AddСondition(*col, val)
+		query.AddСondition(col, val)
 	}
 	return nil
 }
@@ -179,7 +169,7 @@ func getPrimaryColumn(ctx context.Context) (string, error) {
 	sel := selection[0]
 	primary := sel.ObjectDefinition().Fields().Primary()
 	col := primary.Directives().Field().ArgName()
-	return *col, nil
+	return col, nil
 }
 
 func getRelationColumn(ctx context.Context) (string, error) {
@@ -192,7 +182,7 @@ func getRelationColumn(ctx context.Context) (string, error) {
 		return "", errors.New("relation directive in field does not exist")
 	}
 	col := relation.ArgForeignKey()
-	return *col, nil
+	return col, nil
 }
 
 func logQuery(query query.Query) {

@@ -14,6 +14,8 @@ type {{ .Name }}
 	{{ template "field" . }}
 	{{- template "directives" . }}
 	{{- end }}
+	{{/* TODO: протестировать default_fields */}}
+	{{- template "default_fields" . }}
 }
 {{ end }}
 {{- end }}

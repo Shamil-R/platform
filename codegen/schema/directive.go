@@ -70,7 +70,7 @@ type TableDirective struct {
 	argName string
 }
 
-func (d *TableDirective) ArgName() *string {
+func (d *TableDirective) ArgName() string {
 	return directiveArgument(&d.argName, d, "name")
 }
 
@@ -79,7 +79,7 @@ type FieldDirective struct {
 	argName string
 }
 
-func (d *FieldDirective) ArgName() *string {
+func (d *FieldDirective) ArgName() string {
 	return directiveArgument(&d.argName, d, "name")
 }
 
@@ -90,15 +90,15 @@ type RelationDirective struct {
 	argForeignKey string
 }
 
-func (d *RelationDirective) ArgObject() *string {
+func (d *RelationDirective) ArgObject() string {
 	return directiveArgument(&d.argObject, d, "object")
 }
 
-func (d *RelationDirective) ArgField() *string {
+func (d *RelationDirective) ArgField() string {
 	return directiveArgument(&d.argField, d, "field")
 }
 
-func (d *RelationDirective) ArgForeignKey() *string {
+func (d *RelationDirective) ArgForeignKey() string {
 	return directiveArgument(&d.argForeignKey, d, "foreignKey")
 }
 
@@ -108,6 +108,39 @@ type InputDirective struct {
 
 func (d *InputDirective) IsCreateOneWithout() bool {
 	return d.Arguments().ByName("name").Value().Raw == InputDirectiveCreateOneWithout
+}
+
+type TimestampDirective struct {
+	*Directive
+	argDisable     string
+	argCreateField string
+	argUpdateField string
+}
+
+func (d *TimestampDirective) ArgDisable() string {
+	return directiveArgument(&d.argDisable, d, "disable")
+}
+
+func (d *TimestampDirective) ArgCreateField() string {
+	return directiveArgument(&d.argCreateField, d, "createField")
+}
+
+func (d *TimestampDirective) ArgUpdateField() string {
+	return directiveArgument(&d.argUpdateField, d, "updateField")
+}
+
+type SoftDeleteDirective struct {
+	*Directive
+	argDisable     string
+	argDeleteField string
+}
+
+func (d *SoftDeleteDirective) ArgDisable() string {
+	return directiveArgument(&d.argDisable, d, "disable")
+}
+
+func (d *SoftDeleteDirective) ArgDeleteField() string {
+	return directiveArgument(&d.argDeleteField, d, "deleteField")
 }
 
 type DirectiveList []*Directive
@@ -170,6 +203,22 @@ func (l DirectiveList) Field() *FieldDirective {
 		return nil
 	}
 	return &FieldDirective{Directive: directive}
+}
+
+func (l DirectiveList) Timestamp() *TimestampDirective {
+	directive := firstDirective(l, isFieldDirective)
+	if directive == nil {
+		return nil
+	}
+	return &TimestampDirective{Directive: directive}
+}
+
+func (l DirectiveList) SoftDelete() *SoftDeleteDirective {
+	directive := firstDirective(l, isFieldDirective)
+	if directive == nil {
+		return nil
+	}
+	return &SoftDeleteDirective{Directive: directive}
 }
 
 func (l DirectiveList) Relation() *RelationDirective {
@@ -250,17 +299,17 @@ func firstDirective(list DirectiveList, filter directiveFilter) *Directive {
 	return nil
 }
 
-func directiveArgument(current *string, a Arguments, name string) *string {
-	if current == nil || len(*current) == 0 {
+func directiveArgument(current *string, a Arguments, name string) string {
+	if len(*current) == 0 {
 		arg := a.Arguments().ByName(name)
 		if arg == nil {
-			return nil
+			panic("argument does not exist")
 		}
 		val := arg.Value()
 		if val == nil {
-			return nil
+			panic("value does not exist")
 		}
 		*current = val.Raw
 	}
-	return current
+	return *current
 }
