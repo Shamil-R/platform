@@ -14,12 +14,12 @@ var defaultFields map[string]bool = map[string]bool{
 
 type Definition struct {
 	*ast.Definition
-	schema *Schema
-	fields FieldList
+	schema     *Schema
+	fields     FieldList
 	directives DirectiveList
-	mutations ActionList
-	queries ActionList
-	relations ActionList
+	mutations  ActionList
+	queries    ActionList
+	relations  ActionList
 }
 
 func (d *Definition) IsMutation() bool {
@@ -54,12 +54,12 @@ func (d *Definition) Fields() FieldList {
 }
 
 func (d *Definition) Directives() DirectiveList {
-	if d.directives != nil {
-		return d.directives
-	}
-	d.directives = make(DirectiveList, len(d.Definition.Directives))
-	for i, d := range d.Definition.Directives {
-		d.directives[i] = &Directive{d, nil}
+	if d.directives == nil {
+		d.directives = make(DirectiveList, 0, len(d.Definition.Directives))
+		for _, dir := range d.Definition.Directives {
+			directive := &Directive{Directive: dir}
+			d.directives = append(d.directives, directive)
+		}
 	}
 	return d.directives
 }

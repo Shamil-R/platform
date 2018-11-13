@@ -67,62 +67,39 @@ type ValidateDirective struct {
 
 type TableDirective struct {
 	*Directive
-	argName *string
+	argName string
 }
 
 func (d *TableDirective) ArgName() *string {
-	if d.argName == nil {
-		arg := d.Arguments().ByName("name")
-		if arg == nil {
-			return nil
-		}
-		val := arg.Value()
-		if val == nil {
-			return nil
-		}
-		d.argName = &val.Raw
-	}
-	return d.argName
+	return directiveArgument(&d.argName, d, "name")
 }
 
 type FieldDirective struct {
 	*Directive
-	argName *string
+	argName string
 }
 
-func (d *FieldDirective) ArgName() string {
-	if d.argName == nil {
-		d.argName = &d.Arguments().ByName("name").Value().Raw
-	}
-	return *d.argName
+func (d *FieldDirective) ArgName() *string {
+	return directiveArgument(&d.argName, d, "name")
 }
 
 type RelationDirective struct {
 	*Directive
-	argObject     *string
-	argField      *string
-	argForeignKey *string
+	argObject     string
+	argField      string
+	argForeignKey string
 }
 
-func (d *RelationDirective) ArgObject() string {
-	if d.argObject == nil {
-		d.argObject = &d.Arguments().ByName("object").Value().Raw
-	}
-	return *d.argObject
+func (d *RelationDirective) ArgObject() *string {
+	return directiveArgument(&d.argObject, d, "object")
 }
 
-func (d *RelationDirective) ArgField() string {
-	if d.argField == nil {
-		d.argField = &d.Arguments().ByName("field").Value().Raw
-	}
-	return *d.argField
+func (d *RelationDirective) ArgField() *string {
+	return directiveArgument(&d.argField, d, "field")
 }
 
-func (d *RelationDirective) ArgForeignKey() string {
-	if d.argForeignKey == nil {
-		d.argForeignKey = &d.Arguments().ByName("foreignKey").Value().Raw
-	}
-	return *d.argForeignKey
+func (d *RelationDirective) ArgForeignKey() *string {
+	return directiveArgument(&d.argForeignKey, d, "foreignKey")
 }
 
 type InputDirective struct {
@@ -271,4 +248,19 @@ func firstDirective(list DirectiveList, filter directiveFilter) *Directive {
 		}
 	}
 	return nil
+}
+
+func directiveArgument(current *string, a Arguments, name string) *string {
+	if current == nil || len(*current) == 0 {
+		arg := a.Arguments().ByName(name)
+		if arg == nil {
+			return nil
+		}
+		val := arg.Value()
+		if val == nil {
+			return nil
+		}
+		*current = val.Raw
+	}
+	return current
 }

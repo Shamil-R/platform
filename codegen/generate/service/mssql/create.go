@@ -37,9 +37,9 @@ func create(ctx context.Context, result interface{}) error {
 			if err != nil {
 				return err
 			}
-			query.AddValue(field, id)
+			query.AddValue(*field, id)
 		} else {
-			query.AddValue(field, child.Value().Conv())
+			query.AddValue(*field, child.Value().Conv())
 		}
 	}
 

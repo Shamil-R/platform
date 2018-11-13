@@ -6,9 +6,9 @@ import (
 
 type FieldDefinition struct {
 	*ast.FieldDefinition
-	parent   *Definition
-	relation *FieldDefinition
-	arguments ArgumentDefinitionList
+	parent     *Definition
+	relation   *FieldDefinition
+	arguments  ArgumentDefinitionList
 	directives DirectiveList
 }
 
@@ -35,14 +35,12 @@ func (f *FieldDefinition) Arguments() ArgumentDefinitionList {
 
 func (f *FieldDefinition) Directives() DirectiveList {
 	if f.directives == nil {
-		return f.directives
+		f.directives = make(DirectiveList, 0, len(f.FieldDefinition.Directives))
+		for _, directive := range f.FieldDefinition.Directives {
+			dir := &Directive{Directive: directive}
+			f.directives = append(f.directives, dir)
+		}
 	}
-
-	f.directives = make(DirectiveList, len(f.FieldDefinition.Directives))
-	for i, directive := range f.FieldDefinition.Directives {
-		f.directives[i] = &Directive{directive, nil}
-	}
-
 	return f.directives
 }
 
