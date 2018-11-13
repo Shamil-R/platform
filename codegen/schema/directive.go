@@ -3,14 +3,15 @@ package schema
 import "github.com/vektah/gqlparser/ast"
 
 const (
-	DirectivePrimary  = "primary"
-	DirectiveUnique   = "unique"
-	DirectiveIdentity = "identity"
-	DirectiveValidate = "validate"
-	DirectiveTable    = "table"
-	DirectiveField    = "field"
-	DirectiveRelation = "relation"
-	DirectiveInput    = "input"
+	DirectivePrimary   = "primary"
+	DirectiveUnique    = "unique"
+	DirectiveIdentity  = "identity"
+	DirectiveValidate  = "validate"
+	DirectiveTable     = "table"
+	DirectiveField     = "field"
+	DirectiveRelation  = "relation"
+	DirectiveInput     = "input"
+	DirectiveCondition = "condition"
 
 	InputDirectiveCreateOneWithout = "create_one_without"
 )
@@ -237,6 +238,14 @@ func (l DirectiveList) Input() *InputDirective {
 	return &InputDirective{Directive: directive}
 }
 
+func (l DirectiveList) Condition() *ConditionDirective {
+	directive := firstDirective(l, isConditionDirective)
+	if directive == nil {
+		return nil
+	}
+	return &ConditionDirective{Directive: directive}
+}
+
 func (l DirectiveList) ByName(name string) *Directive {
 	return firstDirective(l, byNameDirective(name))
 }
@@ -273,6 +282,10 @@ func isRelationDirective(directive *Directive) bool {
 
 func isInputDirective(directive *Directive) bool {
 	return directive.Name == DirectiveInput
+}
+
+func isConditionDirective(directive *Directive) bool {
+	return directive.Name == DirectiveCondition
 }
 
 func byNameDirective(name string) directiveFilter {

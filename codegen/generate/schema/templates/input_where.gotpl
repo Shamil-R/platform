@@ -13,9 +13,11 @@ input {{ .Name }}WhereInput
 {{- range $_, $field := .Fields.NotRelations }}
 	{{ $field.Name }}: {{ $field.Type.Name }}
 	{{- template "copy_directive" $field.Directives.Field }}
+	{{- template "directive_condition" "eq" }}
 	{{- range $_, $cond := (index $conds $field.Type.Name) }}
 	{{ $field.Name }}{{ $cond }}: {{ $field.Type.Name }}
 	{{- template "copy_directive" $field.Directives.Field }}
+	{{- template "directive_condition" (snakecase $cond) }}
 	{{- end }}
 {{- end }}
 }
