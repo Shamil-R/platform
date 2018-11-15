@@ -2,7 +2,11 @@ package winauth
 
 import (
 	"context"
-	"time"
+	"github.com/davecgh/go-spew/spew"
+	//"io/ioutil"
+	//"log"
+
+	//"time"
 
 	//"encoding/hex"
 	"errors"
@@ -12,8 +16,11 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 
-	"gopkg.in/jcmturner/gokrb5.v6/client"
-	"gopkg.in/jcmturner/gokrb5.v6/config"
+	//"gopkg.in/jcmturner/gokrb5.v6/client"
+	//"gopkg.in/jcmturner/gokrb5.v6/config"
+
+	//"github.com/davecgh/go-spew/spew"
+	//httpntlm "github.com/vadimi/go-http-ntlm"
 )
 
 const (
@@ -112,7 +119,22 @@ func ejectClaims(tokenString string) (*UserContext, error) {
 
 func MiddlewareLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ctx := r
+
+		header := r.Header.Get("Authorization")
+		fmt.Println(header)
+		authReq := strings.Split(header, " ")
+
+		if len(authReq) == 2 || authReq[0] == "Negotiate" {
+			spew.Dump(r)
+			w.WriteHeader(200)
+		} else {
+			w.Header().Set("WWW-Authenticate", "Negotiate")
+			w.WriteHeader(http.StatusUnauthorized)
+		}
+
+		return
+
+		/*ctx := r
 		username := ctx.FormValue("username")
 		password := ctx.FormValue("password")
 
@@ -136,6 +158,8 @@ func MiddlewareLogin() http.HandlerFunc {
 			panic(err)
 		}
 
+		spew.Dump(cl)
+
 		// Создаем новый токен
 		claims := jwt.MapClaims{
 			//todo откуда брать user_id
@@ -147,6 +171,6 @@ func MiddlewareLogin() http.HandlerFunc {
 		// Подписываем токен нашим секретным ключем
 		tokenString, _ := token.SignedString(getSecretKey())
 
-		w.Write([]byte(tokenString))
+		w.Write([]byte(tokenString))*/
 	}
 }

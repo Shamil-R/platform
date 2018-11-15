@@ -45,6 +45,17 @@
   version = "v2.16.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:69dabd9ff5154eba205b9c049a1716b4ce0e6d7da55e3d1a96fa1da2a3540158"
+  name = "github.com/ThomsonReutersEikon/go-ntlm"
+  packages = [
+    "ntlm",
+    "ntlm/md4",
+  ]
+  pruneopts = "UT"
+  revision = "51f51a355c40946a10ff9f8f3c1da22977701967"
+
+[[projects]]
   digest = "1:cc306cae16c310ca360eaee3e563109e251832a3f6a13b26bf39cc6a43c7c9f6"
   name = "github.com/agnivade/levenshtein"
   packages = ["."]
@@ -324,6 +335,14 @@
   version = "v1.20.0"
 
 [[projects]]
+  digest = "1:27e4a98cfd51e5f28e6552a74b03492a7ae6a659fd9ecc42d79e67a5e42408c9"
+  name = "github.com/vadimi/go-http-ntlm"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "023174b08b50b7072233c1a27bf2755c38a709f0"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   digest = "1:7fa8a2105f0b0853395a85d3dd8ef1475c44919374c6496dba7b987586edaced"
   name = "github.com/vektah/gqlparser"
@@ -533,6 +552,7 @@
     "github.com/mitchellh/go-homedir",
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
+    "github.com/vadimi/go-http-ntlm",
     "github.com/vektah/gqlparser",
     "github.com/vektah/gqlparser/ast",
     "go.uber.org/zap",

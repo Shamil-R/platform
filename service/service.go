@@ -1,7 +1,7 @@
 package service
 
 import (
-	"gitlab/nefco/platform/codegen/generate/service/mssql"
+	//"gitlab/nefco/platform/codegen/generate/service/mssql"
 
 	"github.com/99designs/gqlgen/handler"
 	"github.com/spf13/viper"
@@ -13,7 +13,7 @@ func init() {
 		// role.New(),
 		// log.New(),
 		// stub.New(),
-		mssql.New(),
+		//mssql.New(),
 	}
 }
 
