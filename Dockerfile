@@ -13,12 +13,17 @@ COPY . ./
 
 RUN CGO_ENABLED=0 go build -o /platform ./platform/main.go
 
-RUN apt-get update && apt-get install -y \
-		libkrb5-dev \
+#RUN apt-get update && apt-get install -y \
+		#libkrb5-dev \
 		#&& aptitude install -y krb5-user \
 		#&& aptitude install -y openafs-krb5 \
-    && rm -rf /var/lib/apt/lists/*
+    #&& rm -rf /var/lib/apt/lists/*
 
-CMD [ "./platform" ]
 
-EXPOSE 8080
+FROM golang:alpine
+
+COPY --from=builder /platform .
+
+COPY .platform.yml .
+
+CMD [ "./platform", "run" ]

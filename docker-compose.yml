@@ -1,14 +1,14 @@
 version: '3'
 services:
-  mssql:
-      image: microsoft/mssql-server-linux
-      ports:
-      - "1433:1433"
-      environment:
-        ACCEPT_EULA: Y
-        SA_PASSWORD: p@sSw0rd
-      volumes:
-        - mssql:/var/opt/mssql
+#  mssql:
+#      image: microsoft/mssql-server-linux
+#      ports:
+#      - "1433:1433"
+#      environment:
+#        ACCEPT_EULA: Y
+#        SA_PASSWORD: p@sSw0rd
+#      volumes:
+#        - mssql:/var/opt/mssql
   platform:
     build: .
     ports:
