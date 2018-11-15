@@ -2,11 +2,11 @@ app:
   port: 8080
   service:
     mssql:
-      host: 127.0.0.1
+      host: 192.168.2.128
       port: 1433
-      username: platform
-      password: p@sSw0rd
-      database: platform
+      username: web
+      password: byrke5l8byu
+      database: nefco
 codegen:
   schema:
     path: schema.graphql

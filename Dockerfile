@@ -11,6 +11,8 @@ RUN dep ensure --vendor-only -v
 
 COPY . ./
 
+RUN go run ./platform/main.go codegen --clean
+
 RUN CGO_ENABLED=0 go build -o /platform ./platform/main.go
 
 #RUN apt-get update && apt-get install -y \
