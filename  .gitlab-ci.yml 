@@ -4,16 +4,16 @@ variables:
   IMAGE_TAG_DEV: $CI_REGISTRY_IMAGE:dev
   GIT_SUBMODULE_STRATEGY: recursive
 services:
-- docker:dind
+  - docker:dind
 stages:
-- build-docker
+  - build-docker
 build-docker-develop:
   stage: build-docker
   script:
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-  - docker build --cache-from $IMAGE_TAG_DEV -t $IMAGE_TAG_DEV .
-  - docker push $IMAGE_TAG_DEV
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build --cache-from $IMAGE_TAG_DEV -t $IMAGE_TAG_DEV .
+    - docker push $IMAGE_TAG_DEV
   only:
-  - feature/winauth
+    - feature/winauth
   tags:
-  - docker
+    - docker
