@@ -6,7 +6,7 @@ import (
 )
 
 type Update struct {
-	condition
+	conditions
 	values []string
 }
 
@@ -21,7 +21,7 @@ func (q *Update) Query() string {
 		"UPDATE %s SET %s %s",
 		q.table,
 		strings.Join(q.values, ", "),
-		q.condition.block(),
+		where(q.conditions.block()),
 	)
 	return query
 }

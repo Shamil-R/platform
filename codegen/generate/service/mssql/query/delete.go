@@ -5,14 +5,14 @@ import (
 )
 
 type Delete struct {
-	condition
+	conditions
 }
 
 func (q *Delete) Query() string {
 	query := fmt.Sprintf(
 		"DELETE FROM %s %s",
 		q.table,
-		q.condition.block(),
+		where(q.conditions.block()),
 	)
 	return query
 }

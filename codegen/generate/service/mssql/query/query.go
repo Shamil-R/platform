@@ -2,7 +2,7 @@ package query
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 type Query interface {
@@ -15,7 +15,10 @@ type Table interface {
 }
 
 type Conditions interface {
-	AddСondition(column string, value interface{})
+	AddСondition(column, condition string, value interface{})
+	And() Conditions
+	Or() Conditions
+	Not() Conditions
 }
 
 type Values interface {
@@ -31,11 +34,13 @@ type query struct {
 	table string
 }
 
-func (q *query) setArg(key string, value interface{}) {
+func (q *query) setArg(key string, value interface{}) string {
 	if q.arg == nil {
 		q.arg = map[string]interface{}{}
 	}
-	q.arg[key] = value
+	k := key + "_" + strconv.Itoa(len(q.arg))
+	q.arg[k] = value
+	return k
 }
 
 func (q *query) Arg() map[string]interface{} {
@@ -44,23 +49,4 @@ func (q *query) Arg() map[string]interface{} {
 
 func (q *query) SetTable(table string) {
 	q.table = fmt.Sprintf("[%s]", table)
-}
-
-type condition struct {
-	query
-	conditions []string
-}
-
-func (q *condition) block() string {
-	if len(q.conditions) == 0 {
-		return ""
-	}
-	and := strings.Join(q.conditions, " AND")
-	return fmt.Sprintf("WHERE %s", and)
-}
-
-func (q *condition) AddСondition(column string, value interface{}) {
-	cond := fmt.Sprintf("[%s] = :%s", column, column)
-	q.conditions = append(q.conditions, cond)
-	q.setArg(column, value)
 }

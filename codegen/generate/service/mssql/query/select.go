@@ -6,7 +6,7 @@ import (
 )
 
 type Select struct {
-	condition
+	conditions
 	columns []string
 }
 
@@ -20,7 +20,7 @@ func (q *Select) Query() string {
 		"SELECT %s FROM %s %s",
 		strings.Join(q.columns, ", "),
 		q.table,
-		q.condition.block(),
+		where(q.conditions.block()),
 	)
 	return query
 }

@@ -2,6 +2,7 @@ package mssql
 
 import (
 	"context"
+	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
@@ -16,7 +17,7 @@ func Delete(ctx context.Context, result interface{}) error {
 		return err
 	}
 
-	if err := fillConditions(ctx, query); err != nil {
+	if err := build.Conditions(ctx, query); err != nil {
 		return err
 	}
 

@@ -3,6 +3,7 @@ package mssql
 import (
 	"context"
 	"errors"
+	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
 )
@@ -89,7 +90,7 @@ func connectOne(ctx context.Context, v *schema.Value) (int64, error) {
 		return 0, err
 	}
 
-	if err := useConditions(query, v); err != nil {
+	if err := build.ConditionsFromValue(v, query); err != nil {
 		return 0, err
 	}
 
@@ -129,7 +130,7 @@ func createResult(ctx context.Context, id int64, result interface{}) error {
 		return err
 	}
 
-	query.AddСondition(col, id)
+	query.AddСondition(col, "eq", id)
 
 	logQuery(query)
 
