@@ -11,7 +11,7 @@ func Delete(ctx context.Context, result interface{}) error {
 		return err
 	}
 
-	query := new(query.Delete)
+	query := query.NewDelete()
 
 	if err := fillTable(ctx, query); err != nil {
 		return err

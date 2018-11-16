@@ -5,13 +5,21 @@ import (
 	"strings"
 )
 
-type Insert struct {
-	query
+type insert struct {
+	*arg
+	*tableBlock
 	columns []string
 	values  []string
 }
 
-func (q *Insert) AddValue(column string, value interface{}) {
+func NewInsert() *insert {
+	return &insert{
+		arg:        newArg(),
+		tableBlock: newTableBlock(),
+	}
+}
+
+func (q *insert) AddValue(column string, value interface{}) {
 	col := fmt.Sprintf("[%s]", column)
 	q.columns = append(q.columns, col)
 	val := fmt.Sprintf(":%s", column)
@@ -19,7 +27,7 @@ func (q *Insert) AddValue(column string, value interface{}) {
 	q.setArg(column, value)
 }
 
-func (q *Insert) Query() string {
+func (q *insert) Query() string {
 	query := fmt.Sprintf(
 		"INSERT INTO %s (%s) VALUES (%s)",
 		q.table,

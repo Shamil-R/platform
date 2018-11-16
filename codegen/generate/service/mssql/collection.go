@@ -7,7 +7,7 @@ import (
 )
 
 func Collection(ctx context.Context, result interface{}) error {
-	query := new(query.Select)
+	query := query.NewSelect()
 
 	if err := fillTable(ctx, query); err != nil {
 		return err

@@ -16,7 +16,7 @@ func Create(ctx context.Context, result interface{}) error {
 }
 
 func create(ctx context.Context, result interface{}) error {
-	query := new(query.Insert)
+	query := query.NewInsert()
 
 	if err := fillTable(ctx, query); err != nil {
 		return err
@@ -80,7 +80,7 @@ func createOneWithout(ctx context.Context, v *schema.Value) (int64, error) {
 }
 
 func connectOne(ctx context.Context, v *schema.Value) (int64, error) {
-	query := new(query.Select)
+	query := query.NewSelect()
 
 	if err := useTable(query, v); err != nil {
 		return 0, err
@@ -115,7 +115,7 @@ func connectOne(ctx context.Context, v *schema.Value) (int64, error) {
 }
 
 func createResult(ctx context.Context, id int64, result interface{}) error {
-	query := new(query.Select)
+	query := query.NewSelect()
 
 	if err := fillTable(ctx, query); err != nil {
 		return err

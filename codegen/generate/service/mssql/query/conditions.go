@@ -5,15 +5,21 @@ import (
 	"strings"
 )
 
-type conditions struct {
-	query
+type conditionsBlock struct {
+	*arg
 	conditions []string
-	and        []*conditions
-	or         []*conditions
-	not        []*conditions
+	and        []*conditionsBlock
+	or         []*conditionsBlock
+	not        []*conditionsBlock
 }
 
-func (q *conditions) block() string {
+func newConditionsBlock() *conditionsBlock {
+	return &conditionsBlock{
+		arg: newArg(),
+	}
+}
+
+func (q *conditionsBlock) block() string {
 	conds := q.conditions
 
 	if len(q.and) > 0 {
@@ -21,7 +27,7 @@ func (q *conditions) block() string {
 		for _, cond := range q.and {
 			blocks = append(blocks, cond.block())
 		}
-		conds = append(conds, strings.Join(blocks, " OR"))
+		conds = append(conds, "("+strings.Join(blocks, " OR ")+")")
 	}
 
 	if len(q.or) > 0 {
@@ -29,14 +35,14 @@ func (q *conditions) block() string {
 		for _, cond := range q.or {
 			blocks = append(blocks, cond.block())
 		}
-		conds = append(conds, strings.Join(blocks, " OR"))
+		conds = append(conds, "("+strings.Join(blocks, " OR ")+")")
 	}
 
 	if len(conds) == 0 {
 		return ""
 	}
 
-	return "(" + strings.Join(conds, " AND") + ")"
+	return "(" + strings.Join(conds, " AND ") + ")"
 }
 
 func build(conds []string, op string) string {
@@ -46,7 +52,7 @@ func build(conds []string, op string) string {
 	return strings.Join(conds, " "+strings.TrimSpace(op))
 }
 
-func (q *conditions) AddСondition(column, op string, value interface{}) {
+func (q *conditionsBlock) AddСondition(column, op string, value interface{}) {
 	if condFn, ok := conditionFuncs[op]; ok {
 		placeholder := q.setArg(column, value)
 		cond := condFn(column, placeholder)
@@ -54,20 +60,20 @@ func (q *conditions) AddСondition(column, op string, value interface{}) {
 	}
 }
 
-func (q *conditions) And() Conditions {
-	c := new(conditions)
+func (q *conditionsBlock) And() Conditions {
+	c := &conditionsBlock{arg: q.arg}
 	q.and = append(q.and, c)
 	return c
 }
 
-func (q *conditions) Or() Conditions {
-	c := new(conditions)
+func (q *conditionsBlock) Or() Conditions {
+	c := &conditionsBlock{arg: q.arg}
 	q.or = append(q.or, c)
 	return c
 }
 
-func (q *conditions) Not() Conditions {
-	c := new(conditions)
+func (q *conditionsBlock) Not() Conditions {
+	c := &conditionsBlock{arg: q.arg}
 	q.not = append(q.not, c)
 	return c
 }

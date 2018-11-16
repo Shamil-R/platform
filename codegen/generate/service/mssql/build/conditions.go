@@ -23,9 +23,11 @@ func ConditionsFromValue(value *schema.Value, query query.Conditions) error {
 	def := value.Definition()
 
 	for _, child := range value.Children() {
-
 		switch child.Name {
 		case "AND":
+			for _, or := range child.Value().Children() {
+				ConditionsFromValue(or.Value(), query.And())
+			}
 		case "OR":
 			for _, or := range child.Value().Children() {
 				ConditionsFromValue(or.Value(), query.Or())

@@ -7,7 +7,7 @@ import (
 )
 
 func Update(ctx context.Context, result interface{}) error {
-	query := new(query.Update)
+	query := query.NewUpdate()
 
 	if err := fillTable(ctx, query); err != nil {
 		return err

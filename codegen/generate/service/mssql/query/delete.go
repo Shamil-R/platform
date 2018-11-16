@@ -4,15 +4,23 @@ import (
 	"fmt"
 )
 
-type Delete struct {
-	conditions
+type delete struct {
+	*tableBlock
+	*conditionsBlock
 }
 
-func (q *Delete) Query() string {
+func NewDelete() *delete {
+	return &delete{
+		tableBlock:      newTableBlock(),
+		conditionsBlock: newConditionsBlock(),
+	}
+}
+
+func (q *delete) Query() string {
 	query := fmt.Sprintf(
 		"DELETE FROM %s %s",
 		q.table,
-		where(q.conditions.block()),
+		where(q.conditionsBlock.block()),
 	)
 	return query
 }

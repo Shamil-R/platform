@@ -29,24 +29,33 @@ type Columns interface {
 	AddColumn(column, alias string)
 }
 
-type query struct {
-	arg   map[string]interface{}
-	table string
+type arg struct {
+	m map[string]interface{}
 }
 
-func (q *query) setArg(key string, value interface{}) string {
-	if q.arg == nil {
-		q.arg = map[string]interface{}{}
-	}
-	k := key + "_" + strconv.Itoa(len(q.arg))
-	q.arg[k] = value
+func newArg() *arg {
+	return &arg{m: map[string]interface{}{}}
+}
+
+func (a *arg) setArg(key string, value interface{}) string {
+	l := len(a.m)
+	k := key + "_" + strconv.Itoa(l)
+	a.m[k] = value
 	return k
 }
 
-func (q *query) Arg() map[string]interface{} {
-	return q.arg
+func (a *arg) Arg() map[string]interface{} {
+	return a.m
 }
 
-func (q *query) SetTable(table string) {
-	q.table = fmt.Sprintf("[%s]", table)
+type tableBlock struct {
+	table string
+}
+
+func newTableBlock() *tableBlock {
+	return &tableBlock{}
+}
+
+func (t *tableBlock) SetTable(table string) {
+	t.table = fmt.Sprintf("[%s]", table)
 }
