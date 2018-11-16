@@ -35,6 +35,6 @@ COPY --from=builder /platform .
 
 COPY .platform.yml .
 COPY test.keytab .
-RUN export KRB5_CLIENT_KTNAME=./test.keytab
+RUN export KRB5_CLIENT_KTNAME=$PWD/test.keytab
 
 CMD [ "./platform", "run" ]
