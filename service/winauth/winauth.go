@@ -2,7 +2,7 @@ package winauth
 
 import (
 	"context"
-	"github.com/davecgh/go-spew/spew"
+	//"github.com/davecgh/go-spew/spew"
 	"log"
 
 	//"io/ioutil"
@@ -122,11 +122,11 @@ func MiddlewareLogin() http.HandlerFunc {
 
 
 		header := r.Header.Get("Authorization")
-		fmt.Println(header)
+
 		authReq := strings.Split(header, " ")
 
 		if len(authReq) == 2 || authReq[0] == "Negotiate" {
-			spew.Dump(r)
+			fmt.Println(header)
 			w.WriteHeader(200)
 
 
