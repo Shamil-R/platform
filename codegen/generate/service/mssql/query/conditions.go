@@ -27,7 +27,7 @@ func (q *conditionsBlock) block() string {
 		for _, cond := range q.and {
 			blocks = append(blocks, cond.block())
 		}
-		conds = append(conds, "("+strings.Join(blocks, " OR ")+")")
+		conds = append(conds, "("+strings.Join(blocks, " AND ")+")")
 	}
 
 	if len(q.or) > 0 {
