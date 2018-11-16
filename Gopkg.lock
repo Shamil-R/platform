@@ -61,14 +61,6 @@
   version = "v1.0.1"
 
 [[projects]]
-  digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
-  name = "github.com/davecgh/go-spew"
-  packages = ["spew"]
-  pruneopts = "UT"
-  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
-  version = "v1.1.1"
-
-[[projects]]
   branch = "master"
   digest = "1:6f120164f62e62991d0f85562abe2002d438abb2ca80b7717a2f4ae2af1c6829"
   name = "github.com/denisenkom/go-mssqldb"
@@ -298,9 +290,12 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:5b7ec15cefc6787f24cf0ed7cc6d4362d0b871212b2dba06af3c02ddf252a5c5"
+  digest = "1:bc1e77f7a8a1c30b2c7639237d32fea62eb47b1598042f1497ee355c8e8ed9a9"
   name = "github.com/ubccr/kerby"
-  packages = ["."]
+  packages = [
+    ".",
+    "khttp",
+  ]
   pruneopts = "UT"
   revision = "201a958fc4535b4528d245ae127de1fa141eb917"
 
@@ -443,7 +438,6 @@
     "github.com/99designs/gqlgen/graphql/introspection",
     "github.com/99designs/gqlgen/handler",
     "github.com/Masterminds/sprig",
-    "github.com/davecgh/go-spew/spew",
     "github.com/denisenkom/go-mssqldb",
     "github.com/dgrijalva/jwt-go",
     "github.com/go-ozzo/ozzo-validation",
@@ -457,6 +451,7 @@
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
     "github.com/ubccr/kerby",
+    "github.com/ubccr/kerby/khttp",
     "github.com/vektah/gqlparser",
     "github.com/vektah/gqlparser/ast",
     "go.uber.org/zap",
