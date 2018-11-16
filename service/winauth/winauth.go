@@ -1,7 +1,10 @@
 package winauth
 
 import (
+	"bytes"
 	"context"
+	"io/ioutil"
+
 	//"github.com/davecgh/go-spew/spew"
 	"log"
 
@@ -21,6 +24,7 @@ import (
 	//"gopkg.in/jcmturner/gokrb5.v6/client"
 	//"gopkg.in/jcmturner/gokrb5.v6/config"
 	"github.com/ubccr/kerby"
+	"github.com/ubccr/kerby/khttp"
 )
 
 const (
@@ -119,6 +123,34 @@ func ejectClaims(tokenString string) (*UserContext, error) {
 
 func MiddlewareLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		payload := []byte(`{"method":"hello_world"}`)
+		req, err := http.NewRequest(
+			"POST",
+			"http://testrafa.stage.ncsd.ru/login",
+			bytes.NewBuffer(payload))
+
+		req.Header.Set("Content-Type", "application/json")
+
+		t := &khttp.Transport{
+			KeyTab: "test.keytab",
+			Principal: "RShamilov@nefis.local"}
+
+		client := &http.Client{Transport: t}
+
+		res, err := client.Do(req)
+		if err != nil {
+			panic(err)
+		}
+		defer res.Body.Close()
+
+		data, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("%d\n", res.StatusCode)
+		fmt.Printf("%s", data)
+		return
 
 
 		header := r.Header.Get("Authorization")
