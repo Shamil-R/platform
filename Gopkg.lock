@@ -45,17 +45,6 @@
   version = "v2.16.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:69dabd9ff5154eba205b9c049a1716b4ce0e6d7da55e3d1a96fa1da2a3540158"
-  name = "github.com/ThomsonReutersEikon/go-ntlm"
-  packages = [
-    "ntlm",
-    "ntlm/md4",
-  ]
-  pruneopts = "UT"
-  revision = "51f51a355c40946a10ff9f8f3c1da22977701967"
-
-[[projects]]
   digest = "1:cc306cae16c310ca360eaee3e563109e251832a3f6a13b26bf39cc6a43c7c9f6"
   name = "github.com/agnivade/levenshtein"
   packages = ["."]
@@ -144,14 +133,6 @@
   version = "v1.4.0"
 
 [[projects]]
-  digest = "1:12ed7dcca9531e58c65cdadb8af0052724bef7fa1581380523fb9cb1215faf0d"
-  name = "github.com/hashicorp/go-uuid"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "de160f5c59f693fed329e73e291bb751fe4ea4dc"
-  version = "v1.0.0"
-
-[[projects]]
   digest = "1:8ec8d88c248041a6df5f6574b87bc00e7e0b493881dad2e7ef47b11dc69093b5"
   name = "github.com/hashicorp/golang-lru"
   packages = [
@@ -204,17 +185,6 @@
   pruneopts = "UT"
   revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
   version = "v1.0"
-
-[[projects]]
-  branch = "master"
-  digest = "1:ae221758bdddd57f5c76f4ee5e4110af32ee62583c46299094697f8f127e63da"
-  name = "github.com/jcmturner/gofork"
-  packages = [
-    "encoding/asn1",
-    "x/crypto/pbkdf2",
-  ]
-  pruneopts = "UT"
-  revision = "2aebee971930cd0dd525873330952ab7df5ac95c"
 
 [[projects]]
   branch = "master"
@@ -327,20 +297,20 @@
   version = "v1.2.1"
 
 [[projects]]
+  branch = "master"
+  digest = "1:5b7ec15cefc6787f24cf0ed7cc6d4362d0b871212b2dba06af3c02ddf252a5c5"
+  name = "github.com/ubccr/kerby"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "201a958fc4535b4528d245ae127de1fa141eb917"
+
+[[projects]]
   digest = "1:b24d38b282bacf9791408a080f606370efa3d364e4b5fd9ba0f7b87786d3b679"
   name = "github.com/urfave/cli"
   packages = ["."]
   pruneopts = "UT"
   revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
   version = "v1.20.0"
-
-[[projects]]
-  digest = "1:27e4a98cfd51e5f28e6552a74b03492a7ae6a659fd9ecc42d79e67a5e42408c9"
-  name = "github.com/vadimi/go-http-ntlm"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "023174b08b50b7072233c1a27bf2755c38a709f0"
-  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -456,72 +426,6 @@
   revision = "59602fdee893255faef9b2cd3aa8f880ea85265c"
 
 [[projects]]
-  digest = "1:c902038ee2d6f964d3b9f2c718126571410c5d81251cbab9fe58abd37803513c"
-  name = "gopkg.in/jcmturner/aescts.v1"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "f6abebb3171c4c1b1fea279cb7c7325020a26290"
-  version = "v1.0.1"
-
-[[projects]]
-  digest = "1:a1a3e185c03d79a7452d5d5b4c91be4cc433f55e6ed3a35233d852c966e39013"
-  name = "gopkg.in/jcmturner/dnsutils.v1"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "13eeb8d49ffb74d7a75784c35e4d900607a3943c"
-  version = "v1.0.1"
-
-[[projects]]
-  digest = "1:0e780178b7117fc458dffdb864b46027398f7c3fb542ef36b880a95802625981"
-  name = "gopkg.in/jcmturner/gokrb5.v6"
-  packages = [
-    "asn1tools",
-    "client",
-    "config",
-    "credentials",
-    "crypto",
-    "crypto/common",
-    "crypto/etype",
-    "crypto/rfc3961",
-    "crypto/rfc3962",
-    "crypto/rfc4757",
-    "crypto/rfc8009",
-    "gssapi",
-    "iana",
-    "iana/addrtype",
-    "iana/adtype",
-    "iana/asnAppTag",
-    "iana/chksumtype",
-    "iana/errorcode",
-    "iana/etypeID",
-    "iana/flags",
-    "iana/keyusage",
-    "iana/msgtype",
-    "iana/nametype",
-    "iana/patype",
-    "kadmin",
-    "keytab",
-    "krberror",
-    "messages",
-    "pac",
-    "types",
-  ]
-  pruneopts = "UT"
-  revision = "5fd8113cca0a7e26fb12bda6f31261df4dcd9678"
-  version = "v6.0.4"
-
-[[projects]]
-  digest = "1:0f16d9c577198e3b8d3209f5a89aabe679525b2aba2a7548714e973035c0e232"
-  name = "gopkg.in/jcmturner/rpc.v1"
-  packages = [
-    "mstypes",
-    "ndr",
-  ]
-  pruneopts = "UT"
-  revision = "99a8ce2fbf8b8087b6ed12a37c61b10f04070043"
-  version = "v1.1.0"
-
-[[projects]]
   digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -552,12 +456,10 @@
     "github.com/mitchellh/go-homedir",
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
-    "github.com/vadimi/go-http-ntlm",
+    "github.com/ubccr/kerby",
     "github.com/vektah/gqlparser",
     "github.com/vektah/gqlparser/ast",
     "go.uber.org/zap",
-    "gopkg.in/jcmturner/gokrb5.v6/client",
-    "gopkg.in/jcmturner/gokrb5.v6/config",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
