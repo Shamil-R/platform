@@ -126,7 +126,7 @@ func MiddlewareLogin() http.HandlerFunc {
 		payload := []byte(`{"method":"hello_world"}`)
 		req, err := http.NewRequest(
 			"POST",
-			"http://testrafa.stage.ncsd.ru/login",
+			"ldap://192.168.2.10",
 			bytes.NewBuffer(payload))
 
 		req.Header.Set("Content-Type", "application/json")
