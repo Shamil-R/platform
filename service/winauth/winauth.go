@@ -3,6 +3,8 @@ package winauth
 import (
 	"context"
 	"github.com/davecgh/go-spew/spew"
+	"log"
+
 	//"io/ioutil"
 	//"log"
 
@@ -18,9 +20,7 @@ import (
 
 	//"gopkg.in/jcmturner/gokrb5.v6/client"
 	//"gopkg.in/jcmturner/gokrb5.v6/config"
-
-	//"github.com/davecgh/go-spew/spew"
-	//httpntlm "github.com/vadimi/go-http-ntlm"
+	"github.com/ubccr/kerby"
 )
 
 const (
@@ -120,6 +120,7 @@ func ejectClaims(tokenString string) (*UserContext, error) {
 func MiddlewareLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
+
 		header := r.Header.Get("Authorization")
 		fmt.Println(header)
 		authReq := strings.Split(header, " ")
@@ -127,6 +128,31 @@ func MiddlewareLogin() http.HandlerFunc {
 		if len(authReq) == 2 || authReq[0] == "Negotiate" {
 			spew.Dump(r)
 			w.WriteHeader(200)
+
+
+
+			ks := new(kerby.KerbServer)
+			err := ks.Init("")
+			if err != nil {
+				log.Printf("KerbServer Init Error: %s", err.Error())
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			defer ks.Clean()
+
+
+			err = ks.Step(authReq[1])
+			w.Header().Set("WWW-Authenticate", "Negotiate "+ks.Response())
+
+			if err != nil {
+				log.Printf("KerbServer Step Error: %s", err.Error())
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+				return
+			}
+
+			user := ks.UserName()
+			fmt.Fprintf(w, "Hello, %s", user)
+
 		} else {
 			w.Header().Set("WWW-Authenticate", "Negotiate")
 			w.WriteHeader(http.StatusUnauthorized)
