@@ -21,6 +21,10 @@ func Collection(ctx context.Context, result interface{}) error {
 		return err
 	}
 
+	if err := build.Paginations(ctx, query); err != nil {
+		return err
+	}
+
 	logQuery(query)
 
 	tx, err := Begin(ctx)

@@ -9,6 +9,9 @@ type zelect struct {
 	*tableBlock
 	*conditionsBlock
 	columns []string
+	skip int
+	first int
+	last int
 }
 
 func NewSelect() *zelect {
@@ -24,11 +27,40 @@ func (q *zelect) AddColumn(column, alias string) {
 }
 
 func (q *zelect) Query() string {
+	bigquery := "SELECT %s from (SELECT ROW_NUMBER() over (%s) as __num, %s FROM %s %s ) a where 1=1 %s %s"
+	overorderby := "order by (select null)"
+	orderby := ""
+	paginationCondition := fmt.Sprintf("and __num > %v", q.skip)
+
+	if q.first > 0 {
+		paginationCondition = fmt.Sprintf("%s and __num < %v", paginationCondition, q.skip + q.first + 1)
+	} else if q.last > 0 {
+		paginationCondition = fmt.Sprintf("%s and __num < %v", paginationCondition, q.skip + q.last + 1)
+		overorderby = "order by id desc"
+		orderby = overorderby
+	}
+
 	query := fmt.Sprintf(
-		"SELECT %s FROM %s %s",
+		bigquery,
+		strings.Join(q.columns, ", "),
+		overorderby,
 		strings.Join(q.columns, ", "),
 		q.table,
 		where(q.conditionsBlock.block()),
+		paginationCondition,
+		orderby,
 	)
 	return query
+}
+
+func (q *zelect) Skip(skip int) {
+	q.skip = skip
+}
+
+func (q *zelect) First(first int) {
+	q.first = first
+}
+
+func (q *zelect) Last(last int) {
+	q.last = last
 }
