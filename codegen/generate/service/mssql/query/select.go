@@ -27,7 +27,6 @@ func (q *zelect) AddColumn(column, alias string) {
 }
 
 func (q *zelect) Query() string {
-	bigquery := "SELECT %s from (SELECT ROW_NUMBER() over (%s) as __num, %s FROM %s %s ) a where 1=1 %s %s"
 	overorderby := "order by (select null)"
 	orderby := ""
 	paginationCondition := fmt.Sprintf("and __num > %v", q.skip)
@@ -41,7 +40,7 @@ func (q *zelect) Query() string {
 	}
 
 	query := fmt.Sprintf(
-		bigquery,
+		"SELECT %s from (SELECT ROW_NUMBER() over (%s) as __num, %s FROM %s %s ) a where 1=1 %s %s",
 		strings.Join(q.columns, ", "),
 		overorderby,
 		strings.Join(q.columns, ", "),
