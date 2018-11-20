@@ -7,7 +7,7 @@ type {{ .Name }}
 	{{- template "directives" . }}
 	{{- end }}
 	{{- range .Fields.RelationsOneToMany }}
-	{{ .Name }}(where: {{ .Type.Name }}WhereInput): {{ .Type }}
+	{{ .Name }}(where: {{ .Type.Name }}WhereInput, skip: Int, first: Int, last: Int): {{ .Type }}
 	{{- template "directives" . }}
 	{{- end }}
 	{{- range .Fields.RelationsManyToOne }}
