@@ -21,7 +21,7 @@ func Relation(ctx context.Context, objID int, result interface{}) error {
 		return err
 	}
 
-	if err := build.Paginations(ctx, query); err != nil {
+	if err := build.Pagination(ctx, query); err != nil {
 		return err
 	}
 

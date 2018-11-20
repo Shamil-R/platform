@@ -8,7 +8,7 @@ import (
 	"github.com/joomcode/errorx"
 )
 
-func Paginations(ctx context.Context, query query.Pagination) error {
+func Pagination(ctx context.Context, query query.Pagination) error {
 	skip, err := extractArgument(ctx, "skip")
 	if err != nil && !errorx.IsOfType(err, ArgumentDoesNotExist) {
 		return err
