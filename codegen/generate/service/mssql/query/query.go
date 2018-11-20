@@ -22,9 +22,9 @@ type Conditions interface {
 }
 
 type Pagination interface {
-	Skip(int)
-	First(int)
-	Last(int)
+	SetSkip(int)
+	SetFirst(int)
+	SetLast(int)
 }
 
 type Values interface {

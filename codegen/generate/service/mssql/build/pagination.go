@@ -17,7 +17,7 @@ func Paginations(ctx context.Context, query query.Pagination) error {
 		if err != nil {
 			return err
 		}
-		query.Skip(iskip)
+		query.SetSkip(iskip)
 	}
 
 	first, err := extractArgument(ctx, "first")
@@ -28,7 +28,7 @@ func Paginations(ctx context.Context, query query.Pagination) error {
 		if err != nil {
 			return err
 		}
-		query.First(ifirst)
+		query.SetFirst(ifirst)
 	}
 
 	last, err := extractArgument(ctx, "last")
@@ -39,7 +39,7 @@ func Paginations(ctx context.Context, query query.Pagination) error {
 		if err != nil {
 			return err
 		}
-		query.Last(ilast)
+		query.SetLast(ilast)
 	}
 
 	return nil

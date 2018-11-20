@@ -53,14 +53,14 @@ func (q *zelect) Query() string {
 	return query
 }
 
-func (q *zelect) Skip(skip int) {
+func (q *zelect) SetSkip(skip int) {
 	q.skip = skip
 }
 
-func (q *zelect) First(first int) {
+func (q *zelect) SetFirst(first int) {
 	q.first = first
 }
 
-func (q *zelect) Last(last int) {
+func (q *zelect) SetLast(last int) {
 	q.last = last
 }
