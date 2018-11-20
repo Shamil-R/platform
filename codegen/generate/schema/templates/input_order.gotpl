@@ -1,0 +1,8 @@
+{{- define "input_order" }}
+enum {{ .Name }}OrderByInput {
+{{- range $_, $field := .Fields.NotRelations }}
+	{{ $field.Name }}_ASC
+	{{ $field.Name }}_DESC
+{{- end }}
+}
+{{- end }}
