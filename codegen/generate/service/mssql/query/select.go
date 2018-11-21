@@ -28,35 +28,45 @@ func (q *zelect) AddColumn(column, alias string) {
 }
 
 func (q *zelect) Query() string {
+	overorderby := "order by %s %s"
+	orderby := ""
 	var field string
 	var index string
+	overfield := "(select null)"
+	overindex := ""
+
+	// Определяем столбец и направление сортировки
 	if strings.HasSuffix(q.orderBy, "_ASC") {
 		field = strings.TrimSuffix(q.orderBy, "_ASC")
 		index = "ASC"
+		overfield = field
+		overindex = index
 	} else if strings.HasSuffix(q.orderBy, "_DESC") {
 		field = strings.TrimSuffix(q.orderBy, "_DESC")
 		index = "DESC"
+		overfield = field
+		overindex = index
 	}
 
-	overorderby := "order by %s %s"
-	orderby := ""
 	paginationCondition := fmt.Sprintf("and __num > %v", q.skip)
 
 	if q.first > 0 {
 		paginationCondition = fmt.Sprintf("%s and __num < %v", paginationCondition, q.skip + q.first + 1)
 	} else if q.last > 0 {
+		// при выводе last по умолчанию сортируют в обратном порядке, но если уже была определа сортировка,
+		// то сортируем в противополжном ей направлению
 		paginationCondition = fmt.Sprintf("%s and __num < %v", paginationCondition, q.skip + q.last + 1)
-		if field == "" {
-			field = "id"
+		overindex = "DESC"
+		if overfield == "" {
+			overfield = "id"
+		}
+		if index == "DESC" {
+			overindex = "ASC"
 		}
 	}
 
-	if field != "" {
-		orderby = fmt.Sprintf(overorderby, field, index)
-		overorderby = fmt.Sprintf(overorderby, field, "DESC")
-	} else {
-		overorderby = fmt.Sprintf(overorderby, "(select null)", "")
-	}
+	orderby = fmt.Sprintf("order by %s %s", field, index)
+	overorderby = fmt.Sprintf("order by %s %s", overfield, overindex)
 
 	query := fmt.Sprintf(
 		"SELECT %s from (SELECT ROW_NUMBER() over (%s) as __num, %s FROM %s %s ) a where 1=1 %s %s",
