@@ -15,7 +15,7 @@ directive @table(
 
 directive @field(
   name: String
-) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE
 
 directive @relation(
   type: String
@@ -42,5 +42,9 @@ directive @input(
 ) on INPUT_OBJECT
 
 directive @condition(
+  type: String!
+) on INPUT_FIELD_DEFINITION
+
+directive @order(
   type: String!
 ) on INPUT_FIELD_DEFINITION
