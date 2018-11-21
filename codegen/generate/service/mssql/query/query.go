@@ -27,6 +27,10 @@ type Pagination interface {
 	SetLast(int)
 }
 
+type Sort interface {
+	SetOrder(string)
+}
+
 type Values interface {
 	AddValue(column string, value interface{})
 }

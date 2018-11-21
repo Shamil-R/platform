@@ -12,6 +12,7 @@ type zelect struct {
 	skip int
 	first int
 	last int
+	orderBy string
 }
 
 func NewSelect() *zelect {
@@ -27,7 +28,17 @@ func (q *zelect) AddColumn(column, alias string) {
 }
 
 func (q *zelect) Query() string {
-	overorderby := "order by (select null)"
+	var field string
+	var index string
+	if strings.HasSuffix(q.orderBy, "_ASC") {
+		field = strings.TrimSuffix(q.orderBy, "_ASC")
+		index = "ASC"
+	} else if strings.HasSuffix(q.orderBy, "_DESC") {
+		field = strings.TrimSuffix(q.orderBy, "_DESC")
+		index = "DESC"
+	}
+
+	overorderby := "order by %s %s"
 	orderby := ""
 	paginationCondition := fmt.Sprintf("and __num > %v", q.skip)
 
@@ -35,8 +46,17 @@ func (q *zelect) Query() string {
 		paginationCondition = fmt.Sprintf("%s and __num < %v", paginationCondition, q.skip + q.first + 1)
 	} else if q.last > 0 {
 		paginationCondition = fmt.Sprintf("%s and __num < %v", paginationCondition, q.skip + q.last + 1)
-		overorderby = "order by id desc"
+		if field != "" {
+			field = "id"
+			index = "DESC"
+		}
+	}
+
+	if field != "" {
+		overorderby = fmt.Sprintf(overorderby, field, index)
 		orderby = overorderby
+	} else {
+		overorderby = fmt.Sprintf(overorderby, "(select null)", "")
 	}
 
 	query := fmt.Sprintf(
@@ -62,4 +82,8 @@ func (q *zelect) SetFirst(first int) {
 
 func (q *zelect) SetLast(last int) {
 	q.last = last
+}
+
+func (q *zelect) SetOrder(orderBy string) {
+	q.orderBy = orderBy
 }
