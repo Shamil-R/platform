@@ -46,15 +46,14 @@ func (q *zelect) Query() string {
 		paginationCondition = fmt.Sprintf("%s and __num < %v", paginationCondition, q.skip + q.first + 1)
 	} else if q.last > 0 {
 		paginationCondition = fmt.Sprintf("%s and __num < %v", paginationCondition, q.skip + q.last + 1)
-		if field != "" {
+		if field == "" {
 			field = "id"
-			index = "DESC"
 		}
 	}
 
 	if field != "" {
-		overorderby = fmt.Sprintf(overorderby, field, index)
-		orderby = overorderby
+		orderby = fmt.Sprintf(overorderby, field, index)
+		overorderby = fmt.Sprintf(overorderby, field, "DESC")
 	} else {
 		overorderby = fmt.Sprintf(overorderby, "(select null)", "")
 	}
