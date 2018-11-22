@@ -1,5 +1,5 @@
 # source: http://localhost:4466
-# timestamp: Thu Oct 25 2018 14:26:24 GMT+0300 (Moscow Standard Time)
+# timestamp: Thu Nov 22 2018 11:53:08 GMT+0300 (Moscow Standard Time)
 
 type AggregateMaterial {
   count: Int!
@@ -46,16 +46,7 @@ type MaterialConnection {
 
 input MaterialCreateInput {
   name: String!
-  author: UserCreateOneWithoutMaterialsInput!
-}
-
-input MaterialCreateManyWithoutAuthorInput {
-  create: [MaterialCreateWithoutAuthorInput!]
-  connect: [MaterialWhereUniqueInput!]
-}
-
-input MaterialCreateWithoutAuthorInput {
-  name: String!
+  author: UserCreateOneInput!
 }
 
 """An edge in a connection."""
@@ -124,31 +115,7 @@ input MaterialSubscriptionWhereInput {
 
 input MaterialUpdateInput {
   name: String
-  author: UserUpdateOneRequiredWithoutMaterialsInput
-}
-
-input MaterialUpdateManyWithoutAuthorInput {
-  create: [MaterialCreateWithoutAuthorInput!]
-  connect: [MaterialWhereUniqueInput!]
-  disconnect: [MaterialWhereUniqueInput!]
-  delete: [MaterialWhereUniqueInput!]
-  update: [MaterialUpdateWithWhereUniqueWithoutAuthorInput!]
-  upsert: [MaterialUpsertWithWhereUniqueWithoutAuthorInput!]
-}
-
-input MaterialUpdateWithoutAuthorDataInput {
-  name: String
-}
-
-input MaterialUpdateWithWhereUniqueWithoutAuthorInput {
-  where: MaterialWhereUniqueInput!
-  data: MaterialUpdateWithoutAuthorDataInput!
-}
-
-input MaterialUpsertWithWhereUniqueWithoutAuthorInput {
-  where: MaterialWhereUniqueInput!
-  update: MaterialUpdateWithoutAuthorDataInput!
-  create: MaterialCreateWithoutAuthorInput!
+  author: UserUpdateOneRequiredInput
 }
 
 input MaterialWhereInput {
@@ -248,30 +215,30 @@ input MaterialWhereUniqueInput {
 }
 
 type Mutation {
-  createUser(data: UserCreateInput!): User!
   createMaterial(data: MaterialCreateInput!): Material!
   createOrder(data: OrderCreateInput!): Order!
   createPost(data: PostCreateInput!): Post!
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  createUser(data: UserCreateInput!): User!
   updateMaterial(data: MaterialUpdateInput!, where: MaterialWhereUniqueInput!): Material
   updateOrder(data: OrderUpdateInput!, where: OrderWhereUniqueInput!): Order
   updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
-  deleteUser(where: UserWhereUniqueInput!): User
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   deleteMaterial(where: MaterialWhereUniqueInput!): Material
   deleteOrder(where: OrderWhereUniqueInput!): Order
   deletePost(where: PostWhereUniqueInput!): Post
-  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  deleteUser(where: UserWhereUniqueInput!): User
   upsertMaterial(where: MaterialWhereUniqueInput!, create: MaterialCreateInput!, update: MaterialUpdateInput!): Material!
   upsertOrder(where: OrderWhereUniqueInput!, create: OrderCreateInput!, update: OrderUpdateInput!): Order!
   upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   updateManyMaterials(data: MaterialUpdateInput!, where: MaterialWhereInput): BatchPayload!
   updateManyOrders(data: OrderUpdateInput!, where: OrderWhereInput): BatchPayload!
   updateManyPosts(data: PostUpdateInput!, where: PostWhereInput): BatchPayload!
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   deleteManyMaterials(where: MaterialWhereInput): BatchPayload!
   deleteManyOrders(where: OrderWhereInput): BatchPayload!
   deleteManyPosts(where: PostWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -304,16 +271,7 @@ type OrderConnection {
 
 input OrderCreateInput {
   count: Int!
-  owner: UserCreateOneWithoutOrdersInput!
-}
-
-input OrderCreateManyWithoutOwnerInput {
-  create: [OrderCreateWithoutOwnerInput!]
-  connect: [OrderWhereUniqueInput!]
-}
-
-input OrderCreateWithoutOwnerInput {
-  count: Int!
+  owner: UserCreateOneInput!
 }
 
 """An edge in a connection."""
@@ -382,31 +340,7 @@ input OrderSubscriptionWhereInput {
 
 input OrderUpdateInput {
   count: Int
-  owner: UserUpdateOneRequiredWithoutOrdersInput
-}
-
-input OrderUpdateManyWithoutOwnerInput {
-  create: [OrderCreateWithoutOwnerInput!]
-  connect: [OrderWhereUniqueInput!]
-  disconnect: [OrderWhereUniqueInput!]
-  delete: [OrderWhereUniqueInput!]
-  update: [OrderUpdateWithWhereUniqueWithoutOwnerInput!]
-  upsert: [OrderUpsertWithWhereUniqueWithoutOwnerInput!]
-}
-
-input OrderUpdateWithoutOwnerDataInput {
-  count: Int
-}
-
-input OrderUpdateWithWhereUniqueWithoutOwnerInput {
-  where: OrderWhereUniqueInput!
-  data: OrderUpdateWithoutOwnerDataInput!
-}
-
-input OrderUpsertWithWhereUniqueWithoutOwnerInput {
-  where: OrderWhereUniqueInput!
-  update: OrderUpdateWithoutOwnerDataInput!
-  create: OrderCreateWithoutOwnerInput!
+  owner: UserUpdateOneRequiredInput
 }
 
 input OrderWhereInput {
@@ -520,16 +454,7 @@ type PostConnection {
 
 input PostCreateInput {
   text: String!
-  writer: UserCreateOneWithoutPostsInput!
-}
-
-input PostCreateManyWithoutWriterInput {
-  create: [PostCreateWithoutWriterInput!]
-  connect: [PostWhereUniqueInput!]
-}
-
-input PostCreateWithoutWriterInput {
-  text: String!
+  writer: UserCreateOneInput!
 }
 
 """An edge in a connection."""
@@ -598,31 +523,7 @@ input PostSubscriptionWhereInput {
 
 input PostUpdateInput {
   text: String
-  writer: UserUpdateOneRequiredWithoutPostsInput
-}
-
-input PostUpdateManyWithoutWriterInput {
-  create: [PostCreateWithoutWriterInput!]
-  connect: [PostWhereUniqueInput!]
-  disconnect: [PostWhereUniqueInput!]
-  delete: [PostWhereUniqueInput!]
-  update: [PostUpdateWithWhereUniqueWithoutWriterInput!]
-  upsert: [PostUpsertWithWhereUniqueWithoutWriterInput!]
-}
-
-input PostUpdateWithoutWriterDataInput {
-  text: String
-}
-
-input PostUpdateWithWhereUniqueWithoutWriterInput {
-  where: PostWhereUniqueInput!
-  data: PostUpdateWithoutWriterDataInput!
-}
-
-input PostUpsertWithWhereUniqueWithoutWriterInput {
-  where: PostWhereUniqueInput!
-  update: PostUpdateWithoutWriterDataInput!
-  create: PostCreateWithoutWriterInput!
+  writer: UserUpdateOneRequiredInput
 }
 
 input PostWhereInput {
@@ -722,18 +623,18 @@ input PostWhereUniqueInput {
 }
 
 type Query {
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   materials(where: MaterialWhereInput, orderBy: MaterialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Material]!
   orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order]!
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
-  user(where: UserWhereUniqueInput!): User
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   material(where: MaterialWhereUniqueInput!): Material
   order(where: OrderWhereUniqueInput!): Order
   post(where: PostWhereUniqueInput!): Post
-  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  user(where: UserWhereUniqueInput!): User
   materialsConnection(where: MaterialWhereInput, orderBy: MaterialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MaterialConnection!
   ordersConnection(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderConnection!
   postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -743,18 +644,15 @@ type Query {
 }
 
 type Subscription {
-  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   material(where: MaterialSubscriptionWhereInput): MaterialSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
 type User implements Node {
   id: ID!
   name: String!
-  materials(where: MaterialWhereInput, orderBy: MaterialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Material!]
-  orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order!]
-  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
 }
 
 """A connection to a list of items."""
@@ -769,42 +667,11 @@ type UserConnection {
 
 input UserCreateInput {
   name: String!
-  materials: MaterialCreateManyWithoutAuthorInput
-  orders: OrderCreateManyWithoutOwnerInput
-  posts: PostCreateManyWithoutWriterInput
 }
 
-input UserCreateOneWithoutMaterialsInput {
-  create: UserCreateWithoutMaterialsInput
+input UserCreateOneInput {
+  create: UserCreateInput
   connect: UserWhereUniqueInput
-}
-
-input UserCreateOneWithoutOrdersInput {
-  create: UserCreateWithoutOrdersInput
-  connect: UserWhereUniqueInput
-}
-
-input UserCreateOneWithoutPostsInput {
-  create: UserCreateWithoutPostsInput
-  connect: UserWhereUniqueInput
-}
-
-input UserCreateWithoutMaterialsInput {
-  name: String!
-  orders: OrderCreateManyWithoutOwnerInput
-  posts: PostCreateManyWithoutWriterInput
-}
-
-input UserCreateWithoutOrdersInput {
-  name: String!
-  materials: MaterialCreateManyWithoutAuthorInput
-  posts: PostCreateManyWithoutWriterInput
-}
-
-input UserCreateWithoutPostsInput {
-  name: String!
-  materials: MaterialCreateManyWithoutAuthorInput
-  orders: OrderCreateManyWithoutOwnerInput
 }
 
 """An edge in a connection."""
@@ -871,65 +738,24 @@ input UserSubscriptionWhereInput {
   node: UserWhereInput
 }
 
+input UserUpdateDataInput {
+  name: String
+}
+
 input UserUpdateInput {
   name: String
-  materials: MaterialUpdateManyWithoutAuthorInput
-  orders: OrderUpdateManyWithoutOwnerInput
-  posts: PostUpdateManyWithoutWriterInput
 }
 
-input UserUpdateOneRequiredWithoutMaterialsInput {
-  create: UserCreateWithoutMaterialsInput
+input UserUpdateOneRequiredInput {
+  create: UserCreateInput
   connect: UserWhereUniqueInput
-  update: UserUpdateWithoutMaterialsDataInput
-  upsert: UserUpsertWithoutMaterialsInput
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
 }
 
-input UserUpdateOneRequiredWithoutOrdersInput {
-  create: UserCreateWithoutOrdersInput
-  connect: UserWhereUniqueInput
-  update: UserUpdateWithoutOrdersDataInput
-  upsert: UserUpsertWithoutOrdersInput
-}
-
-input UserUpdateOneRequiredWithoutPostsInput {
-  create: UserCreateWithoutPostsInput
-  connect: UserWhereUniqueInput
-  update: UserUpdateWithoutPostsDataInput
-  upsert: UserUpsertWithoutPostsInput
-}
-
-input UserUpdateWithoutMaterialsDataInput {
-  name: String
-  orders: OrderUpdateManyWithoutOwnerInput
-  posts: PostUpdateManyWithoutWriterInput
-}
-
-input UserUpdateWithoutOrdersDataInput {
-  name: String
-  materials: MaterialUpdateManyWithoutAuthorInput
-  posts: PostUpdateManyWithoutWriterInput
-}
-
-input UserUpdateWithoutPostsDataInput {
-  name: String
-  materials: MaterialUpdateManyWithoutAuthorInput
-  orders: OrderUpdateManyWithoutOwnerInput
-}
-
-input UserUpsertWithoutMaterialsInput {
-  update: UserUpdateWithoutMaterialsDataInput!
-  create: UserCreateWithoutMaterialsInput!
-}
-
-input UserUpsertWithoutOrdersInput {
-  update: UserUpdateWithoutOrdersDataInput!
-  create: UserCreateWithoutOrdersInput!
-}
-
-input UserUpsertWithoutPostsInput {
-  update: UserUpdateWithoutPostsDataInput!
-  create: UserCreateWithoutPostsInput!
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
 }
 
 input UserWhereInput {
@@ -1021,15 +847,6 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
-  materials_every: MaterialWhereInput
-  materials_some: MaterialWhereInput
-  materials_none: MaterialWhereInput
-  orders_every: OrderWhereInput
-  orders_some: OrderWhereInput
-  orders_none: OrderWhereInput
-  posts_every: PostWhereInput
-  posts_some: PostWhereInput
-  posts_none: PostWhereInput
 }
 
 input UserWhereUniqueInput {

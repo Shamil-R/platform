@@ -26,6 +26,7 @@ directive @relation(
   localKey: String
 ) on FIELD_DEFINITION
 
+# TODO: завести скалярный тип Datetime
 directive @timestamp(
   disable: Boolean
   createField: String

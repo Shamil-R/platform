@@ -2,9 +2,9 @@ type User {
     id: ID! @unique
     name: String!
     # roles: [RoleObject!]!
-    materials: [Material!]!
-    orders: [Order!]!
-    posts: [Post!]!
+    # materials: [Material!]!
+    # orders: [Order!]!
+    # posts: [Post!]!
 }
 
 # type RoleObject {

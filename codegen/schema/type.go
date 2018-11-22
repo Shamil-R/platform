@@ -4,12 +4,12 @@ import "github.com/vektah/gqlparser/ast"
 
 type Type struct {
 	*ast.Type
-	schema *Schema
+	types DefinitionList
+	elem  *Type
 }
 
-// TODO: проверить на необходимост данной функции
 func (t *Type) IsDefinition() bool {
-	return t.schema.Types().Contains(t)
+	return t.types.Contains(t)
 }
 
 func (t *Type) IsSlice() bool {
@@ -20,7 +20,13 @@ func (t *Type) Elem() *Type {
 	if t.Type.Elem == nil {
 		return nil
 	}
-	return &Type{t.Type.Elem, t.schema}
+	if t.elem == nil {
+		t.elem = &Type{
+			Type:  t.Type.Elem,
+			types: t.types,
+		}
+	}
+	return t.elem
 }
 
 func (t *Type) Name() string {
@@ -29,7 +35,3 @@ func (t *Type) Name() string {
 	}
 	return t.Type.Name()
 }
-
-// func (t *Type) Definition() *Definition {
-// 	return t.schema.Types().ByName(t.Name())
-// }

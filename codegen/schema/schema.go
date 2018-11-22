@@ -30,16 +30,15 @@ func (s *Schema) Query() *Definition {
 }
 
 func (s *Schema) Types() DefinitionList {
-	if s.types != nil {
-		return s.types
-	}
-	s.types = make(DefinitionList, 0, len(s.Schema.Types))
-	for _, def := range s.Schema.Types {
-		isInt := def.Name == "Int"
-		isString := def.Name == "String"
-		if !strings.HasPrefix(def.Name, "__") &&
-			!isInt && !isString {
-			s.types = append(s.types, &Definition{Definition: def, schema: s})
+	if s.types == nil {
+		s.types = make(DefinitionList, 0, len(s.Schema.Types))
+		for _, def := range s.Schema.Types {
+			isInt := def.Name == "Int"
+			isString := def.Name == "String"
+			if !strings.HasPrefix(def.Name, "__") && !isInt && !isString {
+				d := &Definition{Definition: def, schema: s}
+				s.types = append(s.types, d)
+			}
 		}
 	}
 	return s.types
