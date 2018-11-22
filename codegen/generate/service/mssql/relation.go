@@ -21,6 +21,10 @@ func Relation(ctx context.Context, objID int, result interface{}) error {
 		return err
 	}
 
+	if err := build.Pagination(ctx, query); err != nil {
+		return err
+	}
+
 	col, err := getRelationColumn(ctx)
 	if err != nil {
 		return err

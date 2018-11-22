@@ -2,7 +2,7 @@
 type Query {
 {{- range . }}
     {{ untitle .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
-    {{ untitle .Name | plural }}(where: {{ .Name }}WhereInput, skip: Int, first: Int, last: Int): [{{ .Name }}]!
+    {{ untitle .Name | plural }}(where: {{ .Name }}WhereInput, orderBy: {{ .Name }}OrderByInput, skip: Int, first: Int, last: Int): [{{ .Name }}]!
 {{- end }}
 }
 {{- end }}

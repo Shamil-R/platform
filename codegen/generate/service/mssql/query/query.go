@@ -21,6 +21,16 @@ type Conditions interface {
 	Not() Conditions
 }
 
+type Pagination interface {
+	SetSkip(int)
+	SetFirst(int)
+	SetLast(int)
+}
+
+type Sort interface {
+	SetOrder(string, string)
+}
+
 type Values interface {
 	AddValue(column string, value interface{})
 }

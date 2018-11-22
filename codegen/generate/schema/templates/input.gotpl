@@ -6,5 +6,6 @@
 	{{ template "input_update" . }}
 	{{ template "input_where_unique" . }}
 	{{ template "input_where" . }}
+	{{ template "input_order" . }}
 {{ end }}
 {{- end }}
