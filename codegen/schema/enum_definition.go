@@ -22,19 +22,19 @@ func (f *EnumValueDefinition) Directives() DirectiveList {
 
 type EnumValueList []*EnumValueDefinition
 
-type valueEnumFilter func(field *EnumValueDefinition) bool
+type valueEnumFilter func(value *EnumValueDefinition) bool
 
 func (l EnumValueList) ByName(name string) *EnumValueDefinition {
-	fn := func(field *EnumValueDefinition) bool {
-		return field.Name == name
+	fn := func(value *EnumValueDefinition) bool {
+		return value.Name == name
 	}
 	return firstEnumValue(l, fn)
 }
 
 func firstEnumValue(list EnumValueList, filter valueEnumFilter) *EnumValueDefinition {
-	for _, field := range list {
-		if filter(field) {
-			return field
+	for _, value := range list {
+		if filter(value) {
+			return value
 		}
 	}
 	return nil

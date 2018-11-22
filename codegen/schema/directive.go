@@ -249,12 +249,12 @@ func (l DirectiveList) Condition() *ConditionDirective {
 	return &ConditionDirective{Directive: directive}
 }
 
-func (l DirectiveList) OrderBy() *ConditionDirective {
+func (l DirectiveList) OrderBy() *OrderDirective {
 	directive := firstDirective(l, isOrderDirective)
 	if directive == nil {
 		return nil
 	}
-	return &ConditionDirective{Directive: directive}
+	return &OrderDirective{Directive: directive}
 }
 
 func (l DirectiveList) ByName(name string) *Directive {
