@@ -22,16 +22,16 @@ func (f *EnumValueDefinition) Directives() DirectiveList {
 
 type EnumValueList []*EnumValueDefinition
 
-type fieldEnumFilter func(field *EnumValueDefinition) bool
+type valueEnumFilter func(field *EnumValueDefinition) bool
 
 func (l EnumValueList) ByName(name string) *EnumValueDefinition {
 	fn := func(field *EnumValueDefinition) bool {
 		return field.Name == name
 	}
-	return firstEnumField(l, fn)
+	return firstEnumValue(l, fn)
 }
 
-func firstEnumField(list EnumValueList, filter fieldEnumFilter) *EnumValueDefinition {
+func firstEnumValue(list EnumValueList, filter valueEnumFilter) *EnumValueDefinition {
 	for _, field := range list {
 		if filter(field) {
 			return field
