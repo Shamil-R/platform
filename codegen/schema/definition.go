@@ -54,7 +54,7 @@ func (d *Definition) Fields() FieldList {
 	return d.fields
 }
 
-func (d *Definition) EnumFields() EnumValueList {
+func (d *Definition) EnumValues() EnumValueList {
 	if d.enum != nil {
 		return d.enum
 	}
