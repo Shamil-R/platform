@@ -20,6 +20,7 @@ type Definition struct {
 	mutations  ActionList
 	queries    ActionList
 	relations  ActionList
+	enum  	   EnumFieldList
 }
 
 func (d *Definition) IsMutation() bool {
@@ -51,6 +52,21 @@ func (d *Definition) Fields() FieldList {
 	}
 
 	return d.fields
+}
+
+func (d *Definition) EnumFields() EnumFieldList {
+	if d.enum != nil {
+		return d.enum
+	}
+	d.enum = make(EnumFieldList, 0, len(d.Definition.EnumValues))
+	for _, field := range d.Definition.EnumValues {
+		if defaultFields[field.Name] == true {
+			continue
+		}
+		d.enum = append(d.enum, &EnumFieldDefinition{EnumValueDefinition: field})
+	}
+
+	return d.enum
 }
 
 func (d *Definition) Directives() DirectiveList {

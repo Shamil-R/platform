@@ -12,7 +12,8 @@ type zelect struct {
 	skip int
 	first int
 	last int
-	orderBy string
+	orderField string
+	orderIndex string
 }
 
 func NewSelect() *zelect {
@@ -30,22 +31,16 @@ func (q *zelect) AddColumn(column, alias string) {
 func (q *zelect) Query() string {
 	overorderby := "order by %s %s"
 	orderby := ""
-	var field string
-	var index string
 	overfield := "(select null)"
 	overindex := ""
 
 	// Определяем столбец и направление сортировки
-	if strings.HasSuffix(q.orderBy, "_ASC") {
-		field = strings.TrimSuffix(q.orderBy, "_ASC")
-		index = "ASC"
-		overfield = field
-		overindex = index
-	} else if strings.HasSuffix(q.orderBy, "_DESC") {
-		field = strings.TrimSuffix(q.orderBy, "_DESC")
-		index = "DESC"
-		overfield = field
-		overindex = index
+	if q.orderIndex == "ASC" {
+		overfield = q.orderField
+		overindex = q.orderIndex
+	} else if q.orderIndex == "DESC" {
+		overfield = q.orderField
+		overindex = q.orderIndex
 	}
 
 	paginationCondition := fmt.Sprintf("and __num > %v", q.skip)
@@ -60,12 +55,12 @@ func (q *zelect) Query() string {
 		if overfield == "" {
 			overfield = "id"
 		}
-		if index == "DESC" {
+		if q.orderIndex == "DESC" {
 			overindex = "ASC"
 		}
 	}
 
-	orderby = fmt.Sprintf("order by %s %s", field, index)
+	orderby = fmt.Sprintf("order by %s %s", q.orderField, q.orderIndex)
 	overorderby = fmt.Sprintf("order by %s %s", overfield, overindex)
 
 	query := fmt.Sprintf(
@@ -93,6 +88,7 @@ func (q *zelect) SetLast(last int) {
 	q.last = last
 }
 
-func (q *zelect) SetOrder(orderBy string) {
-	q.orderBy = orderBy
+func (q *zelect) SetOrder(orderField string, orderIndex string) {
+	q.orderField = orderField
+	q.orderIndex = orderIndex
 }

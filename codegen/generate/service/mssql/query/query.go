@@ -28,7 +28,7 @@ type Pagination interface {
 }
 
 type Sort interface {
-	SetOrder(string)
+	SetOrder(string, string)
 }
 
 type Values interface {
