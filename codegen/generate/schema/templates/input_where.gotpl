@@ -4,6 +4,7 @@
 {{- $number := list "Not" "Lt" "Lte" "Gt" "Gte" }}
 {{- $boolean := list "Not" }}
 {{- $conds := dict "Int" $int "String" $string "Boolean" $boolean "Number" $number -}}
+{{- $in := list "Int" "String" "Number" }}
 
 input {{ .Name }}WhereInput
 	{{- template "copy_directive" .Directives.Table }} {
@@ -14,6 +15,14 @@ input {{ .Name }}WhereInput
 	{{ $field.Name }}: {{ $field.Type.Name }}
 	{{- template "copy_directive" $field.Directives.Field }}
 	{{- template "directive_condition" "eq" }}
+	{{- if has $field.Type.Name $in }}
+	{{ $field.Name }}In: [{{ $field.Type.Name }}!]
+	{{- template "copy_directive" $field.Directives.Field }}
+	{{- template "directive_condition" "in" }}
+	{{ $field.Name }}NotIn: [{{ $field.Type.Name }}!]
+	{{- template "copy_directive" $field.Directives.Field }}
+	{{- template "directive_condition" "not_in" }}
+	{{- end }}
 	{{- range $_, $cond := (index $conds $field.Type.Name) }}
 	{{ $field.Name }}{{ $cond }}: {{ $field.Type.Name }}
 	{{- template "copy_directive" $field.Directives.Field }}
