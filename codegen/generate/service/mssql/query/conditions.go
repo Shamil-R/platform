@@ -135,6 +135,14 @@ func notEndsWith(column, placeholder string) string {
 	return fmt.Sprintf("[%s] NOT LIKE CONCAT('%%', :%s)", column, placeholder)
 }
 
+func in(column, placeholder string) string {
+	return fmt.Sprintf("[%s] in (:%s)", column, placeholder)
+}
+
+func notIn(column, placeholder string) string {
+	return fmt.Sprintf("[%s] not in (:%s)", column, placeholder)
+}
+
 var conditionFuncs map[string]conditionFunc = map[string]conditionFunc{
 	"eq":              eq,
 	"not":             not,
@@ -148,4 +156,6 @@ var conditionFuncs map[string]conditionFunc = map[string]conditionFunc{
 	"not_starts_with": notStartsWith,
 	"ends_with":       endsWith,
 	"not_ends_with":   notEndsWith,
+	"in":   		   in,
+	"not_in":   	   notIn,
 }

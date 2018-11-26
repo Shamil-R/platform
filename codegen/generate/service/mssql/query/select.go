@@ -60,7 +60,9 @@ func (q *zelect) Query() string {
 		}
 	}
 
-	orderby = fmt.Sprintf("order by %s %s", q.orderField, q.orderIndex)
+	if q.orderField != "" {
+		orderby = fmt.Sprintf("order by %s %s", q.orderField, q.orderIndex)
+	}
 	overorderby = fmt.Sprintf("order by %s %s", overfield, overindex)
 
 	query := fmt.Sprintf(
