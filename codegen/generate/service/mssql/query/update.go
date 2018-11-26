@@ -19,9 +19,10 @@ func NewUpdate() *update {
 }
 
 func (q *update) AddValue(column string, value interface{}) {
-	val := fmt.Sprintf("[%s] = :%s", column, column)
+	arg := q.setArg(column, value)
+	val := fmt.Sprintf("[%s] = :%s", column, arg)
 	q.values = append(q.values, val)
-	q.setArg(column, value)
+
 }
 
 func (q *update) Query() string {
