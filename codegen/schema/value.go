@@ -1,9 +1,8 @@
 package schema
 
 import (
-	"strconv"
-
 	"github.com/vektah/gqlparser/ast"
+	"strconv"
 )
 
 type Value struct {
@@ -32,6 +31,12 @@ func (v *Value) Conv() interface{} {
 	case ast.IntValue:
 		n, _ := strconv.Atoi(v.Raw)
 		return n
+	case ast.ListValue:
+		var arr []string
+		for _, child := range v.Value.Children {
+			arr = append(arr, child.Value.Raw)
+		}
+		return arr
 	}
 	return v.Raw
 }
