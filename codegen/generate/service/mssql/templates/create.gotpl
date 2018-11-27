@@ -1,7 +1,9 @@
 {{- define "create" }}
 	res := {{ template "new" .Type }}
 
-	if err := mssql.Create(ctx, &res); err != nil {
+	var f mssql.ArgName = func() string {return "data"}
+
+	if err := mssql.Create(ctx, &res, f); err != nil {
 		return res, err
 	}
 

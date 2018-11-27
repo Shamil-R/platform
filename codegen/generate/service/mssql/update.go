@@ -6,14 +6,14 @@ import (
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
-func Update(ctx context.Context, result interface{}) error {
+func Update(ctx context.Context, result interface{}, f ArgName) error {
 	query := query.NewUpdate()
 
 	if err := fillTable(ctx, query); err != nil {
 		return err
 	}
 
-	if err := fillValues(ctx, query); err != nil {
+	if err := fillValues(ctx, query, f); err != nil {
 		return err
 	}
 

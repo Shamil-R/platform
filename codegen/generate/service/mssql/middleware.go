@@ -12,6 +12,8 @@ type SQLContext struct {
 	tx *sqlx.Tx
 }
 
+type ArgName func() string
+
 func NewContext(db *sqlx.DB) *SQLContext {
 	return &SQLContext{db: db}
 }

@@ -108,8 +108,8 @@ func fillColumns(ctx context.Context, query query.Columns) error {
 // 	return nil
 // }
 
-func fillValues(ctx context.Context, query query.Values) error {
-	data, err := extractArgument(ctx, "data")
+func fillValues(ctx context.Context, query query.Values, f ArgName) error {
+	data, err := extractArgument(ctx, f())
 	if err != nil {
 		return err
 	}

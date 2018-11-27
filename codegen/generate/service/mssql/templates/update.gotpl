@@ -1,7 +1,9 @@
 {{- define "update" }}
 	res := {{ template "new" .Type }}
 
-	if err := mssql.Update(ctx, res); err != nil {
+	var f mssql.ArgName = func() string {return "data"}
+
+	if err := mssql.Update(ctx, res, f); err != nil {
 		return nil, err
 	}
 

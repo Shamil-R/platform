@@ -8,21 +8,21 @@ import (
 	"gitlab/nefco/platform/codegen/schema"
 )
 
-func Create(ctx context.Context, result interface{}) error {
-	if err := create(ctx, result); err != nil {
+func Create(ctx context.Context, result interface{}, f ArgName) error {
+	if err := create(ctx, result, f); err != nil {
 		return err
 	}
 	return nil
 }
 
-func create(ctx context.Context, result interface{}) error {
+func create(ctx context.Context, result interface{}, f ArgName) error {
 	query := query.NewInsert()
 
 	if err := fillTable(ctx, query); err != nil {
 		return err
 	}
 
-	data, err := extractArgument(ctx, "data")
+	data, err := extractArgument(ctx, f())
 	if err != nil {
 		return err
 	}

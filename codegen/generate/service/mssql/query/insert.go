@@ -22,9 +22,9 @@ func NewInsert() *insert {
 func (q *insert) AddValue(column string, value interface{}) {
 	col := fmt.Sprintf("[%s]", column)
 	q.columns = append(q.columns, col)
-	val := fmt.Sprintf(":%s", column)
-	q.values = append(q.values, val)
-	q.setArg(column, value)
+	val := q.setArg(column, column)
+	q.values = append(q.values, fmt.Sprintf(":%s", val))
+
 }
 
 func (q *insert) Query() string {
