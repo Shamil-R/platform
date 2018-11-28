@@ -15,20 +15,20 @@ type Material {
 type Order {
   id: Int! @primary
   date: String!
-  user: User!
+  # user: User!
   # items: [Item!]!
 }
 
 type Item {
   id: Int! @primary
   count: Int!
-  order: Order!
-  material: Material!
+  # order: Order!
+  # material: Material!
 }
 
 type Trip {
   id: Int! @primary
   city: String!
-  user: User!
+  # user: User!
   # orders: [Order!]!
 }
