@@ -1,0 +1,5 @@
+{{- define "batchpayload" }}
+type BatchPayload {
+  count: Int!
+}
+{{- end }}

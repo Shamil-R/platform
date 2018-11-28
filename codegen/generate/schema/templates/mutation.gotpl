@@ -5,6 +5,8 @@ type Mutation {
     update{{ .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
     delete{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
     upsert{{ .Name }}(where: {{ .Name }}WhereUniqueInput!, create: {{ .Name }}CreateInput!, update: {{ .Name }}UpdateInput!): {{ .Name }}
+    updateMany{{ plural .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereInput): BatchPayload!
+    deleteMany{{ plural .Name }}(where: {{ .Name }}WhereInput): BatchPayload!
 {{- end }}
 }
 {{- end }}
