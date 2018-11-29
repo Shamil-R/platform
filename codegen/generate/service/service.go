@@ -53,7 +53,7 @@ func Generate(cfg Config) error {
 		return err
 	}
 
-	for _, def := range s.Types().Objects() {
+	for _, def := range s.Types().Objects().WholeObjects() {
 		buf := bytes.NewBuffer([]byte{})
 
 		data := &struct {
