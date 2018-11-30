@@ -5,6 +5,10 @@
 	{{- template "update" . }}
 	{{- else if eq .Action "delete" }}
 	{{- template "delete" . }}
+	{{- else if eq .Action "updateMany" }}
+	{{- template "updateMany" . }}
+	{{- else if eq .Action "deleteMany" }}
+	{{- template "deleteMany" . }}
 	{{- else if eq .Action "upsert" }}
 	{{- template "upsert" . }}
 	{{- else if eq .Action "item" }}

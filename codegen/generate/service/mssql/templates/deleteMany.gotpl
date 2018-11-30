@@ -1,0 +1,9 @@
+{{- define "deleteMany" }}
+	res := {{ template "new" .Type }}
+
+	if err := mssql.DeleteMany(ctx, res); err != nil {
+		return res, err
+	}
+
+	return res, nil
+{{- end }}
