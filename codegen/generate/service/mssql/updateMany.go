@@ -38,13 +38,18 @@ func UpdateMany(ctx context.Context, f ArgName) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	_query = tx.Rebind(_query)
+
 	rows, err := tx.Exec(_query, args...)
 	if err != nil {
 		return 0, err
 	}
 
-	result, _ := rows.RowsAffected()
+	result, err := rows.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
 
 	return int(result), nil
 }
