@@ -1,0 +1,3 @@
+models:
+  Datetime:
+    model: gitlab/nefco/platform/codegen/schema/scalar.Datetime

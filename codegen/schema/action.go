@@ -9,6 +9,8 @@ const (
 	ACTION_ITEM       = "item"
 	ACTION_COLLECTION = "collection"
 	ACTION_RELATION   = "relation"
+	ACTION_DELETE_MANY= "deleteMany"
+	ACTION_UPDATE_MANY= "updateMany"
 )
 
 type Action struct {

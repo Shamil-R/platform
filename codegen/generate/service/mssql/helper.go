@@ -71,6 +71,17 @@ func fillTable(ctx context.Context, query query.Table) error {
 	return nil
 }
 
+func fillTableCondition(ctx context.Context, query query.Table) error {
+	where, err := extractArgument(ctx, "where")
+	if err != nil {
+		return err
+	}
+	tableName := where.Definition().Directives().ByName("table").Arguments().ByName("name").Value().Raw
+	query.SetTable(tableName)
+
+	return nil
+}
+
 func fillColumns(ctx context.Context, query query.Columns) error {
 	field, err := extractField(ctx)
 	if err != nil {

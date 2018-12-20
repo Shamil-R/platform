@@ -90,11 +90,14 @@ func (d *Definition) Mutations() ActionList {
 	if mutation == nil {
 		return d.mutations
 	}
+	pluralName := inflection.Plural(d.Name)
 	checks := map[string]string{
-		ACTION_CREATE + d.Name: ACTION_CREATE,
-		ACTION_UPDATE + d.Name: ACTION_UPDATE,
-		ACTION_DELETE + d.Name: ACTION_DELETE,
-		ACTION_UPSERT + d.Name: ACTION_UPSERT,
+		ACTION_CREATE 		+ d.Name: 	  ACTION_CREATE,
+		ACTION_UPDATE 		+ d.Name: 	  ACTION_UPDATE,
+		ACTION_DELETE 		+ d.Name: 	  ACTION_DELETE,
+		ACTION_UPSERT 		+ d.Name: 	  ACTION_UPSERT,
+		ACTION_DELETE_MANY 	+ pluralName: ACTION_DELETE_MANY,
+		ACTION_UPDATE_MANY 	+ pluralName: ACTION_UPDATE_MANY,
 	}
 	for _, field := range mutation.Fields() {
 		if act, ok := checks[field.Name]; ok {
@@ -181,6 +184,13 @@ func (l DefinitionList) Contains(t *Type) bool {
 func (l DefinitionList) Objects() DefinitionList {
 	fn := func(def *Definition) bool {
 		return def.IsObject()
+	}
+	return l.filter(fn)
+}
+
+func (l DefinitionList) WholeObjects() DefinitionList {
+	fn := func(def *Definition) bool {
+		return def.IsObject() && (len(def.Mutations()) > 0 || len(def.Queries()) > 0 || len(def.Relations()) > 0)
 	}
 	return l.filter(fn)
 }
