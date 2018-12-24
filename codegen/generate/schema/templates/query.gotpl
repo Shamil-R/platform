@@ -2,7 +2,19 @@
 type Query {
 {{- range . }}
     {{ untitle .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
-    {{ untitle .Name | plural }}(where: {{ .Name }}WhereInput, orderBy: {{ .Name }}OrderByInput, skip: Int, first: Int, last: Int, withTrashed: Boolean, onlyTrashed: Boolean): [{{ .Name }}]!
+    {{- /* Рассматриваем директиву softDelete */}}
+    {{- $trashed := "" }}
+	{{- with .Directives.ByName "softDelete" }}
+		{{- /* Проверяем не запрещена ли директива */}}
+		{{- with .Arguments.ByName `disable` }}
+			{{- if ne .Value.Raw "true" }}
+			{{- $trashed = ", withTrashed: Boolean, onlyTrashed: Boolean" }}
+			{{- end }}
+		{{- else }}
+		{{- $trashed = ", withTrashed: Boolean, onlyTrashed: Boolean" }}
+		{{- end }}
+	{{- end }}
+    {{ untitle .Name | plural }}(where: {{ .Name }}WhereInput, orderBy: {{ .Name }}OrderByInput, skip: Int, first: Int, last: Int{{print $trashed}}): [{{ .Name }}]!
 {{- end }}
 }
 {{- end }}

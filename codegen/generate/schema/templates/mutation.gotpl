@@ -2,11 +2,23 @@
 type Mutation {
 {{- range . }}
     create{{ .Name }}(data: {{ .Name }}CreateInput!): {{ .Name }}!
-    update{{ .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
-    delete{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
     upsert{{ .Name }}(where: {{ .Name }}WhereUniqueInput!, create: {{ .Name }}CreateInput!, update: {{ .Name }}UpdateInput!): {{ .Name }}
+    update{{ .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
     updateMany{{ plural .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereInput): BatchPayload!
-    deleteMany{{ plural .Name }}(where: {{ .Name }}WhereInput): BatchPayload!
+    forceDelete{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
+    forceDeleteMany{{ plural .Name }}(where: {{ .Name }}WhereInput): BatchPayload!
+    {{- $name := .Name }}
+    {{- /* Рассматриваем директиву softDelete */}}
+	{{- with .Directives.ByName "softDelete" }}
+		{{- /* Проверяем не запрещена ли директива */}}
+		{{- with .Arguments.ByName `disable` }}
+			{{- if ne .Value.Raw "true" }}
+			{{- template "soft_delete_mutation" $name }}
+			{{- end }}
+		{{- else }}
+		{{- template "soft_delete_mutation" $name }}
+		{{- end }}
+	{{- end }}
 {{- end }}
 }
 {{- end }}
