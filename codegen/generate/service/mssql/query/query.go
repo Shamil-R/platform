@@ -27,6 +27,10 @@ type Pagination interface {
 	SetLast(int)
 }
 
+type Trasher interface {
+	SetTrashed(bool, bool)
+}
+
 type Sort interface {
 	SetOrder(string, string)
 }
