@@ -7,15 +7,13 @@ import (
 )
 
 func Delete(ctx context.Context, result interface{}) error {
-	if err := Item(ctx, result); err != nil {
-		return err
-	}
-
-	query := query.NewDelete()
+	query := query.NewUpdate()
 
 	if err := fillTable(ctx, query); err != nil {
 		return err
 	}
+
+	//todo: get deleted_at field
 
 	if err := build.Conditions(ctx, query); err != nil {
 		return err
@@ -29,6 +27,10 @@ func Delete(ctx context.Context, result interface{}) error {
 	}
 
 	if _, err := tx.NamedExec(query.Query(), query.Arg()); err != nil {
+		return err
+	}
+
+	if err := Item(ctx, result); err != nil {
 		return err
 	}
 

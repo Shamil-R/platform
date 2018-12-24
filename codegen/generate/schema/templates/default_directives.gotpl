@@ -1,0 +1,10 @@
+{{- define "default_directives" }}
+	{{- $name := "timestamp" }}
+	{{- $args := dict "disable" false "createField" `"created_at"` "updateField" `"updated_at"` }}
+	{{- $data := dict "Directives" .Directives "Name" $name "Args" $args }}
+	{{- template "directive" $data }}
+	{{ $name := "softDelete" }}
+	{{- $args := dict "disable" false "deleteField" `"deleted_at"` }}
+	{{- $data := dict "Directives" .Directives "Name" $name "Args" $args }}
+	{{- template "directive" $data }}
+{{- end }}
