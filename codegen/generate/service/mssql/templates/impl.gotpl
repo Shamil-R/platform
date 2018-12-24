@@ -9,6 +9,14 @@
 	{{- template "updateMany" . }}
 	{{- else if eq .Action "deleteMany" }}
 	{{- template "deleteMany" . }}
+	{{- else if eq .Action "forceDelete" }}
+	{{- template "forceDelete" . }}
+	{{- else if eq .Action "forceDeleteMany" }}
+	{{- template "forceDeleteMany" . }}
+	{{- else if eq .Action "restore" }}
+	{{- template "restore" . }}
+	{{- else if eq .Action "restoreMany" }}
+	{{- template "restoreMany" . }}
 	{{- else if eq .Action "upsert" }}
 	{{- template "upsert" . }}
 	{{- else if eq .Action "item" }}
