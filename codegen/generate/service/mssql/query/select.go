@@ -69,11 +69,13 @@ func (q *zelect) Query() string {
 	overorderby = fmt.Sprintf("order by %s %s", overfield, overindex)
 
 
-	if q.onlyTrashed {
-		q.AddСondition(q.trashedFieldName, "is_not", "null")
-	} else if q.withTrashed {
-	} else {
-		q.AddСondition(q.trashedFieldName, "is", "null")
+	if q.trashedFieldName != "" {
+		if q.onlyTrashed {
+			q.AddСondition(q.trashedFieldName, "is_not", "null")
+		} else if q.withTrashed {
+		} else {
+			q.AddСondition(q.trashedFieldName, "is", "null")
+		}
 	}
 
 

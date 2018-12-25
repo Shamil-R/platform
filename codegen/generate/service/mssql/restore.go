@@ -2,6 +2,7 @@ package mssql
 
 import (
 	"context"
+	"database/sql"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
@@ -19,7 +20,7 @@ func Restore(ctx context.Context, result interface{}) error {
 	if err != nil {
 		return err
 	}
-	query.AddValue(fieldName, "null")
+	query.AddValue(fieldName, sql.NullString{})
 
 	if err := build.Conditions(ctx, query); err != nil {
 		return err

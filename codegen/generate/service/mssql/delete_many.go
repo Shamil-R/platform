@@ -2,6 +2,7 @@ package mssql
 
 import (
 	"context"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
@@ -10,8 +11,8 @@ import (
 
 func DeleteMany(ctx context.Context) (int, error) {
 	query := query.NewUpdate()
-
-	if err := fillTable(ctx, query); err != nil {
+	fmt.Println("table")
+	if err := fillTableCondition(ctx, query); err != nil {
 		return 0, err
 	}
 
@@ -21,6 +22,7 @@ func DeleteMany(ctx context.Context) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+	fmt.Println(fieldName)
 	query.AddValue(fieldName, time.Now())
 
 	if err := build.Conditions(ctx, query); err != nil {

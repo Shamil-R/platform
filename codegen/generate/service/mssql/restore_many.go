@@ -2,6 +2,7 @@ package mssql
 
 import (
 	"context"
+	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
@@ -10,7 +11,7 @@ import (
 func RestoreMany(ctx context.Context) (int, error) {
 	query := query.NewUpdate()
 
-	if err := fillTable(ctx, query); err != nil {
+	if err := fillTableCondition(ctx, query); err != nil {
 		return 0, err
 	}
 
@@ -20,7 +21,7 @@ func RestoreMany(ctx context.Context) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	query.AddValue(fieldName, "null")
+	query.AddValue(fieldName, sql.NullString{})
 
 	if err := build.Conditions(ctx, query); err != nil {
 		return 0, err
