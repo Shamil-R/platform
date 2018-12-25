@@ -70,7 +70,7 @@ func (q *zelect) Query() string {
 
 
 	if q.onlyTrashed {
-		q.AddСondition(q.trashedFieldName, "is not", "null")
+		q.AddСondition(q.trashedFieldName, "is_not", "null")
 	} else if q.withTrashed {
 	} else {
 		q.AddСondition(q.trashedFieldName, "is", "null")
@@ -84,7 +84,6 @@ func (q *zelect) Query() string {
 		strings.Join(q.columns, ", "),
 		q.table,
 		where(q.conditionsBlock.block()),
-		//trasher,
 		paginationCondition,
 		orderby,
 	)
@@ -114,5 +113,5 @@ func (q *zelect) SetTrashed(withTrashed bool, onlyTrashed bool) {
 }
 
 func (q *zelect) SetTrashedFieldName(column string) {
-	q.trashedFieldName = fmt.Sprintf("[%s]", column)
+	q.trashedFieldName = fmt.Sprintf("%s", column)
 }
