@@ -68,22 +68,23 @@ func (q *zelect) Query() string {
 	}
 	overorderby = fmt.Sprintf("order by %s %s", overfield, overindex)
 
-	trasher := "and %s is null"
+
 	if q.onlyTrashed {
-		trasher = "and %s is not null"
+		q.AddСondition(q.trashedFieldName, "is not", "null")
 	} else if q.withTrashed {
-		trasher = ""
+	} else {
+		q.AddСondition(q.trashedFieldName, "is", "null")
 	}
-	trasher = fmt.Sprintf(trasher, q.trashedFieldName)
+
 
 	query := fmt.Sprintf(
-		"SELECT %s from (SELECT ROW_NUMBER() over (%s) as __num, %s FROM %s %s ) a where 1=1 %s %s %s",
+		"SELECT %s from (SELECT ROW_NUMBER() over (%s) as __num, %s FROM %s %s ) a where 1=1  %s %s",
 		strings.Join(q.columns, ", "),
 		overorderby,
 		strings.Join(q.columns, ", "),
 		q.table,
 		where(q.conditionsBlock.block()),
-		trasher,
+		//trasher,
 		paginationCondition,
 		orderby,
 	)

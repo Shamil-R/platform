@@ -15,6 +15,8 @@ const (
 	DirectiveInput     = "input"
 	DirectiveCondition = "condition"
 	DirectiveOrder 	   = "order"
+	DirectiveTimestamp = "timestamp"
+	DirectiveSoftDelete= "softDelete"
 
 	InputDirectiveCreateOneWithout = "create_one_without"
 )
@@ -50,6 +52,14 @@ func (d *Directive) IsTable() bool {
 
 func (d *Directive) IsField() bool {
 	return isFieldDirective(d)
+}
+
+func (d *Directive) IsTimestamp() bool {
+	return isTimestampDirective(d)
+}
+
+func (d *Directive) IsSoftDelete() bool {
+	return isSoftDeleteDirective(d)
 }
 
 func (f *Directive) Arguments() ArgumentList {
@@ -210,7 +220,7 @@ func (l DirectiveList) Field() *FieldDirective {
 }
 
 func (l DirectiveList) Timestamp() *TimestampDirective {
-	directive := firstDirective(l, isFieldDirective)
+	directive := firstDirective(l, isTimestampDirective)
 	if directive == nil {
 		return nil
 	}
@@ -218,7 +228,7 @@ func (l DirectiveList) Timestamp() *TimestampDirective {
 }
 
 func (l DirectiveList) SoftDelete() *SoftDeleteDirective {
-	directive := firstDirective(l, isFieldDirective)
+	directive := firstDirective(l, isSoftDeleteDirective)
 	if directive == nil {
 		return nil
 	}
@@ -301,6 +311,14 @@ func isConditionDirective(directive *Directive) bool {
 
 func isOrderDirective(directive *Directive) bool {
 	return directive.Name == DirectiveOrder
+}
+
+func isTimestampDirective(directive *Directive) bool {
+	return directive.Name == DirectiveTimestamp
+}
+
+func isSoftDeleteDirective(directive *Directive) bool {
+	return directive.Name == DirectiveSoftDelete
 }
 
 func byNameDirective(name string) directiveFilter {

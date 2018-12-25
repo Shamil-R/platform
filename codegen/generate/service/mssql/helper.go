@@ -70,6 +70,29 @@ func fillTable(ctx context.Context, query query.Table) error {
 	return nil
 }
 
+func fillSoftDeleteFieldName(ctx context.Context, query query.Trasher) error {
+	field, err := extractField(ctx)
+	if err != nil {
+		return err
+	}
+
+	sels := field.SelectionSet().Fields()
+	if len(sels) == 0 {
+		return SelectionDoesNotExist
+	}
+
+	def := sels[0].ObjectDefinition()
+
+	softDelete := def.Directives().SoftDelete()
+	if softDelete == nil {
+		return DirectiveDoesNotExist.New("softDelete")
+	}
+
+	query.SetTrashedFieldName(softDelete.ArgDeleteField())
+
+	return nil
+}
+
 func fillTableCondition(ctx context.Context, query query.Table) error {
 	where, err := extractArgument(ctx, "where")
 	if err != nil {

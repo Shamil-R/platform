@@ -29,6 +29,7 @@ type Pagination interface {
 
 type Trasher interface {
 	SetTrashed(bool, bool)
+	SetTrashedFieldName(string)
 }
 
 type Sort interface {
