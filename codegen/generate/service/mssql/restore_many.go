@@ -8,11 +8,19 @@ import (
 )
 
 func RestoreMany(ctx context.Context) (int, error) {
-	query := query.NewRestore()
+	query := query.NewUpdate()
 
-	if err := fillTableCondition(ctx, query); err != nil {
+	if err := fillTable(ctx, query); err != nil {
 		return 0, err
 	}
+
+	dirName := "softDelete"
+	argName := "deleteField"
+	fieldName, err := getDefaultValues(ctx, dirName, argName)
+	if err != nil {
+		return 0, err
+	}
+	query.AddValue(fieldName, "null")
 
 	if err := build.Conditions(ctx, query); err != nil {
 		return 0, err

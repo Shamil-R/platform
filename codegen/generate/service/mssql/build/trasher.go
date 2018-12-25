@@ -10,6 +10,7 @@ import (
 func Trasher(ctx context.Context, query query.Trasher) error {
 	bwithTrashed := false
 	bonlyTrashed := false
+	//определение необходимости выводить список с sotdDeleted записями
 	withTrashed, err := extractArgument(ctx, "withTrashed")
 	if err != nil && !errorx.IsOfType(err, ArgumentDoesNotExist) {
 		return err
@@ -19,7 +20,7 @@ func Trasher(ctx context.Context, query query.Trasher) error {
 			return err
 		}
 	}
-
+	//определение необходимости выводить список только из sotdDeleted записей
 	onlyTrashed, err := extractArgument(ctx, "onlyTrashed")
 	if err != nil && !errorx.IsOfType(err, ArgumentDoesNotExist) {
 		return err

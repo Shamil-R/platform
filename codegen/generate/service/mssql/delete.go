@@ -4,6 +4,7 @@ import (
 	"context"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	"time"
 )
 
 func Delete(ctx context.Context, result interface{}) error {
@@ -13,7 +14,13 @@ func Delete(ctx context.Context, result interface{}) error {
 		return err
 	}
 
-	//todo: get deleted_at field
+	dirName := "softDelete"
+	argName := "deleteField"
+	fieldName, err := getDefaultValues(ctx, dirName, argName)
+	if err != nil {
+		return err
+	}
+	query.AddValue(fieldName, time.Now())
 
 	if err := build.Conditions(ctx, query); err != nil {
 		return err

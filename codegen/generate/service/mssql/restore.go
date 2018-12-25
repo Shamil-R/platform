@@ -7,15 +7,19 @@ import (
 )
 
 func Restore(ctx context.Context, result interface{}) error {
-	if err := Item(ctx, result); err != nil {
-		return err
-	}
-
-	query := query.NewRestore()
+	query := query.NewUpdate()
 
 	if err := fillTable(ctx, query); err != nil {
 		return err
 	}
+
+	dirName := "softDelete"
+	argName := "deleteField"
+	fieldName, err := getDefaultValues(ctx, dirName, argName)
+	if err != nil {
+		return err
+	}
+	query.AddValue(fieldName, "null")
 
 	if err := build.Conditions(ctx, query); err != nil {
 		return err
@@ -29,6 +33,10 @@ func Restore(ctx context.Context, result interface{}) error {
 	}
 
 	if _, err := tx.NamedExec(query.Query(), query.Arg()); err != nil {
+		return err
+	}
+
+	if err := Item(ctx, result); err != nil {
 		return err
 	}
 

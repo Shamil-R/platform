@@ -16,6 +16,7 @@ type zelect struct {
 	orderIndex string
 	withTrashed bool
 	onlyTrashed bool
+	trashedFieldName string
 }
 
 func NewSelect() *zelect {
@@ -67,12 +68,13 @@ func (q *zelect) Query() string {
 	}
 	overorderby = fmt.Sprintf("order by %s %s", overfield, overindex)
 
-	trasher := "and deleted_at is null"
+	trasher := "and %s is null"
 	if q.onlyTrashed {
-		trasher = "and deleted_at is not null"
+		trasher = "and %s is not null"
 	} else if q.withTrashed {
 		trasher = ""
 	}
+	trasher = fmt.Sprintf(trasher, q.trashedFieldName)
 
 	query := fmt.Sprintf(
 		"SELECT %s from (SELECT ROW_NUMBER() over (%s) as __num, %s FROM %s %s ) a where 1=1 %s %s %s",
@@ -108,4 +110,8 @@ func (q *zelect) SetOrder(orderField string, orderIndex string) {
 func (q *zelect) SetTrashed(withTrashed bool, onlyTrashed bool) {
 	q.withTrashed = withTrashed
 	q.onlyTrashed = onlyTrashed
+}
+
+func (q *zelect) SetTrashedFieldName(column string) {
+	q.trashedFieldName = fmt.Sprintf("[%s]", column)
 }
