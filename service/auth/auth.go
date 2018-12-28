@@ -2,7 +2,10 @@ package auth
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -118,18 +121,32 @@ func MiddlewareLogin() http.HandlerFunc {
 
 func MiddlewareRegistration() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		/*ctx := r
+		ctx := r
 
 		if r.Method == http.MethodPost {
-			login := ctx.FormValue("login")
-			password := ctx.FormValue("password")
-			name := ctx.FormValue("name")
-			surname := ctx.FormValue("surname")
-			patronymic := ctx.FormValue("patronymic")
-			setUser()
+
+			decoder := json.NewDecoder(ctx.Body)
+			var user User
+			err := decoder.Decode(&user)
+			if err != nil {
+				panic(err)
+			}
+
+			fmt.Println(user)
+
+			/*user.Login = ctx.FormValue("login")
+			user.Password = ctx.FormValue("password")
+			var temp string
+			temp = ctx.FormValue("name")
+			user.Name = &temp
+			temp = ctx.FormValue("surname")
+			user.Surname = &temp
+			temp = ctx.FormValue("patronymic")
+			user.Patronymic = &temp*/
+			setUser(user)
 		} else {
 			io.WriteString(w, r.Method + " is not implemented")
-		}*/
+		}
 	}
 }
 
@@ -140,6 +157,9 @@ type User struct {
 	ID 			*int	`json:"id" db:"id"`
 	Login		string	`json:"login" db:"login" validate:"required"`
 	Password   	string  `json:"password,omitempty" db:"password" validate:"required"`
+	Name   		*string  `json:"password,omitempty" db:"password" validate:"required"`
+	Surname   	*string  `json:"password,omitempty" db:"password" validate:"required"`
+	Patronymic  *string  `json:"password,omitempty" db:"password" validate:"required"`
 }
 
 func CheckPasswordHash(password, hash string) bool {
@@ -156,8 +176,11 @@ func getUser(login string) (*User, error) {//todo clarify model
 		&id,
 		"kaz_avto_trans",
 		"$2a$10$JewUnzN6b6dVrnWNvtlbdOzzticUee.MNPX6.h.2L8.8pI/nQU4sa",
+		nil,
+		nil,
+		nil,
 	}, nil
 }
-/*func setUser(login string) (error) {//todo clarify model
+func setUser(user User) (error) {//todo clarify model
 	return nil
-}*/
+}
