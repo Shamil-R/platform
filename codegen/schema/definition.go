@@ -92,12 +92,16 @@ func (d *Definition) Mutations() ActionList {
 	}
 	pluralName := inflection.Plural(d.Name)
 	checks := map[string]string{
-		ACTION_CREATE 		+ d.Name: 	  ACTION_CREATE,
-		ACTION_UPDATE 		+ d.Name: 	  ACTION_UPDATE,
-		ACTION_DELETE 		+ d.Name: 	  ACTION_DELETE,
-		ACTION_UPSERT 		+ d.Name: 	  ACTION_UPSERT,
-		ACTION_DELETE_MANY 	+ pluralName: ACTION_DELETE_MANY,
-		ACTION_UPDATE_MANY 	+ pluralName: ACTION_UPDATE_MANY,
+		ACTION_CREATE 		        + d.Name: 	  ACTION_CREATE,
+		ACTION_UPDATE 		        + d.Name: 	  ACTION_UPDATE,
+		ACTION_DELETE 		        + d.Name: 	  ACTION_DELETE,
+		ACTION_UPSERT 		        + d.Name: 	  ACTION_UPSERT,
+		ACTION_DELETE_MANY 	        + pluralName: ACTION_DELETE_MANY,
+		ACTION_UPDATE_MANY 	        + pluralName: ACTION_UPDATE_MANY,
+		ACTION_FORCE_DELETE	        + d.Name:     ACTION_FORCE_DELETE,
+		ACTION_FORCE_DELETE_MANY	+ pluralName: ACTION_FORCE_DELETE_MANY,
+		ACTION_RESTORE				+ d.Name:     ACTION_RESTORE,
+		ACTION_RESTORE_MANY			+ pluralName: ACTION_RESTORE_MANY,
 	}
 	for _, field := range mutation.Fields() {
 		if act, ok := checks[field.Name]; ok {

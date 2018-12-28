@@ -1,0 +1,6 @@
+{{- define "soft_delete_mutation" }}
+    delete{{ . }}(where: {{ . }}WhereUniqueInput!): {{ . }}
+    deleteMany{{ plural . }}(where: {{ . }}WhereInput): BatchPayload!
+    restore{{ . }}(where: {{ . }}WhereUniqueInput!): {{ . }}
+    restoreMany{{ plural . }}(where: {{ . }}WhereInput): BatchPayload!
+{{- end }}

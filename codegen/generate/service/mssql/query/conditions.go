@@ -143,6 +143,14 @@ func notIn(column, placeholder string) string {
 	return fmt.Sprintf("[%s] not in (:%s)", column, placeholder)
 }
 
+func is(column, _ string) string {
+	return fmt.Sprintf("[%s] is null", column)
+}
+
+func isNot(column, _ string) string {
+	return fmt.Sprintf("[%s] is not null", column)
+}
+
 var conditionFuncs map[string]conditionFunc = map[string]conditionFunc{
 	"eq":              eq,
 	"not":             not,
@@ -158,4 +166,6 @@ var conditionFuncs map[string]conditionFunc = map[string]conditionFunc{
 	"not_ends_with":   notEndsWith,
 	"in":   		   in,
 	"not_in":   	   notIn,
+	"is":   	       is,
+	"is_not":   	   isNot,
 }

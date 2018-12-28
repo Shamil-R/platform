@@ -1,0 +1,9 @@
+{{- define "restore" }}
+	res := {{ template "new" .Type }}
+
+	if err := mssql.Restore(ctx, res); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+{{- end }}

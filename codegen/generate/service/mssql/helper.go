@@ -4,10 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/joomcode/errorx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
-
-	"github.com/joomcode/errorx"
 
 	"github.com/99designs/gqlgen/graphql"
 )
@@ -71,6 +70,29 @@ func fillTable(ctx context.Context, query query.Table) error {
 	return nil
 }
 
+func fillSoftDeleteFieldName(ctx context.Context, query query.Trasher) error {
+	field, err := extractField(ctx)
+	if err != nil {
+		return err
+	}
+
+	sels := field.SelectionSet().Fields()
+	if len(sels) == 0 {
+		return SelectionDoesNotExist
+	}
+
+	def := sels[0].ObjectDefinition()
+
+	softDelete := def.Directives().SoftDelete()
+	if softDelete == nil {
+		return DirectiveDoesNotExist.New("softDelete")
+	}
+
+	query.SetTrashedFieldName(softDelete.ArgDeleteField())
+
+	return nil
+}
+
 func fillTableCondition(ctx context.Context, query query.Table) error {
 	where, err := extractArgument(ctx, "where")
 	if err != nil {
@@ -101,24 +123,6 @@ func fillColumns(ctx context.Context, query query.Columns) error {
 	return nil
 }
 
-// func fillConditions(ctx context.Context, query query.Conditions) error {
-// 	where, err := extractArgument(ctx, "where")
-// 	if err != nil {
-// 		return err
-// 	}
-// 	if where == nil {
-// 		return nil
-// 	}
-// 	def := where.Definition()
-// 	for _, child := range where.Children() {
-// 		fieldDef := def.Fields().ByName(child.Name)
-// 		col := fieldDef.Directives().Field().ArgName()
-// 		val := child.Value().Conv()
-// 		query.AddСondition(col, val)
-// 	}
-// 	return nil
-// }
-
 func fillValues(ctx context.Context, query query.Values, f ArgName) error {
 	data, err := extractArgument(ctx, f())
 	if err != nil {
@@ -132,6 +136,23 @@ func fillValues(ctx context.Context, query query.Values, f ArgName) error {
 		query.AddValue(col, val)
 	}
 	return nil
+}
+
+func getDefaultValues(ctx context.Context, dirName string, argName string) (string, error) {
+	argument, err := extractArgument(ctx, "where")
+	if err != nil {
+		if errorx.IsOfType(err, ArgumentDoesNotExist) {
+			return "", nil
+		}
+		return "", err
+	}
+
+	def := argument.Definition()
+
+	dir := def.Definition.Directives.ForName(dirName)
+	arg := dir.Arguments.ForName(argName)
+
+	return arg.Value.Raw, nil
 }
 
 func useTable(query query.Table, value *schema.Value) error {
@@ -156,20 +177,6 @@ func useColumns(query query.Columns, value *schema.Value) error {
 	}
 	return nil
 }
-
-// func useConditions(query query.Conditions, value *schema.Value) error {
-// 	if value == nil {
-// 		return nil
-// 	}
-// 	def := value.Definition()
-// 	for _, child := range value.Children() {
-// 		fieldDef := def.Fields().ByName(child.Name)
-// 		col := fieldDef.Directives().Field().ArgName()
-// 		val := child.Value().Conv()
-// 		query.AddСondition(col, val)
-// 	}
-// 	return nil
-// }
 
 func getPrimaryColumn(ctx context.Context) (string, error) {
 	field, err := extractField(ctx)

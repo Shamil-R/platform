@@ -2,17 +2,28 @@ package mssql
 
 import (
 	"context"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	"time"
 )
 
 func DeleteMany(ctx context.Context) (int, error) {
-	query := query.NewDelete()
-
+	query := query.NewUpdate()
+	fmt.Println("table")
 	if err := fillTableCondition(ctx, query); err != nil {
 		return 0, err
 	}
+
+	dirName := "softDelete"
+	argName := "deleteField"
+	fieldName, err := getDefaultValues(ctx, dirName, argName)
+	if err != nil {
+		return 0, err
+	}
+	fmt.Println(fieldName)
+	query.AddValue(fieldName, time.Now())
 
 	if err := build.Conditions(ctx, query); err != nil {
 		return 0, err

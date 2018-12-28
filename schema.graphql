@@ -8,13 +8,13 @@ type User @timestamp(disable: true createField: "created_at" updateField: "updat
 		# createdAt: String
 }
 
-# type RoleObject @softDelete(disable: true delteField: "delted_at") {
+# type RoleObject @softDelete(disable: true deleteField: "delted_at") {
 #     id: Int! @primary @identity
 #     object: String!
 #     access: RoleAccess!
 # }
 
-type Material {
+type Material @softDelete(disable: true deleteField: "deleted_at") {
 		id: Int! @primary @identity
 		name: String! @validate(min: 10 max: 20)
 		info: String
