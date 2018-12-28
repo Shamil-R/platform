@@ -37,8 +37,9 @@ func (s *Schema) Types() DefinitionList {
 	for _, def := range s.Schema.Types {
 		isInt := def.Name == "Int"
 		isString := def.Name == "String"
+		isBoolean := def.Name == "Boolean"
 		if !strings.HasPrefix(def.Name, "__") &&
-			!isInt && !isString {
+			!isInt && !isString && !isBoolean {
 			s.types = append(s.types, &Definition{Definition: def, schema: s})
 		}
 	}

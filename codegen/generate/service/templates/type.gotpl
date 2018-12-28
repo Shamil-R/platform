@@ -8,6 +8,7 @@
 	{{- else }}
 		{{- if eq .Name "Int" }}int
 		{{- else if eq .Name "String" }}string
+		{{- else if eq .Name "Boolean" }}bool
 		{{- end }}
 	{{- end }}
 {{- end }}

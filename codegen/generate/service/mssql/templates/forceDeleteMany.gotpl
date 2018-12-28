@@ -1,0 +1,11 @@
+{{- define "forceDeleteMany" }}
+	res := {{ template "new" .Type }}
+
+	rowNumber, err := mssql.ForceDeleteMany(ctx)
+	if err != nil {
+		return res, err
+	}
+
+	res.Count = rowNumber
+	return res, nil
+{{- end }}

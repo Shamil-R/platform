@@ -2,12 +2,12 @@ package mssql
 
 import (
 	"context"
+	"database/sql"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
-	"time"
 )
 
-func Delete(ctx context.Context, result interface{}) error {
+func Restore(ctx context.Context, result interface{}) error {
 	query := query.NewUpdate()
 
 	if err := fillTable(ctx, query); err != nil {
@@ -20,7 +20,7 @@ func Delete(ctx context.Context, result interface{}) error {
 	if err != nil {
 		return err
 	}
-	query.AddValue(fieldName, time.Now())
+	query.AddValue(fieldName, sql.NullString{})
 
 	if err := build.Conditions(ctx, query); err != nil {
 		return err

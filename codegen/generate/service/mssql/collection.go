@@ -30,6 +30,14 @@ func Collection(ctx context.Context, result interface{}) error {
 		return err
 	}
 
+	if err := build.Trasher(ctx, query); err != nil {
+		return err
+	}
+
+	if err := fillSoftDeleteFieldName(ctx, query); err != nil {
+		return err
+	}
+
 	logQuery(query)
 
 	tx, err := Begin(ctx)
