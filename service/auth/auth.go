@@ -3,12 +3,12 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type key int
@@ -17,6 +17,11 @@ const ctxKey key = 2
 
 type UserContext struct {
 	ID int
+}
+
+type jwtClaims struct {
+	UserContext UserContext
+	jwt.StandardClaims
 }
 
 func withContext(req *http.Request, userCtx *UserContext) *http.Request {
@@ -65,45 +70,39 @@ func MiddlewareAuth(next http.Handler) http.Handler {
 }
 
 func ejectClaims(tokenString string) (*UserContext, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		// Don't forget to validate the alg is what you expect:
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-		}
-
-		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
+	token, err := jwt.ParseWithClaims(tokenString, &jwtClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return getSecretKey(), nil
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		user_id := int(claims["user_id"].(float64))
-		return &UserContext{user_id}, nil
+	// todo: do not work
+	if claims, ok := token.Claims.(*jwtClaims); ok && token.Valid {
+		return &claims.UserContext, nil
 	} else {
+		panic(ok)
 		return nil, errors.New("invalid authorization token")
 	}
 }
 
 func MiddlewareLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		/*ctx := r
-		username := ctx.FormValue("username")
-		password := ctx.FormValue("password")*/
+		ctx := r
+		login := ctx.FormValue("login")
+		password := ctx.FormValue("password")
 
-		//todo find user in db
-		/*user, err := __User(username)
+		user, err := getUser(login)
 		if err != nil {
-			panic("User not finded")
+			panic(err.Error())
 		}
 		if user == nil || !CheckPasswordHash(password, user.Password) {
-			panic("authorization failed")
+			panic("authorization failed:1")
 		}
-		user.Password = ""
+
 		expires := 24 * time.Hour
 		clm := &jwtClaims{
-			User: *user,
+			UserContext: UserContext{ID:*user.ID},
 			StandardClaims: jwt.StandardClaims{
 				ExpiresAt: time.Now().Add(expires).Unix(),
 			},
@@ -111,43 +110,54 @@ func MiddlewareLogin() http.HandlerFunc {
 
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, clm)
 
-		sign, err := token.SignedString([]byte("secret"))
-		if err != nil {
-			panic("token signed")
-		}
-		fmt.Println(sign)*/
-
-		// Создаем новый токен
-		claims := jwt.MapClaims{
-			"user_id": 1,
-			"exp":     time.Now().Add(time.Hour * 24).Unix(),
-		}
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-		// Подписываем токен нашим секретным ключем
 		tokenString, _ := token.SignedString(getSecretKey())
 
 		w.Write([]byte(tokenString))
 	}
 }
 
-/*
-type jwtClaims struct {
-	User User
-	jwt.StandardClaims
+func MiddlewareRegistration() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		/*ctx := r
+
+		if r.Method == http.MethodPost {
+			login := ctx.FormValue("login")
+			password := ctx.FormValue("password")
+			name := ctx.FormValue("name")
+			surname := ctx.FormValue("surname")
+			patronymic := ctx.FormValue("patronymic")
+			setUser()
+		} else {
+			io.WriteString(w, r.Method + " is not implemented")
+		}*/
+	}
 }
 
+
+
+//todo clarify model
 type User struct {
-	Username   string            `json:"username" db:"username" validate:"required"`
-	Password   string            `json:"password,omitempty" db:"password" validate:"required"`
+	ID 			*int	`json:"id" db:"id"`
+	Login		string	`json:"login" db:"login" validate:"required"`
+	Password   	string  `json:"password,omitempty" db:"password" validate:"required"`
 }
-func __User(username string) (*User, error) {
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+func getUser(login string) (*User, error) {//todo clarify model
+	//todo find user in db
+	if login != "kaz_avto_trans" {
+		return nil, errors.New("authorization failed:2")
+	}
+	id := 1
 	return &User{
+		&id,
 		"kaz_avto_trans",
 		"$2a$10$JewUnzN6b6dVrnWNvtlbdOzzticUee.MNPX6.h.2L8.8pI/nQU4sa",
 	}, nil
 }
-func CheckPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
+/*func setUser(login string) (error) {//todo clarify model
+	return nil
 }*/
