@@ -47,7 +47,10 @@ func Run(v *viper.Viper, exec graphql.ExecutableSchema) error {
 	http.Handle("/login", auth.MiddlewareLogin())
 
 	// регистрация
-	http.Handle("/registration", auth.MiddlewareRegistration())
+	http.Handle("/registration", auth.MiddlewareRegistration(v))
+
+	// регистрация
+	http.Handle("/confirm", auth.MiddlewareConfirm())
 
 	// graphql запросы+авторизация
 	http.Handle("/query", auth.MiddlewareAuth(handler.GraphQL(exec, options...)))
