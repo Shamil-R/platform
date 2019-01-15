@@ -1,0 +1,14 @@
+{{- define "type" }}
+{{- if .IsSlice }}[]
+	{{- template "type" .Elem }}
+{{- else }}
+	{{- if not .NonNull }}*{{ end }}
+	{{- if .IsDefinition }}
+		{{- .Name | printf "model.%s" }}
+	{{- else }}
+		{{- if eq .Name "Int" }}int
+		{{- else if eq .Name "String" }}string
+		{{- end }}
+	{{- end }}
+{{- end }}
+{{- end }}

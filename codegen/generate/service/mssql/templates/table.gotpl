@@ -1,0 +1,9 @@
+{{- define "table" }}[
+{{- with .Directives.Table }}
+{{- with .Arguments.ByName "name" }}
+{{- .Value.Raw }}
+{{- end }}
+{{- else }}
+{{- lower .Name }}
+{{- end }}]
+{{- end }}

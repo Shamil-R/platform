@@ -1,0 +1,9 @@
+{{- define "field" }}[
+{{- with .Directives.Field }}
+{{- with .Arguments.ByName "name" }}
+{{- .Value.Raw }}
+{{- end }}
+{{- else }}
+{{- .Name }}
+{{- end }}]
+{{- end }}

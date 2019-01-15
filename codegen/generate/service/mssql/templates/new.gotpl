@@ -1,0 +1,7 @@
+{{- define "new" }}
+{{- if .IsSlice }}[]
+{{- template "type" .Elem }}{}
+{{- else }}
+{{- if not .NonNull }}&{{ end }}model.{{ .Name }}{}
+{{- end }}
+{{- end }}

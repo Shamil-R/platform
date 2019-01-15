@@ -1,0 +1,5 @@
+{{- define "directives" }}
+	{{- range .Directives }}
+		{{- template "copy_directive" . }}
+	{{- end }}
+{{- end }}

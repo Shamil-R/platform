@@ -1,0 +1,9 @@
+{{- define "delete" }}
+	res := {{ template "new" .Type }}
+
+	if err := mssql.Delete(ctx, res); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+{{- end }}

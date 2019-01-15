@@ -1,0 +1,10 @@
+{{- define "mutation" }}
+type Mutation {
+{{- range . }}
+    create{{ .Name }}(data: {{ .Name }}CreateInput!): {{ .Name }}!
+    update{{ .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
+    delete{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
+    upsert{{ .Name }}(where: {{ .Name }}WhereUniqueInput!, create: {{ .Name }}CreateInput!, update: {{ .Name }}UpdateInput!): {{ .Name }}
+{{- end }}
+}
+{{- end }}

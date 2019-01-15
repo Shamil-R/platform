@@ -1,0 +1,29 @@
+{{- define "print_fields" -}}
+	{{- $directives := .Directives }}
+	{{- $dirName := .DirName }}
+	{{- $point := .Point }}
+	{{- $fieldsName := .FieldsName }}
+
+	{{- with $dir := $point.Directives.ByName $dirName -}}
+		{{- range $key, $value := $directives }}
+			{{- $keyString := (printf "%v" $key) }}
+			{{- with $dir.Arguments.ByName $keyString }}
+				{{- $_ := set $directives $key .Value }}
+			{{- end }}
+			{{- with $dir.Arguments.ByName "disable" }}
+				{{- if eq .Value.Raw "true" }}
+					{{- $_ := unset $directives $key }}
+				{{- end }}
+			{{- end }}
+		{{- end }}
+	{{- end }}
+
+
+{{- range $key, $value := $directives }}
+	{{- $temp := index $fieldsName $key }}
+	{{ $temp }}: String!
+	@field(name: {{ $value }})
+{{- end }}
+
+{{- end }}
+

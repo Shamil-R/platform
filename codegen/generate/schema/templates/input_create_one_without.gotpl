@@ -1,0 +1,9 @@
+{{- define "input_create_one_without" }}
+{{- range .Fields.RelationsManyToOne }}
+input {{ .Directives.Relation.ArgObject }}CreateOneWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input
+	{{- template "directive_input" "create_one_without" }} {
+	create: {{ .Directives.Relation.ArgObject }}CreateWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input
+	connect: {{ .Directives.Relation.ArgObject }}WhereUniqueInput
+}
+{{- end }}
+{{- end }}

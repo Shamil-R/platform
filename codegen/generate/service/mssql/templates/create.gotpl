@@ -1,0 +1,9 @@
+{{- define "create" }}
+	res := {{ template "new" .Type }}
+
+	if err := mssql.Create(ctx, &res); err != nil {
+		return res, err
+	}
+
+	return res, nil
+{{- end }}

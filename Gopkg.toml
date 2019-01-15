@@ -24,18 +24,19 @@
 #   go-tests = true
 #   unused-packages = true
 
-
-[[constraint]]
-  name = "github.com/99designs/gqlgen"
-  version = "0.4.3"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/vektah/gqlparser"
+required = ["github.com/99designs/gqlgen", "github.com/gobuffalo/packr/packr", "github.com/jmoiron/sqlx"]
 
 [prune]
   go-tests = true
   unused-packages = true
+
+[[constraint]]
+  name = "github.com/99designs/gqlgen"
+  version = "0.6.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/vektah/gqlparser"
 
 [[constraint]]
   name = "github.com/spf13/cobra"
@@ -58,9 +59,21 @@
   version = "1.1.0"
 
 [[constraint]]
-  name = "github.com/fatih/structs"
-  version = "1.0.0"
-
-[[constraint]]
   branch = "master"
   name = "github.com/mitchellh/go-homedir"
+
+[[constraint]]
+  name = "github.com/huandu/xstrings"
+  version = "1.2.0"
+
+[[constraint]]
+  name = "github.com/go-ozzo/ozzo-validation"
+  version = "3.5.0"
+
+[[constraint]]
+  name = "github.com/sanity-io/litter"
+  version = "1.1.0"
+
+[[constraint]]
+  name = "github.com/joomcode/errorx"
+  version = "0.1.0"

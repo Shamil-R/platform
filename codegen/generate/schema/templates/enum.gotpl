@@ -1,0 +1,11 @@
+{{- define "enum" }}
+{{- range . }}
+{{- template "description" .Description }}
+enum {{ .Name }} {
+{{- range .EnumValues }}
+    {{- template "description_tab" .Description }}
+    {{ .Name }}
+{{- end }}
+}
+{{ end }}
+{{- end }}

@@ -1,0 +1,16 @@
+{{- define "input_create" }}
+input {{ .Name }}CreateInput
+	{{- template "copy_directive" .Directives.Table }} {
+	{{- range .Fields.NotRelations }}
+	{{- if not .Directives.HasIndentity }}
+	{{ template "field" . }}
+	{{- template "copy_directive" .Directives.Validate }}
+	{{- template "copy_directive" .Directives.Field }}
+	{{- end }}
+	{{- end }}
+	{{- range .Fields.RelationsManyToOne }}
+	{{ .Name }}: {{ .Directives.Relation.ArgObject }}CreateOneWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input!
+	{{- template "copy_directive" .Directives.Field }}
+	{{- end }}
+}
+{{- end }}

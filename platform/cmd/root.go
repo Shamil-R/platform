@@ -12,16 +12,13 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	cfgFile string
-	cfg     = DefaultConfig
-)
+var cfgFile string
 
 var rootCmd = &cobra.Command{
-	Use:   "auction",
-	Short: "auction server",
-	Run: func(cmd *cobra.Command, args []string) {
-	},
+	Use:   "platform",
+	Short: "platform",
+	Long:  `platform`,
+	Run:   func(cmd *cobra.Command, args []string) {},
 }
 
 func Execute() {
@@ -60,15 +57,11 @@ func initConfig() {
 
 		viper.AddConfigPath(home)
 		viper.AddConfigPath(work)
-		viper.SetConfigName(".platform.yml")
+		viper.SetConfigName(".platform")
 	}
 
 	viper.SetEnvPrefix("platform")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-
-	for _, v := range configVars(cfg) {
-		viper.BindEnv(v)
-	}
 
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Println("Can't read config:", err)

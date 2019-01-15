@@ -1,0 +1,21 @@
+{{- define "object" }}
+{{- range . }}
+type {{ .Name }}
+	{{- template "directives" . }} {
+	{{- range .Fields.NotRelations }}
+	{{ template "field" . }}
+	{{- template "directives" . }}
+	{{- end }}
+	{{- range .Fields.RelationsOneToMany }}
+	{{ .Name }}(where: {{ .Type.Name }}WhereInput, skip: Int, first: Int, last: Int): {{ .Type }}
+	{{- template "directives" . }}
+	{{- end }}
+	{{- range .Fields.RelationsManyToOne }}
+	{{ template "field" . }}
+	{{- template "directives" . }}
+	{{- end }}
+	{{/* TODO: протестировать default_fields */}}
+	{{- template "default_fields" . }}
+}
+{{ end }}
+{{- end }}

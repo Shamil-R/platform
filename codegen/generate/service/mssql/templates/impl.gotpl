@@ -1,0 +1,19 @@
+{{- define "impl" }}
+	{{- if eq .Action "create" }}
+	{{- template "create" . }}
+	{{- else if eq .Action "update" }}
+	{{- template "update" . }}
+	{{- else if eq .Action "delete" }}
+	{{- template "delete" . }}
+	{{/*- else if eq .Action "upsert" }}
+	{{- template "upsert" . */}}
+	{{- else if eq .Action "item" }}
+	{{- template "item" . }}
+	{{- else if eq .Action "collection" }}
+	{{- template "collection" . }}
+	{{- else if eq .Action "relation" }}
+	{{- template "relation" . }}
+	{{- else }}
+	panic("not implemented")
+	{{- end }}
+{{- end }}

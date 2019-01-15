@@ -1,0 +1,24 @@
+{{- define "input_where" }}
+{{- $string := list "Not" "Lt" "Lte" "Gt" "Gte" "Contains" "NotContains" "StartsWith" "NotStartsWith" "EndsWith" "NotEndsWith" }}
+{{- $int := list "Not" "Lt" "Lte" "Gt" "Gte" }}
+{{- $number := list "Not" "Lt" "Lte" "Gt" "Gte" }}
+{{- $boolean := list "Not" }}
+{{- $conds := dict "Int" $int "String" $string "Boolean" $boolean "Number" $number -}}
+
+input {{ .Name }}WhereInput
+	{{- template "copy_directive" .Directives.Table }} {
+	AND: [{{ .Name }}WhereInput!]
+	OR: [{{ .Name }}WhereInput!]
+	NOT: [{{ .Name }}WhereInput!]
+{{- range $_, $field := .Fields.NotRelations }}
+	{{ $field.Name }}: {{ $field.Type.Name }}
+	{{- template "copy_directive" $field.Directives.Field }}
+	{{- template "directive_condition" "eq" }}
+	{{- range $_, $cond := (index $conds $field.Type.Name) }}
+	{{ $field.Name }}{{ $cond }}: {{ $field.Type.Name }}
+	{{- template "copy_directive" $field.Directives.Field }}
+	{{- template "directive_condition" (snakecase $cond) }}
+	{{- end }}
+{{- end }}
+}
+{{- end }}

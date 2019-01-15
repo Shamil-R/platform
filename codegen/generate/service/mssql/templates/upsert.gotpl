@@ -1,0 +1,113 @@
+{{- define "upsert_old" }}
+	res := {{ template "new" .Type }}
+
+	tx, err := mssql.Begin(ctx)
+	if err != nil {
+		return res, err
+	}
+
+	querySelect := `
+		SELECT {{ template "select" .Type.Definition.Fields }}
+		FROM {{ template "table" .Definition }}
+		WHERE id = :id
+	`
+
+	arg := map[string]interface{}{
+		"id": where.ID,
+	}
+
+	stmt, err := tx.PrepareNamed(querySelect)
+	if err != nil {
+		return nil, err
+	}
+
+	row := {{ template "new" .Type }}
+
+	var id interface{}
+	action := "update"
+
+	if err := stmt.Get(row, arg); err != nil {
+		if err != sql.ErrNoRows {
+		  return nil, err
+		} else {
+			action = "insert"
+		}
+	}
+
+	if action == "insert" {
+		queryInsert := `
+			INSERT INTO {{ template "table" .Definition }} (
+				{{- with .Arguments.ByName "create" }}
+				{{- range $i, $arg := .Type.Definition.Fields }}
+				{{- if gt $i 0 }}, {{ end }}
+				{{ template "field" . }}
+				{{- end }}
+			) VALUES (
+				{{- range $i, $arg := .Type.Definition.Fields }}
+				{{- if gt $i 0 }}, {{ end }}
+				{{ template "bind" . }}
+				{{- end }}
+				{{- end }}
+			)
+		`
+
+		resInsert, err := tx.NamedExec(queryInsert, &create)
+		if err != nil {
+			return res, err
+		}
+
+		id, err = resInsert.LastInsertId()
+		if err != nil {
+			return nil, err
+		}
+
+	} else {
+		queryUpdate := `
+			UPDATE {{ template "table" .Definition }} SET
+				{{- with .Arguments.ByName "update" }}
+				{{- range $i, $arg := .Type.Definition.Fields }}
+				{{- if gt $i 0 }}, {{ end }}
+				{{ template "field" . }} = {{ template "bind" . }}
+				{{- end }}
+				{{- end }}
+			WHERE id = :id
+		`
+
+		argUpdate := map[string]interface{}{
+			{{- with .Arguments.ByName "update" }}
+			{{- range $i, $arg := .Type.Definition.Fields }}
+			"{{ .Name }}": update.{{ title .Name }},
+			{{- end }}
+			{{- end }}
+			"id": where.ID,
+		}
+
+		if _, err := tx.NamedExec(queryUpdate, argUpdate); err != nil {
+			return nil, err
+		}
+
+		id = where.ID
+	}
+
+	querySelect = `
+		SELECT {{ template "select" .Type.Definition.Fields }}
+		FROM {{ template "table" .Definition }}
+		WHERE id = :id
+	`
+
+	argSelect := map[string]interface{}{
+		"id": id,
+	}
+
+	stmt, err = tx.PrepareNamed(querySelect)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := stmt.Get(res, argSelect); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+
+{{- end }}

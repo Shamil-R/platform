@@ -1,0 +1,9 @@
+{{- define "relation" }}
+	res := {{ template "new" .Type }}
+
+	if err := mssql.Relation(ctx, obj.ID, &res); err != nil {
+		return res, err
+	}
+
+	return res, nil
+{{- end }}

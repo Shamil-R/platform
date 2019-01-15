@@ -1,0 +1,12 @@
+{{- define "select" }}
+{{- range $i, $field := .NotRelations }}
+	{{- if gt $i 0 }}, {{ end }}
+	{{- with .Directives.Field }}
+		{{- with .Arguments.ByName "name" }}
+			[{{ .Value.Raw }}] AS {{ $field.Name }}
+		{{- end }}
+	{{- else }}
+			[{{ .Name }}]
+	{{- end }}
+{{- end }}
+{{- end }}

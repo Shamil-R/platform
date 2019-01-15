@@ -1,0 +1,51 @@
+directive @primary on FIELD_DEFINITION
+
+directive @unique on FIELD_DEFINITION
+
+directive @identity on FIELD_DEFINITION
+
+directive @validate(
+  min: Int
+  max: Int
+) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @table(
+  name: String
+) on OBJECT | INPUT_OBJECT
+
+directive @field(
+  name: String
+) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE
+
+directive @relation(
+  type: String
+  object: String
+  field: String
+  table: String
+  foreignKey: String
+  localKey: String
+) on FIELD_DEFINITION
+
+# TODO: завести скалярный тип Datetime
+directive @timestamp(
+  disable: Boolean
+  createField: String
+  updateField: String
+) on OBJECT
+
+directive @softDelete(
+  disable: Boolean
+  deleteField: String
+) on OBJECT
+
+directive @input(
+  name: String
+) on INPUT_OBJECT
+
+directive @condition(
+  type: String!
+) on INPUT_FIELD_DEFINITION
+
+directive @order(
+  type: String!
+) on INPUT_FIELD_DEFINITION

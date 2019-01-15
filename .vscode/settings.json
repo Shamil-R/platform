@@ -1,3 +1,6 @@
 {
-    "go.lintOnSave": "off"
+    "go.lintOnSave": "off",
+    "files.exclude": {
+        "vendor": true
+    }
 }

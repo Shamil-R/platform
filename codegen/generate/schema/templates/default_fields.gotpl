@@ -1,0 +1,16 @@
+{{- define "default_fields" -}}
+	{{- $point := . -}}
+
+	{{- $directives := dict "createField" `"created_at"` "updateField" `"updated_at"` }}
+	{{- $fieldsName := dict "createField" "createdAt" "updateField" "updatedAt" }}
+	{{- $dirName := "timestamp" }}
+	{{- $data := dict "Directives" $directives "DirName" $dirName "Point" $point "FieldsName" $fieldsName }}
+	{{- template "print_fields" $data -}}
+
+	{{- $directives := dict "deleteField" `"deleted_at"` }}
+	{{- $fieldsName := dict "deleteField" "deletedAt" }}
+	{{- $dirName := "softDelete" }}
+	{{- $data := dict "Directives" $directives "DirName" $dirName "Point" $point "FieldsName" $fieldsName }}
+	{{- template "print_fields" $data }}
+{{- end }}
+

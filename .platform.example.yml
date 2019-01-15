@@ -1,0 +1,14 @@
+app:
+  port: 8080
+  service:
+    mssql:
+      host: 127.0.0.1
+      port: 1433
+      username: username
+      password: password
+      database: database
+codegen:
+  schema:
+    path: schema.graphql
+  output:
+    dir: app/

@@ -1,0 +1,9 @@
+{{- define "update" }}
+	res := {{ template "new" .Type }}
+
+	if err := mssql.Update(ctx, res); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+{{- end }}
