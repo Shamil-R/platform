@@ -1,7 +1,7 @@
 type User {
 		id: Int! @primary
 		name: String!
-		# materials: [Material!]!
+		materials: [Material!]!
     # orders: [Order!]!
     # trips: [Trip!]!
 }

@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"fmt"
-
 	"github.com/vektah/gqlparser/ast"
 )
 
@@ -64,23 +62,23 @@ func (f *FieldDefinition) Relation() *FieldDefinition {
 	return f.relation
 }
 
-type Relation struct {
-	schema               *Schema
-	owner                *FieldDefinition
-	definitionCache      *Definition
-	fieldDefinitionCache *FieldDefinition
-}
+// type Relation struct {
+// 	schema               *Schema
+// 	owner                *FieldDefinition
+// 	definitionCache      *Definition
+// 	fieldDefinitionCache *FieldDefinition
+// }
 
-func (r *Relation) Definition() *Definition {
-	if r.definitionCache == nil {
-		r.definitionCache = r.schema.Types().ByType(r.owner.Type())
-	}
-	return r.definitionCache
-}
+// func (r *Relation) Definition() *Definition {
+// 	if r.definitionCache == nil {
+// 		r.definitionCache = r.schema.Types().ByType(r.owner.Type())
+// 	}
+// 	return r.definitionCache
+// }
 
-func (r *Relation) FieldDefinition() *FieldDefinition {
-	return r.fieldDefinitionCache
-}
+// func (r *Relation) FieldDefinition() *FieldDefinition {
+// 	return r.fieldDefinitionCache
+// }
 
 type FieldList []*FieldDefinition
 
@@ -141,8 +139,7 @@ func isManyToOneRelation(field *FieldDefinition) bool {
 		return false
 	}
 	if field.Relation() == nil {
-		fmt.Println("#", field.Type().IsDefinition())
-		return field.Type().IsDefinition()
+		return false
 	}
 	return field.Relation().Type().IsSlice()
 }
