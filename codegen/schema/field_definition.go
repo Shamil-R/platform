@@ -8,6 +8,7 @@ type FieldDefinition struct {
 	*ast.FieldDefinition
 	parent     *Definition
 	relation   *FieldDefinition
+	typeCache  *Type
 	arguments  ArgumentDefinitionList
 	directives DirectiveList
 }
@@ -17,19 +18,27 @@ func (f *FieldDefinition) Definition() *Definition {
 }
 
 func (f *FieldDefinition) Type() *Type {
-	return &Type{f.FieldDefinition.Type, f.parent.schema}
+	if f.typeCache == nil {
+		f.typeCache = &Type{
+			Type:  f.FieldDefinition.Type,
+			types: f.parent.schema.Types(),
+		}
+	}
+	return f.typeCache
 }
 
 func (f *FieldDefinition) Arguments() ArgumentDefinitionList {
-	if f.arguments != nil {
-		return f.arguments
+	if f.arguments == nil {
+		l := len(f.FieldDefinition.Arguments)
+		f.arguments = make(ArgumentDefinitionList, 0, l)
+		for _, argument := range f.FieldDefinition.Arguments {
+			arg := &ArgumentDefinition{
+				ArgumentDefinition: argument,
+				fieldDefinition:    f,
+			}
+			f.arguments = append(f.arguments, arg)
+		}
 	}
-
-	f.arguments = make(ArgumentDefinitionList, len(f.FieldDefinition.Arguments))
-	for i, arg := range f.FieldDefinition.Arguments {
-		f.arguments[i] = &ArgumentDefinition{arg, f}
-	}
-
 	return f.arguments
 }
 
@@ -52,6 +61,24 @@ func (f *FieldDefinition) Relation() *FieldDefinition {
 	}
 	return f.relation
 }
+
+// type Relation struct {
+// 	schema               *Schema
+// 	owner                *FieldDefinition
+// 	definitionCache      *Definition
+// 	fieldDefinitionCache *FieldDefinition
+// }
+
+// func (r *Relation) Definition() *Definition {
+// 	if r.definitionCache == nil {
+// 		r.definitionCache = r.schema.Types().ByType(r.owner.Type())
+// 	}
+// 	return r.definitionCache
+// }
+
+// func (r *Relation) FieldDefinition() *FieldDefinition {
+// 	return r.fieldDefinitionCache
+// }
 
 type FieldList []*FieldDefinition
 

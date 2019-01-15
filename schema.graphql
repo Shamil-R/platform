@@ -1,45 +1,34 @@
-type User @timestamp(disable: true createField: "created_at" updateField: "updated_at") {
-		id: Int! @primary @identity
-		name: String! @validate(min: 5 max: 30)
-		info: String @field(name: "bio")
-		# roles: [RoleObject!]!
-		materials: [Material!]
-		# завести скалярный тип Datetime
-		# createdAt: String
+type User {
+		id: Int! @primary
+		name: String!
+		materials: [Material!]!
+    # orders: [Order!]!
+    # trips: [Trip!]!
 }
 
-# type RoleObject @softDelete(disable: true deleteField: "delted_at") {
-#     id: Int! @primary @identity
-#     object: String!
-#     access: RoleAccess!
-# }
-
-type Material @softDelete(disable: true deleteField: "deleted_at") {
-		id: Int! @primary @identity
-		name: String! @validate(min: 10 max: 20)
-		info: String
-		author: User! @field(name: "user_id")
+type Material {
+		id: Int! @primary
+		title: String!
+		user: User!
 }
 
-# type Person @table(name: "co_person") {
-#   id: Int! @primary @identity
-#   name: String
-#   surname: String
-#   phone: String @field(name: "home_phone")
-# }
+type Order {
+  id: Int! @primary
+  date: String!
+  # user: User!
+  # items: [Item!]!
+}
 
-# """
-# Уровни доступа
-# """
-# enum RoleAccess {
-#     """
-#     Создание
-#     """
-#     CREATE
-#     """
-#     Чтение
-#     """
-#     READ
-#     UPDATE
-#     DELETE
-# }
+type Item {
+  id: Int! @primary
+  count: Int!
+  # order: Order!
+  # material: Material!
+}
+
+type Trip {
+  id: Int! @primary
+  city: String!
+  # user: User!
+  # orders: [Order!]!
+}
