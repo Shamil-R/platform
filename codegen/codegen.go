@@ -1,12 +1,12 @@
 package codegen
 
 import (
+	"github.com/spf13/viper"
 	"gitlab/nefco/platform/codegen/generate/gqlgen"
+	"gitlab/nefco/platform/codegen/generate/migration"
 	"gitlab/nefco/platform/codegen/generate/schema"
 	"gitlab/nefco/platform/codegen/generate/server"
 	"gitlab/nefco/platform/codegen/generate/service"
-
-	"github.com/spf13/viper"
 )
 
 func Generate(v *viper.Viper) error {
@@ -24,6 +24,9 @@ func Generate(v *viper.Viper) error {
 		return err
 	}
 	if err := server.Generate(cfg.ServerConfig()); err != nil {
+		return err
+	}
+	if err := migration.Generate(cfg.MigrationConfig()); err != nil {
 		return err
 	}
 	return nil
@@ -59,4 +62,12 @@ func GenerateServer(v *viper.Viper) error {
 		return err
 	}
 	return server.Generate(cfg.ServerConfig())
+}
+
+func GenerateMigration(v *viper.Viper) error {
+	cfg, err := readConfig(v)
+	if err != nil {
+		return err
+	}
+	return migration.Generate(cfg.MigrationConfig())
 }
