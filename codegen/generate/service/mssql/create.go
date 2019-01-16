@@ -18,7 +18,7 @@ func Create(ctx context.Context, result interface{}, f ArgName) error {
 func create(ctx context.Context, result interface{}, f ArgName) error {
 	query := query.NewInsert()
 
-	if err := fillTable(ctx, query); err != nil {
+	if err := build.Table(ctx, query); err != nil {
 		return err
 	}
 
@@ -117,7 +117,7 @@ func connectOne(ctx context.Context, v *schema.Value) (int64, error) {
 func createResult(ctx context.Context, id int64, result interface{}) error {
 	query := query.NewSelect()
 
-	if err := fillTable(ctx, query); err != nil {
+	if err := build.Table(ctx, query); err != nil {
 		return err
 	}
 

@@ -2,7 +2,7 @@
 input {{ .Name }}CreateInput
 	{{- template "copy_directive" .Directives.Table }} {
 	{{- range .Fields.NotRelations }}
-	{{- if not .Directives.HasIndentity }}
+	{{- if not .Directives.HasPrimary }}
 	{{ template "field" . }}
 	{{- template "copy_directive" .Directives.Validate }}
 	{{- template "copy_directive" .Directives.Field }}

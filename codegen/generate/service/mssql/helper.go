@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/joomcode/errorx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
+
+	"github.com/joomcode/errorx"
 
 	"github.com/99designs/gqlgen/graphql"
 )
@@ -47,28 +48,28 @@ func extractArgument(ctx context.Context, name string) (*schema.Value, error) {
 	return argument.Value(), nil
 }
 
-func fillTable(ctx context.Context, query query.Table) error {
-	field, err := extractField(ctx)
-	if err != nil {
-		return err
-	}
+// func fillTable(ctx context.Context, query query.Table) error {
+// 	field, err := extractField(ctx)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	sels := field.SelectionSet().Fields()
-	if len(sels) == 0 {
-		return SelectionDoesNotExist
-	}
+// 	sels := field.SelectionSet().Fields()
+// 	if len(sels) == 0 {
+// 		return SelectionDoesNotExist
+// 	}
 
-	def := sels[0].ObjectDefinition()
+// 	def := sels[0].ObjectDefinition()
 
-	table := def.Directives().Table()
-	if table == nil {
-		return DirectiveDoesNotExist.New("table")
-	}
+// 	table := def.Directives().Table()
+// 	if table == nil {
+// 		return DirectiveDoesNotExist.New("table")
+// 	}
 
-	query.SetTable(table.ArgName())
+// 	query.SetTable(table.ArgName())
 
-	return nil
-}
+// 	return nil
+// }
 
 func fillSoftDeleteFieldName(ctx context.Context, query query.Trasher) error {
 	field, err := extractField(ctx)

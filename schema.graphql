@@ -12,23 +12,23 @@ type Material {
 		user: User!
 }
 
-type Order {
-  id: Int! @primary
-  date: String!
-  # user: User!
-  # items: [Item!]!
-}
+# type Order {
+#   id: Int! @primary
+#   date: String!
+#   user: User!
+#   items: [Item!]!
+# }
 
-type Item {
-  id: Int! @primary
-  count: Int!
-  # order: Order!
-  # material: Material!
-}
+# type Item {
+#   id: Int! @primary
+#   count: Int!
+#   order: Order!
+#   material: Material!
+# }
 
-type Trip {
-  id: Int! @primary
-  city: String!
-  # user: User!
-  # orders: [Order!]!
-}
+# type Trip {
+#   id: Int! @primary
+#   city: String!
+#   user: User!
+#   orders: [Order!]!
+# }

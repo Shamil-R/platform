@@ -9,7 +9,7 @@ import (
 func Item(ctx context.Context, result interface{}) error {
 	query := query.NewSelect()
 
-	if err := fillTable(ctx, query); err != nil {
+	if err := build.Table(ctx, query); err != nil {
 		return err
 	}
 

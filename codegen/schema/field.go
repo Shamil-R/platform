@@ -4,41 +4,53 @@ import "github.com/vektah/gqlparser/ast"
 
 type Field struct {
 	*ast.Field
-	arguments        ArgumentList
-	selectionSet     *SelectionSet
-	definition       *FieldDefinition
-	objectDefinition *Definition
+	argumentsCache        ArgumentList
+	directivesCache       DirectiveList
+	selectionSetCache     *SelectionSet
+	definitionCache       *FieldDefinition
+	objectDefinitionCache *Definition
 }
 
 func (f *Field) Arguments() ArgumentList {
-	if f.arguments == nil {
-		f.arguments = make(ArgumentList, 0, len(f.Field.Arguments))
+	if f.argumentsCache == nil {
+		f.argumentsCache = make(ArgumentList, 0, len(f.Field.Arguments))
 		for _, arg := range f.Field.Arguments {
-			f.arguments = append(f.arguments, &Argument{Argument: arg})
+			f.argumentsCache = append(f.argumentsCache, &Argument{Argument: arg})
 		}
 	}
-	return f.arguments
+	return f.argumentsCache
+}
+
+func (f *Field) Directives() DirectiveList {
+	if f.directivesCache == nil {
+		f.directivesCache = make(DirectiveList, 0, len(f.Field.Directives))
+		for _, directive := range f.Field.Directives {
+			dir := &Directive{Directive: directive}
+			f.directivesCache = append(f.directivesCache, dir)
+		}
+	}
+	return f.directivesCache
 }
 
 func (f *Field) SelectionSet() *SelectionSet {
-	if f.selectionSet == nil {
-		f.selectionSet = &SelectionSet{SelectionSet: f.Field.SelectionSet}
+	if f.selectionSetCache == nil {
+		f.selectionSetCache = &SelectionSet{SelectionSet: f.Field.SelectionSet}
 	}
-	return f.selectionSet
+	return f.selectionSetCache
 }
 
 func (f *Field) Definition() *FieldDefinition {
-	if f.definition == nil {
-		f.definition = &FieldDefinition{FieldDefinition: f.Field.Definition}
+	if f.definitionCache == nil {
+		f.definitionCache = &FieldDefinition{FieldDefinition: f.Field.Definition}
 	}
-	return f.definition
+	return f.definitionCache
 }
 
 func (f *Field) ObjectDefinition() *Definition {
-	if f.objectDefinition == nil {
-		f.objectDefinition = &Definition{Definition: f.Field.ObjectDefinition}
+	if f.objectDefinitionCache == nil {
+		f.objectDefinitionCache = &Definition{Definition: f.Field.ObjectDefinition}
 	}
-	return f.objectDefinition
+	return f.objectDefinitionCache
 }
 
 type SelectionSet struct {
