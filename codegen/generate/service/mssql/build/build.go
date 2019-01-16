@@ -29,6 +29,10 @@ func extractField(ctx context.Context) (*schema.Field, error) {
 	return field, nil
 }
 
+func ExtractArgument(ctx context.Context, name string) (*schema.Value, error) {
+	return extractArgument(ctx, name)
+}
+
 func extractArgument(ctx context.Context, name string) (*schema.Value, error) {
 	field, err := extractField(ctx)
 	if err != nil {

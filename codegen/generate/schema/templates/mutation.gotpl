@@ -13,16 +13,16 @@ type Mutation {
 	{{- template "copy_directive" .Directives.Table }}
 	forceDeleteMany{{ plural .Name }}(where: {{ .Name }}WhereInput): BatchPayload!
 	{{- template "copy_directive" .Directives.Table }}
-	{{- $name := .Name }}
+	{{- $type := . }}
 	{{- /* Рассматриваем директиву softDelete */}}
 	{{- with .Directives.ByName "softDelete" }}
 		{{- /* Проверяем не запрещена ли директива */}}
 		{{- with .Arguments.ByName `disable` }}
 			{{- if ne .Value.Raw "true" }}
-			{{- template "soft_delete_mutation" $name }}
+			{{- template "soft_delete_mutation" $type }}
 			{{- end }}
 		{{- else }}
-		{{- template "soft_delete_mutation" $name }}
+		{{- template "soft_delete_mutation" $type }}
 		{{- end }}
 	{{- end }}
 {{- end }}

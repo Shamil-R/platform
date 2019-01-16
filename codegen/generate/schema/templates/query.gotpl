@@ -16,6 +16,7 @@ type Query {
 		{{- end }}
 	{{- end }}
 	{{ untitle .Name | plural }}(where: {{ .Name }}WhereInput, orderBy: {{ .Name }}OrderByInput, skip: Int, first: Int, last: Int{{print $trashed}}): [{{ .Name }}]!
+	{{- template "copy_directive" .Directives.Table }}
 {{- end }}
 }
 {{- end }}

@@ -22,7 +22,7 @@ func create(ctx context.Context, result interface{}, f ArgName) error {
 		return err
 	}
 
-	data, err := extractArgument(ctx, f())
+	data, err := build.ExtractArgument(ctx, "data")
 	if err != nil {
 		return err
 	}
@@ -33,14 +33,16 @@ func create(ctx context.Context, result interface{}, f ArgName) error {
 		field := fieldDef.Directives().Field().ArgName()
 
 		input := child.Value().Definition().Directives().Input()
-		if input != nil && input.IsCreateOneWithout() {
+		if input != nil {
+			query.AddValue(field, child.Value().Conv())
+		} else if input.IsCreateOneWithout() {
 			id, err := createOneWithout(ctx, child.Value())
 			if err != nil {
 				return err
 			}
 			query.AddValue(field, id)
-		} else {
-			query.AddValue(field, child.Value().Conv())
+		} else if input.IsCreateManyWithout() {
+
 		}
 	}
 

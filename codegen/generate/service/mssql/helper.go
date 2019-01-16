@@ -48,29 +48,6 @@ func extractArgument(ctx context.Context, name string) (*schema.Value, error) {
 	return argument.Value(), nil
 }
 
-// func fillTable(ctx context.Context, query query.Table) error {
-// 	field, err := extractField(ctx)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	sels := field.SelectionSet().Fields()
-// 	if len(sels) == 0 {
-// 		return SelectionDoesNotExist
-// 	}
-
-// 	def := sels[0].ObjectDefinition()
-
-// 	table := def.Directives().Table()
-// 	if table == nil {
-// 		return DirectiveDoesNotExist.New("table")
-// 	}
-
-// 	query.SetTable(table.ArgName())
-
-// 	return nil
-// }
-
 func fillSoftDeleteFieldName(ctx context.Context, query query.Trasher) error {
 	field, err := extractField(ctx)
 	if err != nil {
