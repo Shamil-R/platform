@@ -79,3 +79,35 @@ func Generate(cfg Config) error {
 
 	return nil
 }
+
+func Init(cfg Config) error {
+
+	gen, err := generator(defaultGenerator)
+	if err != nil {
+		return err
+	}
+
+	tmpl, err := helper.ReadTemplate("migration/migration", gen.Box())
+	if err != nil {
+		return err
+	}
+
+	sch, err := schema.LoadSchema(cfg.Schema.Path)
+	if err != nil {
+		return err
+	}
+
+	buf := bytes.NewBuffer([]byte{})
+
+	if err := tmpl.Execute(buf, sch); err != nil {
+		return err
+	}
+
+	filename := path.Join(cfg.Service.Dir(), "migration.sql")
+
+	if err := helper.WriteFile(filename, buf); err != nil {
+		return err
+	}
+
+	return nil
+}

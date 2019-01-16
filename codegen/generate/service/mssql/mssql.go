@@ -1,10 +1,7 @@
 package mssql
 
 import (
-	"bytes"
 	"fmt"
-	"gitlab/nefco/platform/codegen/helper"
-	"gitlab/nefco/platform/codegen/schema"
 	"go.uber.org/zap"
 	"strings"
 
@@ -69,30 +66,7 @@ func (s *mssql) Middleware(v *viper.Viper) (handler.Option, error) {
 	db.Mapper = reflectx.NewMapperFunc("json", strings.ToLower)
 	return handler.RequestMiddleware(middleware(db)), nil
 }
-
-func (s *mssql) Migration(v *viper.Viper) (error) {
-	box := packr.NewBox("./templates")
-
-	tmpl, err := helper.ReadTemplate("migration", box)
-	if err != nil {
-		return err
-	}
-
-	//todo define path
-	sch, err := schema.LoadSchema("~/dev/go/src/gitlab/nefco/platform/app/schema/schema_gen.graphql")
-	if err != nil {
-		return err
-	}
-
-	buf := bytes.NewBufferString("")
-
-	if err := tmpl.Execute(buf, sch); err != nil {
-		return err
-	}
-
-	if err := helper.WriteFile("./migration.sql", buf); err != nil {
-		return err
-	}
-
+//todo Предлагаю перенести создание и применение миграций сюда
+/*func (s *mssql) Migration(v *viper.Viper) (error) {
 	return nil
-}
+}*/

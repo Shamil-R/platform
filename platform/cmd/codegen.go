@@ -11,12 +11,12 @@ import (
 )
 
 var (
-	genSchema    = false
-	genGqlgen    = false
-	genService   = false
-	genServer    = false
-	genClean     = false
-	genMigration = false
+	genSchema   = false
+	genGqlgen   = false
+	genService  = false
+	genServer   = false
+	genClean    = false
+	genInit		= false
 )
 
 func init() {
@@ -25,7 +25,7 @@ func init() {
 	codegenCmd.Flags().BoolVar(&genService, "service", false, "generate service")
 	codegenCmd.Flags().BoolVar(&genServer, "server", false, "generate server")
 	codegenCmd.Flags().BoolVar(&genClean, "clean", false, "generate clean")
-	codegenCmd.Flags().BoolVar(&genMigration, "migrate", false, "generate migration")
+	codegenCmd.Flags().BoolVar(&genInit, "init", false, "generate init")
 
 	rootCmd.AddCommand(codegenCmd)
 }
@@ -41,12 +41,7 @@ var codegenCmd = &cobra.Command{
 				os.Exit(1)
 			}
 		}
-		if genMigration {
-			if err := codegen.GenerateMigration(viper.GetViper()); err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-		} else if genSchema {
+		if genSchema {
 			if err := codegen.GenerateSchema(viper.GetViper()); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
@@ -61,7 +56,12 @@ var codegenCmd = &cobra.Command{
 				fmt.Println(err)
 				os.Exit(1)
 			}
-		} else if genServer {
+		} else if genInit {
+			if err := codegen.GenerateInit(viper.GetViper()); err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+		} else  if genServer {
 			if err := codegen.GenerateServer(viper.GetViper()); err != nil {
 				fmt.Println(err)
 				os.Exit(1)

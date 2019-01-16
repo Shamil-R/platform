@@ -1,0 +1,2 @@
+{{- template "migration/table" .Types.Objects }}
+{{- template "migration/relation" .Types.Objects }}

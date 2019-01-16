@@ -2,7 +2,6 @@ package codegen
 
 import (
 	"gitlab/nefco/platform/codegen/generate/gqlgen"
-	"gitlab/nefco/platform/codegen/generate/migration"
 	"gitlab/nefco/platform/codegen/generate/schema"
 	"gitlab/nefco/platform/codegen/generate/server"
 	"gitlab/nefco/platform/codegen/generate/service"
@@ -80,13 +79,6 @@ func (c Config) fileExSchema() helper.File {
 	}
 }
 
-func (c Config) fileMigration() helper.File {
-	return helper.File{
-		Root: c.Root,
-		Path: path.Join(c.Output.Dir, "migration/migration.sql"),
-	}
-}
-
 func (c Config) fileService() helper.File {
 	return helper.File{
 		Root: c.Root,
@@ -131,13 +123,6 @@ func (c Config) ServerConfig() server.Config {
 		Server:  c.fileServer(),
 		Exec:    c.fileExec(),
 		Service: c.fileService(),
-	}
-}
-
-func (c Config) MigrationConfig() migration.Config {
-	return migration.Config{
-		In:  c.fileExSchema(),
-		Out: c.fileMigration(),
 	}
 }
 

@@ -1,0 +1,26 @@
+{{- define "migration/table" }}
+	{{- range . }}
+
+		{{- $name := "" }}
+		{{- with .Directives.ByName "table" }}
+
+			{{- range .Arguments }}
+				{{- if eq .Name "name" }}
+					{{- $name = .Value }}
+				{{- end }}
+			{{- end }}
+
+		{{- end -}}
+
+		CREATE TABLE [{{print $name}}]
+		(
+			{{- range .Fields.NotRelations }}
+            	{{- .Name }}: {{ .Type }}
+			{{- end }}
+			{{- range .Fields.RelationsManyToOne }}
+			{{- .Name }}: {{ .Type }}
+			{{- end }}
+		)
+		GO
+	{{- end }}
+{{- end }}
