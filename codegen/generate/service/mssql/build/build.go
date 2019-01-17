@@ -15,7 +15,8 @@ var (
 
 	DoesNotExist = IllegalState.NewSubtype("does_not_exist")
 
-	ArgumentDoesNotExist = DoesNotExist.NewSubtype("argument")
+	ArgumentDoesNotExist  = DoesNotExist.NewSubtype("argument")
+	DirectiveDoesNotExist = DoesNotExist.NewSubtype("directive")
 )
 
 func extractField(ctx context.Context) (*schema.Field, error) {

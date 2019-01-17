@@ -133,18 +133,18 @@ func getDefaultValues(ctx context.Context, dirName string, argName string) (stri
 	return arg.Value.Raw, nil
 }
 
-func useTable(query query.Table, value *schema.Value) error {
-	def := value.Definition()
+// func useTable(query query.Table, value *schema.Value) error {
+// 	def := value.Definition()
 
-	table := def.Directives().Table()
-	if table == nil {
-		return DirectiveDoesNotExist.New("table")
-	}
+// 	table := def.Directives().Table()
+// 	if table == nil {
+// 		return DirectiveDoesNotExist.New("table")
+// 	}
 
-	query.SetTable(table.ArgName())
+// 	query.SetTable(table.ArgName())
 
-	return nil
-}
+// 	return nil
+// }
 
 func useColumns(query query.Columns, value *schema.Value) error {
 	def := value.Definition()

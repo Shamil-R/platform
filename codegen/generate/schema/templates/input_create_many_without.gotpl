@@ -1,0 +1,9 @@
+{{- define "input_create_many_without" }}
+{{- range .Fields.RelationsOneToMany }}
+input {{ .Directives.Relation.ArgObject }}CreateManyWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input
+	{{- template "directive_input" "create_many_without" }} {
+	create: [{{ .Directives.Relation.ArgObject }}CreateWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input!]
+	connect: [{{ .Directives.Relation.ArgObject }}WhereUniqueInput!]
+}
+{{- end }}
+{{- end }}

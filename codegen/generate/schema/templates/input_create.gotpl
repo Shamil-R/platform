@@ -8,6 +8,10 @@ input {{ .Name }}CreateInput
 	{{- template "copy_directive" .Directives.Field }}
 	{{- end }}
 	{{- end }}
+	{{- range .Fields.RelationsOneToMany }}
+	{{ .Name }}: {{ .Directives.Relation.ArgObject }}CreateManyWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input
+	{{- template "copy_directive" .Directives.Relation }}
+	{{- end }}
 	{{- range .Fields.RelationsManyToOne }}
 	{{ .Name }}: {{ .Directives.Relation.ArgObject }}CreateOneWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input!
 	{{- template "copy_directive" .Directives.Field }}

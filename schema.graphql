@@ -1,4 +1,4 @@
-type User {
+type User @softDelete(disable: true) {
 		id: Int! @primary
 		name: String!
 		materials: [Material!]!
@@ -6,7 +6,7 @@ type User {
     # trips: [Trip!]!
 }
 
-type Material {
+type Material @softDelete(disable: true) {
 		id: Int! @primary
 		title: String!
 		user: User!
