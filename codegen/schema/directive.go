@@ -107,6 +107,8 @@ type RelationDirective struct {
 	argObject     string
 	argField      string
 	argForeignKey string
+	argTable 	  string
+	argOwnerKey	  string
 }
 
 func (d *RelationDirective) ArgObject() string {
@@ -119,6 +121,14 @@ func (d *RelationDirective) ArgField() string {
 
 func (d *RelationDirective) ArgForeignKey() string {
 	return directiveArgument(&d.argForeignKey, d, "foreignKey")
+}
+
+func (d *RelationDirective) ArgTable() string {
+	return directiveArgument(&d.argTable, d, "table")
+}
+
+func (d *RelationDirective) ArgOwnerKey() string {
+	return directiveArgument(&d.argOwnerKey, d, "ownerKey")
 }
 
 type InputDirective struct {

@@ -1,10 +1,14 @@
 {{- define "migration/table" }}
 {{- $type := dict "Int" "INT" "Boolean" "BIT" "Float" "FLOAT" }}
 	{{- range . }}
-		CREATE TABLE [{{.Directives.Table.ArgName}}]
+		IF OBJECT_ID('{{ .Directives.Table.ArgName }}', 'U') IS NOT NULL
+        BEGIN
+            DROP TABLE [{{ .Directives.Table.ArgName }}]
+        END
+		CREATE TABLE [{{ .Directives.Table.ArgName }}]
 		(
 			{{- range .Fields.NotRelations }}
-				{{ .Directives.Field.ArgName }}
+				[{{ .Directives.Field.ArgName }}]
 
 				{{- if eq .Type.Name "String" }}
 					{{- with .Directives.Validate }}
@@ -33,7 +37,7 @@
 			{{- end }}
 
 			{{- range .Fields.RelationsManyToOne }}
-				{{ .Directives.Field.ArgName }}
+				[{{ .Directives.Field.ArgName }}]
 				INT
 				{{- with .Type.NonNull }}
 					NOT NULL
@@ -42,7 +46,7 @@
 			{{- end }}
 
 			{{- range .DefaultFields }}
-				{{ .Directives.Field.ArgName }}
+				[{{ .Directives.Field.ArgName }}]
 				DATETIME
 				{{- with .Type.NonNull }}
 					NOT NULL
