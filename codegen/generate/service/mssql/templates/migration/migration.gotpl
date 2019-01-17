@@ -1,2 +1,2 @@
-{{- template "migration/table" .Types.Objects }}
-{{- template "migration/relation" .Types.Objects }}
+{{- template "migration/table" .Types.WholeObjects }}
+{{- template "migration/relation" .Types.WholeObjects }}

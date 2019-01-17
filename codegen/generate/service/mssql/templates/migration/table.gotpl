@@ -1,24 +1,53 @@
 {{- define "migration/table" }}
+{{- $type := dict "Int" "INT" "Boolean" "BIT" "Float" "FLOAT" }}
 	{{- range . }}
-
-		{{- $name := "" }}
-		{{- with .Directives.ByName "table" }}
-
-			{{- range .Arguments }}
-				{{- if eq .Name "name" }}
-					{{- $name = .Value }}
-				{{- end }}
-			{{- end }}
-
-		{{- end -}}
-
-		CREATE TABLE [{{print $name}}]
+		CREATE TABLE [{{.Directives.Table.ArgName}}]
 		(
 			{{- range .Fields.NotRelations }}
-            	{{- .Name }}: {{ .Type }}
+				{{ .Directives.Field.ArgName }}
+
+				{{- if eq .Type.Name "String" }}
+					{{- with .Directives.Validate }}
+						VARCHAR({{ .ArgMax }})
+					{{- else }}
+						TEXT
+					{{- end }}
+				{{- else }}
+					{{ index $type .Type.Name }}
+
+					{{- with .Directives.HasIndentity }}
+						IDENTITY
+					{{- end }}
+
+				{{- end }}
+
+				{{- with .Type.NonNull }}
+					NOT NULL
+				{{- end }}
+
+				{{- with .Directives.HasPrimary }}
+					PRIMARY KEY
+				{{- end }}
+
+				{{- print ","}}
 			{{- end }}
+
 			{{- range .Fields.RelationsManyToOne }}
-			{{- .Name }}: {{ .Type }}
+				{{ .Directives.Field.ArgName }}
+				INT
+				{{- with .Type.NonNull }}
+					NOT NULL
+				{{- end }}
+				{{- print ","}}
+			{{- end }}
+
+			{{- range .DefaultFields }}
+				{{ .Directives.Field.ArgName }}
+				DATETIME
+				{{- with .Type.NonNull }}
+					NOT NULL
+				{{- end }}
+				{{- print ","}}
 			{{- end }}
 		)
 		GO

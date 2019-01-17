@@ -14,13 +14,14 @@ var defaultFields map[string]bool = map[string]bool{
 
 type Definition struct {
 	*ast.Definition
-	schema     *Schema
-	fields     FieldList
-	directives DirectiveList
-	mutations  ActionList
-	queries    ActionList
-	relations  ActionList
-	enum  	   EnumValueList
+	schema     		*Schema
+	fields     		FieldList
+	defaultFields	FieldList
+	directives 		DirectiveList
+	mutations  		ActionList
+	queries    		ActionList
+	relations  		ActionList
+	enum  	   		EnumValueList
 }
 
 func (d *Definition) IsMutation() bool {
@@ -52,6 +53,21 @@ func (d *Definition) Fields() FieldList {
 	}
 
 	return d.fields
+}
+
+func (d *Definition) DefaultFields() FieldList {
+	if d.defaultFields != nil {
+		return d.defaultFields
+	}
+	d.defaultFields = make(FieldList, 0, len(d.Definition.Fields))
+	for _, field := range d.Definition.Fields {
+		if defaultFields[field.Name] != true {
+			continue
+		}
+		d.defaultFields = append(d.defaultFields, &FieldDefinition{FieldDefinition: field, parent: d})
+	}
+
+	return d.defaultFields
 }
 
 func (d *Definition) EnumValues() EnumValueList {

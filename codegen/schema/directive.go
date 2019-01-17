@@ -77,6 +77,11 @@ func (f *Directive) Arguments() ArgumentList {
 
 type ValidateDirective struct {
 	*Directive
+	argMax string
+}
+
+func (d *ValidateDirective) ArgMax() string {
+	return directiveArgument(&d.argMax, d, "max")
 }
 
 type TableDirective struct {
