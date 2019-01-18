@@ -94,9 +94,12 @@ func (s *mssql) Init(schemaPath string,v *viper.Viper) (error) {
 		return err
 	}
 	query := buf.String()
-	//todo for develop
-	if err := helper.WriteFile("app/migration.sql", buf); err != nil {
-		return err
+
+	if !v.GetBool("prod") {
+		outputMigrate := v.GetString("codegen.output.dir") + "migration.sql"
+		if err := helper.WriteFile(outputMigrate, buf); err != nil {
+			return err
+		}
 	}
 
 	db, err := s.connection(v)
