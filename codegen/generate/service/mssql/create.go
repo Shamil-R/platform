@@ -27,13 +27,14 @@ func create(ctx context.Context, result interface{}, f ArgName) error {
 		return err
 	}
 
+	if err := build.Value(data, query); err != nil {
+		return err
+	}
+
+	// create one without
 	for _, child := range data.Children() {
 		input := child.Value().Definition().Directives().Input()
-		if input == nil {
-			fieldDef := data.Definition().Fields().ByName(child.Name)
-			field := fieldDef.Directives().Field().ArgName()
-			query.AddValue(field, child.Value().Conv())
-		} else if input.IsCreateOneWithout() {
+		if input != nil && input.IsCreateOneWithout() {
 			id, err := createOneWithout(ctx, child.Value())
 			if err != nil {
 				return err
@@ -61,6 +62,7 @@ func create(ctx context.Context, result interface{}, f ArgName) error {
 		return err
 	}
 
+	// create many without
 	for _, child := range data.Children() {
 		input := child.Value().Definition().Directives().Input()
 		if input != nil && input.IsCreateManyWithout() {
@@ -116,8 +118,6 @@ func createManyWithout(ctx context.Context, v *schema.Value,
 
 	return nil
 }
-
-func create
 
 func createOne(ctx context.Context, v *schema.Value) (int64, error) {
 	query := query.NewInsert()
@@ -181,41 +181,19 @@ func createMany(ctx context.Context, v *schema.Value,
 }
 
 func connectOne(ctx context.Context, v *schema.Value) (int64, error) {
-	query := query.NewSelect()
-
-	if err := build.TableFromValue(v, query); err != nil {
-		return 0, err
+	for _, child := range v.Children() {
+		id, ok := child.Value().Conv().(int64)
+		if !ok {
+			return 0, errors.New("failed cast in connect one")
+		}
+		return id, nil
 	}
 
-	if err := useColumns(query, v); err != nil {
-		return 0, err
-	}
-
-	if err := build.ConditionsFromValue(v, query); err != nil {
-		return 0, err
-	}
-
-	logQuery(query)
-
-	tx, err := Begin(ctx)
-	if err != nil {
-		return 0, err
-	}
-
-	stmt, err := tx.PrepareNamed(query.Query())
-	if err != nil {
-		return 0, err
-	}
-
-	var id int64
-	if err := stmt.Get(&id, query.Arg()); err != nil {
-		return 0, err
-	}
-
-	return id, nil
+	return 0, errors.New("failed connect one")
 }
 
 func connectMany(ctx context.Context, v *schema.Value) error {
+	// TODO: issue-2509 реализовать connectMany
 	return nil
 }
 

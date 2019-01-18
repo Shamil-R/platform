@@ -193,6 +193,10 @@ func (l DirectiveList) HasField() bool {
 	return hasDirective(l, isFieldDirective)
 }
 
+func (l DirectiveList) HasRelation() bool {
+	return hasDirective(l, isRelationDirective)
+}
+
 func (l DirectiveList) Primary() *Directive {
 	return firstDirective(l, isPrimaryDirective)
 }

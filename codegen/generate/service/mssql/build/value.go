@@ -8,8 +8,12 @@ import (
 func Value(value *schema.Value, query query.Values) error {
 	for _, child := range value.Children() {
 		fieldDef := value.Definition().Fields().ByName(child.Name)
-		field := fieldDef.Directives().Field().ArgName()
-		query.AddValue(field, child.Value().Conv())
+		if !fieldDef.Directives().HasRelation() {
+			field := fieldDef.Directives().Field()
+			if field != nil {
+				query.AddValue(field.ArgName(), child.Value().Conv())
+			}
+		}
 	}
 	return nil
 }

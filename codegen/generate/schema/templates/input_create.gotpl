@@ -15,6 +15,7 @@ input {{ .Name }}CreateInput
 	{{- range .Fields.RelationsManyToOne }}
 	{{ .Name }}: {{ .Directives.Relation.ArgObject }}CreateOneWithout{{ firstRuneToUpper .Directives.Relation.ArgField }}Input!
 	{{- template "copy_directive" .Directives.Field }}
+	{{- template "copy_directive" .Directives.Relation }}
 	{{- end }}
 }
 {{- end }}

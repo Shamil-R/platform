@@ -133,29 +133,6 @@ func getDefaultValues(ctx context.Context, dirName string, argName string) (stri
 	return arg.Value.Raw, nil
 }
 
-// func useTable(query query.Table, value *schema.Value) error {
-// 	def := value.Definition()
-
-// 	table := def.Directives().Table()
-// 	if table == nil {
-// 		return DirectiveDoesNotExist.New("table")
-// 	}
-
-// 	query.SetTable(table.ArgName())
-
-// 	return nil
-// }
-
-func useColumns(query query.Columns, value *schema.Value) error {
-	def := value.Definition()
-	for _, child := range value.Children() {
-		fieldDef := def.Fields().ByName(child.Name)
-		col := fieldDef.Directives().Field().ArgName()
-		query.AddColumn(col, child.Name)
-	}
-	return nil
-}
-
 func getPrimaryColumn(ctx context.Context) (string, error) {
 	field, err := extractField(ctx)
 	if err != nil {
