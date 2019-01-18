@@ -80,40 +80,40 @@ func (f *FieldDefinition) Relation() *FieldDefinition {
 // 	return r.fieldDefinitionCache
 // }
 
-type FieldList []*FieldDefinition
+type FieldDefinitionList []*FieldDefinition
 
-func (l FieldList) HasRelations() bool {
+func (l FieldDefinitionList) HasRelations() bool {
 	return hasField(l, isRelation)
 }
 
-func (l FieldList) Primary() *FieldDefinition {
+func (l FieldDefinitionList) Primary() *FieldDefinition {
 	return firstField(l, isPrimaryField)
 }
 
-func (l FieldList) RelationsOneToMany() FieldList {
+func (l FieldDefinitionList) RelationsOneToMany() FieldDefinitionList {
 	return filterFields(l, isOneToManyRelation)
 }
 
-func (l FieldList) RelationsManyToOne() FieldList {
+func (l FieldDefinitionList) RelationsManyToOne() FieldDefinitionList {
 	return filterFields(l, isManyToOneRelation)
 }
 
-func (l FieldList) Relations() FieldList {
+func (l FieldDefinitionList) Relations() FieldDefinitionList {
 	return filterFields(l, isRelation)
 }
 
-func (l FieldList) NotRelations() FieldList {
+func (l FieldDefinitionList) NotRelations() FieldDefinitionList {
 	return filterFields(l, notRelation)
 }
 
-func (l FieldList) ByName(name string) *FieldDefinition {
+func (l FieldDefinitionList) ByName(name string) *FieldDefinition {
 	fn := func(field *FieldDefinition) bool {
 		return field.Name == name
 	}
 	return firstField(l, fn)
 }
 
-func (l FieldList) ByType(name string) *FieldDefinition {
+func (l FieldDefinitionList) ByType(name string) *FieldDefinition {
 	fn := func(field *FieldDefinition) bool {
 		return field.Type().Name() == name
 	}
@@ -154,11 +154,11 @@ func notRelation(field *FieldDefinition) bool {
 
 type fieldFilter func(field *FieldDefinition) bool
 
-func hasField(list FieldList, filter fieldFilter) bool {
+func hasField(list FieldDefinitionList, filter fieldFilter) bool {
 	return firstField(list, filter) != nil
 }
 
-func firstField(list FieldList, filter fieldFilter) *FieldDefinition {
+func firstField(list FieldDefinitionList, filter fieldFilter) *FieldDefinition {
 	for _, field := range list {
 		if filter(field) {
 			return field
@@ -167,8 +167,8 @@ func firstField(list FieldList, filter fieldFilter) *FieldDefinition {
 	return nil
 }
 
-func filterFields(list FieldList, filter fieldFilter) FieldList {
-	fields := make(FieldList, 0, len(list))
+func filterFields(list FieldDefinitionList, filter fieldFilter) FieldDefinitionList {
+	fields := make(FieldDefinitionList, 0, len(list))
 	for _, field := range list {
 		if filter(field) {
 			fields = append(fields, field)

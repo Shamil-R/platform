@@ -13,7 +13,7 @@ func ForceDelete(ctx context.Context, result interface{}) error {
 
 	query := query.NewForceDelete()
 
-	if err := build.TableFromContext(ctx, query); err != nil {
+	if err := build.TableFromField(ctx, query); err != nil {
 		return err
 	}
 

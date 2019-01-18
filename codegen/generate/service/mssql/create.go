@@ -18,7 +18,7 @@ func Create(ctx context.Context, result interface{}, f ArgName) error {
 func create(ctx context.Context, result interface{}, f ArgName) error {
 	query := query.NewInsert()
 
-	if err := build.TableFromContext(ctx, query); err != nil {
+	if err := build.TableFromField(ctx, query); err != nil {
 		return err
 	}
 
@@ -198,13 +198,13 @@ func connectMany(ctx context.Context, v *schema.Value) error {
 }
 
 func createResult(ctx context.Context, id int64, result interface{}) error {
-	query := query.NewSelect()
+	q := query.NewSelect()
 
-	if err := build.TableFromContext(ctx, query); err != nil {
+	if err := build.TableFromSelection(ctx, q); err != nil {
 		return err
 	}
 
-	if err := fillColumns(ctx, query); err != nil {
+	if err := build.ColumnsFromSelection(ctx, q); err != nil {
 		return err
 	}
 
@@ -213,21 +213,21 @@ func createResult(ctx context.Context, id int64, result interface{}) error {
 		return err
 	}
 
-	query.AddСondition(col, "eq", id)
+	q.AddСondition(col, "eq", id)
 
-	logQuery(query)
+	logQuery(q)
 
 	tx, err := Begin(ctx)
 	if err != nil {
 		return err
 	}
 
-	stmt, err := tx.PrepareNamed(query.Query())
+	stmt, err := tx.PrepareNamed(q.Query())
 	if err != nil {
 		return err
 	}
 
-	if err := stmt.Get(result, query.Arg()); err != nil {
+	if err := stmt.Get(result, q.Arg()); err != nil {
 		return err
 	}
 

@@ -9,7 +9,7 @@ import (
 func Update(ctx context.Context, result interface{}, f ArgName) error {
 	query := query.NewUpdate()
 
-	if err := build.TableFromContext(ctx, query); err != nil {
+	if err := build.TableFromField(ctx, query); err != nil {
 		return err
 	}
 
