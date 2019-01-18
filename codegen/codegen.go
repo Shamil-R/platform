@@ -22,7 +22,7 @@ func Generate(v *viper.Viper) error {
 	if err := service.Generate(cfg.ServiceConfig()); err != nil {
 		return err
 	}
-	if err := service.Init(cfg.ServiceConfig()); err != nil {
+	if err := service.Init(cfg.ServiceConfig(), v); err != nil {
 		return err
 	}
 	if err := server.Generate(cfg.ServerConfig()); err != nil {
@@ -60,7 +60,7 @@ func GenerateInit(v *viper.Viper) error {
 	if err != nil {
 		return err
 	}
-	return service.Init(cfg.ServiceConfig())
+	return service.Init(cfg.ServiceConfig(), v)
 }
 
 func GenerateServer(v *viper.Viper) error {

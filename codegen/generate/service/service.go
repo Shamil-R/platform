@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"fmt"
+	"github.com/spf13/viper"
 	"gitlab/nefco/platform/codegen/helper"
 	"gitlab/nefco/platform/codegen/schema"
 	"gitlab/nefco/platform/service"
@@ -14,6 +15,7 @@ import (
 
 type Generator interface {
 	Box() packr.Box
+	Init(string, *viper.Viper) error
 }
 
 func generator(name string) (Generator, error) {
@@ -80,32 +82,14 @@ func Generate(cfg Config) error {
 	return nil
 }
 
-func Init(cfg Config) error {
-
-	gen, err := generator(defaultGenerator)
+func Init(cfg Config, v *viper.Viper) error {
+	m, err := generator(defaultGenerator)
 	if err != nil {
 		return err
 	}
 
-	tmpl, err := helper.ReadTemplate("migration/migration", gen.Box())
+	err = m.Init(cfg.Schema.Path, v)
 	if err != nil {
-		return err
-	}
-
-	sch, err := schema.LoadSchema(cfg.Schema.Path)
-	if err != nil {
-		return err
-	}
-
-	buf := bytes.NewBuffer([]byte{})
-
-	if err := tmpl.Execute(buf, sch); err != nil {
-		return err
-	}
-
-	filename := path.Join(cfg.Service.Dir(), "migration.sql")
-
-	if err := helper.WriteFile(filename, buf); err != nil {
 		return err
 	}
 

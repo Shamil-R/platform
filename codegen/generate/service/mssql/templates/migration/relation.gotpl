@@ -3,9 +3,9 @@
 		{{$tablename := .Directives.Table.ArgName}}
 
 		{{- range .Fields.RelationsManyToOne }}
-			ALTER TABLE [dbo].[{{$tablename}}]
+			ALTER TABLE [{{$tablename}}]
 			ADD CONSTRAINT {{$tablename}}_fk_{{ .Directives.Field.ArgName }}
-			FOREIGN KEY ([{{ .Directives.Field.ArgName }}]) REFERENCES [{{ .Directives.Relation.ArgTable }}] ([{{ .Directives.Relation.ArgOwnerKey }}])
+			FOREIGN KEY ([{{ .Directives.Field.ArgName }}]) REFERENCES [{{ .Directives.Relation.ArgTable }}] ([{{ .Directives.Relation.ArgOwnerKey }}]);
 		{{- end }}
 	{{- end }}
 {{- end }}
