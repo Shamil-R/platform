@@ -1,2 +1,3 @@
+{{- template "migration/deleteRelation" .Types.WholeObjects }}
 {{- template "migration/table" .Types.WholeObjects }}
 {{- template "migration/relation" .Types.WholeObjects }}

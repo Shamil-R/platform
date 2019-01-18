@@ -1,6 +1,10 @@
 {{- define "migration/table" }}
 {{- $type := dict "Int" "INT" "Boolean" "BIT" "Float" "FLOAT" }}
 	{{- range . }}
+		IF OBJECT_ID('{{ .Directives.Table.ArgName }}', 'U') IS NOT NULL
+        BEGIN
+            DROP TABLE [{{ .Directives.Table.ArgName }}]
+        END
 		CREATE TABLE [{{ .Directives.Table.ArgName }}]
 		(
 			{{- range .Fields.NotRelations }}
