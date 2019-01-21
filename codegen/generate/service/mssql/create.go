@@ -3,7 +3,6 @@ package mssql
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/jmoiron/sqlx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
@@ -48,7 +47,6 @@ func create(ctx context.Context, result interface{}, f ArgName) error {
 	}
 
 	logQuery(query)
-	fmt.Println("---")
 
 	tx, err := Begin(ctx)
 	if err != nil {
@@ -78,9 +76,9 @@ func create(ctx context.Context, result interface{}, f ArgName) error {
 		}
 	}
 
-	/*if err := createResult(ctx, id, result); err != nil {
+	if err := createResult(ctx, id, result); err != nil {
 		return err
-	}*/
+	}
 
 	return nil
 }
@@ -199,22 +197,17 @@ func connectMany(ctx context.Context, v *schema.Value,
 	for _, child := range v.Children() {
 		queryObj := query.NewUpdate()
 
-		//fmt.Println("-start-")
 		if err := build.TableFromValue(child.Value(), queryObj); err != nil {
 			return err
 		}
-		//logQuery(queryObj)
 
 		queryObj.AddValue(foreignKey, id)
-		//logQuery(queryObj)
 
 		if err := build.ConditionsFromValue(child.Value(), queryObj); err != nil {
 			return err
 		}
 		logQuery(queryObj)
 
-		//fmt.Println("-stop-")
-		//return nil
 
 		tx, err := Begin(ctx)
 		if err != nil {
@@ -233,17 +226,11 @@ func connectMany(ctx context.Context, v *schema.Value,
 
 		_query = tx.Rebind(_query)
 
-		rows, err := tx.Exec(_query, args...)
-		if err != nil {
-			return err
-		}
-
-		_, err = rows.RowsAffected()
+		_, err = tx.Exec(_query, args...)
 		if err != nil {
 			return err
 		}
 	}
-	// TODO: issue-2509 реализовать connectMany
 
 	return nil
 }
