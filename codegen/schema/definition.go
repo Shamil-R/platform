@@ -15,12 +15,12 @@ var defaultFields map[string]bool = map[string]bool{
 type Definition struct {
 	*ast.Definition
 	schema     *Schema
-	fields     FieldList
+	fields     FieldDefinitionList
 	directives DirectiveList
 	mutations  ActionList
 	queries    ActionList
 	relations  ActionList
-	enum  	   EnumValueList
+	enum       EnumValueList
 }
 
 func (d *Definition) IsMutation() bool {
@@ -39,11 +39,11 @@ func (d *Definition) IsEnum() bool {
 	return d.Kind == ast.Enum
 }
 
-func (d *Definition) Fields() FieldList {
+func (d *Definition) Fields() FieldDefinitionList {
 	if d.fields != nil {
 		return d.fields
 	}
-	d.fields = make(FieldList, 0, len(d.Definition.Fields))
+	d.fields = make(FieldDefinitionList, 0, len(d.Definition.Fields))
 	for _, field := range d.Definition.Fields {
 		if defaultFields[field.Name] == true {
 			continue
@@ -92,16 +92,16 @@ func (d *Definition) Mutations() ActionList {
 	}
 	pluralName := inflection.Plural(d.Name)
 	checks := map[string]string{
-		ACTION_CREATE 		        + d.Name: 	  ACTION_CREATE,
-		ACTION_UPDATE 		        + d.Name: 	  ACTION_UPDATE,
-		ACTION_DELETE 		        + d.Name: 	  ACTION_DELETE,
-		ACTION_UPSERT 		        + d.Name: 	  ACTION_UPSERT,
-		ACTION_DELETE_MANY 	        + pluralName: ACTION_DELETE_MANY,
-		ACTION_UPDATE_MANY 	        + pluralName: ACTION_UPDATE_MANY,
-		ACTION_FORCE_DELETE	        + d.Name:     ACTION_FORCE_DELETE,
-		ACTION_FORCE_DELETE_MANY	+ pluralName: ACTION_FORCE_DELETE_MANY,
-		ACTION_RESTORE				+ d.Name:     ACTION_RESTORE,
-		ACTION_RESTORE_MANY			+ pluralName: ACTION_RESTORE_MANY,
+		ACTION_CREATE + d.Name:                ACTION_CREATE,
+		ACTION_UPDATE + d.Name:                ACTION_UPDATE,
+		ACTION_DELETE + d.Name:                ACTION_DELETE,
+		ACTION_UPSERT + d.Name:                ACTION_UPSERT,
+		ACTION_DELETE_MANY + pluralName:       ACTION_DELETE_MANY,
+		ACTION_UPDATE_MANY + pluralName:       ACTION_UPDATE_MANY,
+		ACTION_FORCE_DELETE + d.Name:          ACTION_FORCE_DELETE,
+		ACTION_FORCE_DELETE_MANY + pluralName: ACTION_FORCE_DELETE_MANY,
+		ACTION_RESTORE + d.Name:               ACTION_RESTORE,
+		ACTION_RESTORE_MANY + pluralName:      ACTION_RESTORE_MANY,
 	}
 	for _, field := range mutation.Fields() {
 		if act, ok := checks[field.Name]; ok {

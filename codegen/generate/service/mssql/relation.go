@@ -11,11 +11,11 @@ import (
 func Relation(ctx context.Context, objID int, result interface{}) error {
 	query := query.NewSelect()
 
-	if err := build.TableFromContext(ctx, query); err != nil {
+	if err := build.TableFromSelection(ctx, query); err != nil {
 		return err
 	}
 
-	if err := fillColumns(ctx, query); err != nil {
+	if err := build.ColumnsFromSelection(ctx, query); err != nil {
 		return err
 	}
 

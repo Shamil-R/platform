@@ -30,6 +30,29 @@ func extractField(ctx context.Context) (*schema.Field, error) {
 	return field, nil
 }
 
+func extractFieldsFromSelection(ctx context.Context) (schema.FieldList, error) {
+	field, err := extractField(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return field.SelectionSet().Fields(), nil
+}
+
+func extractDefinitionFromSelection(ctx context.Context) (*schema.Definition, error) {
+	fields, err := extractFieldsFromSelection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(fields) == 0 {
+		return nil, DoesNotExist.New("definition does not exist in selection")
+	}
+
+	def := fields[0].ObjectDefinition()
+
+	return def, nil
+}
+
 func ExtractArgument(ctx context.Context, name string) (*schema.Value, error) {
 	return extractArgument(ctx, name)
 }

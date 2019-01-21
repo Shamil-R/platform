@@ -82,25 +82,6 @@ func fillTableCondition(ctx context.Context, query query.Table) error {
 	return nil
 }
 
-func fillColumns(ctx context.Context, query query.Columns) error {
-	field, err := extractField(ctx)
-	if err != nil {
-		return err
-	}
-
-	for _, sel := range field.SelectionSet().Fields() {
-		directives := sel.Definition().Directives()
-		relation := directives.Relation()
-		if relation == nil {
-			field := directives.Field().ArgName()
-			query.AddColumn(field, sel.Name)
-		} else {
-		}
-	}
-
-	return nil
-}
-
 func fillValues(ctx context.Context, query query.Values, f ArgName) error {
 	data, err := extractArgument(ctx, f())
 	if err != nil {

@@ -53,20 +53,22 @@ func (f *Field) ObjectDefinition() *Definition {
 	return f.objectDefinitionCache
 }
 
+type FieldList []*Field
+
 type SelectionSet struct {
 	ast.SelectionSet
-	fields []*Field
+	fieldsCache []*Field
 }
 
-func (s SelectionSet) Fields() []*Field {
-	if s.fields == nil {
-		s.fields = make([]*Field, 0, len(s.SelectionSet))
+func (s SelectionSet) Fields() FieldList {
+	if s.fieldsCache == nil {
+		s.fieldsCache = make(FieldList, 0, len(s.SelectionSet))
 		for _, sel := range s.SelectionSet {
 			if f, ok := sel.(*ast.Field); ok {
 				field := &Field{Field: f}
-				s.fields = append(s.fields, field)
+				s.fieldsCache = append(s.fieldsCache, field)
 			}
 		}
 	}
-	return s.fields
+	return s.fieldsCache
 }
