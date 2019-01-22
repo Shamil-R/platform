@@ -1,6 +1,10 @@
 {{- define "soft_delete_mutation" }}
-    delete{{ . }}(where: {{ . }}WhereUniqueInput!): {{ . }}
-    deleteMany{{ plural . }}(where: {{ . }}WhereInput): BatchPayload!
-    restore{{ . }}(where: {{ . }}WhereUniqueInput!): {{ . }}
-    restoreMany{{ plural . }}(where: {{ . }}WhereInput): BatchPayload!
+	delete{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
+	{{- template "copy_directive" .Directives.Table }}
+	deleteMany{{ plural .Name }}(where: {{ .Name }}WhereInput): BatchPayload!
+	{{- template "copy_directive" .Directives.Table }}
+	restore{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
+	{{- template "copy_directive" .Directives.Table }}
+	restoreMany{{ plural .Name }}(where: {{ .Name }}WhereInput): BatchPayload!
+	{{- template "copy_directive" .Directives.Table }}
 {{- end }}

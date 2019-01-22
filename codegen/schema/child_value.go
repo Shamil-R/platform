@@ -29,9 +29,9 @@ func (v *ChildValue) Directives() DirectiveList {
 
 type ChildValueList []*ChildValue
 
-/* func (l ChildValueList) Create() *ChildValue {
+func (l ChildValueList) Create() *ChildValue {
 	return firstChildValue(l, isCreateChildValue)
-} */
+}
 
 func (l ChildValueList) Connect() *ChildValue {
 	return firstChildValue(l, isConnectChildValue)

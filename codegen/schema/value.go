@@ -1,8 +1,9 @@
 package schema
 
 import (
-	"github.com/vektah/gqlparser/ast"
 	"strconv"
+
+	"github.com/vektah/gqlparser/ast"
 )
 
 type Value struct {
@@ -29,7 +30,10 @@ func (v *Value) Definition() *Definition {
 func (v *Value) Conv() interface{} {
 	switch v.Kind {
 	case ast.IntValue:
-		n, _ := strconv.Atoi(v.Raw)
+		n, err := strconv.ParseInt(v.Raw, 10, 64)
+		if err != nil {
+			panic("failed conv raw to int64")
+		}
 		return n
 	case ast.ListValue:
 		var arr []string

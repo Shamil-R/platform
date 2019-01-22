@@ -2,19 +2,20 @@ package mssql
 
 import (
 	"context"
-	"github.com/jmoiron/sqlx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+
+	"github.com/jmoiron/sqlx"
 )
 
 func Relation(ctx context.Context, objID int, result interface{}) error {
 	query := query.NewSelect()
 
-	if err := fillTable(ctx, query); err != nil {
+	if err := build.TableFromSelection(ctx, query); err != nil {
 		return err
 	}
 
-	if err := fillColumns(ctx, query); err != nil {
+	if err := build.ColumnsFromSelection(ctx, query); err != nil {
 		return err
 	}
 

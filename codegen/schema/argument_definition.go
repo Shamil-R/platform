@@ -5,10 +5,17 @@ import "github.com/vektah/gqlparser/ast"
 type ArgumentDefinition struct {
 	*ast.ArgumentDefinition
 	fieldDefinition *FieldDefinition
+	typeCache       *Type
 }
 
 func (a *ArgumentDefinition) Type() *Type {
-	return &Type{a.ArgumentDefinition.Type, a.fieldDefinition.parent.schema}
+	if a.typeCache == nil {
+		a.typeCache = &Type{
+			Type:  a.ArgumentDefinition.Type,
+			types: a.fieldDefinition.parent.schema.Types(),
+		}
+	}
+	return a.typeCache
 }
 
 type ArgumentDefinitionList []*ArgumentDefinition

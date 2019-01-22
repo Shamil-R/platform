@@ -9,6 +9,7 @@ type zelect struct {
 	*tableBlock
 	*conditionsBlock
 	columns []string
+	aliases []string
 	skip int
 	first int
 	last int
@@ -29,6 +30,7 @@ func NewSelect() *zelect {
 func (q *zelect) AddColumn(column, alias string) {
 	col := fmt.Sprintf("[%s] AS %s", column, alias)
 	q.columns = append(q.columns, col)
+	q.aliases = append(q.aliases, alias)
 }
 
 func (q *zelect) Query() string {
@@ -81,7 +83,7 @@ func (q *zelect) Query() string {
 
 	query := fmt.Sprintf(
 		"SELECT %s from (SELECT ROW_NUMBER() over (%s) as __num, %s FROM %s %s ) a where 1=1  %s %s",
-		strings.Join(q.columns, ", "),
+		strings.Join(q.aliases, ", "),
 		overorderby,
 		strings.Join(q.columns, ", "),
 		q.table,

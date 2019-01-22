@@ -22,8 +22,8 @@ func NewInsert() *insert {
 func (q *insert) AddValue(column string, value interface{}) {
 	col := fmt.Sprintf("[%s]", column)
 	q.columns = append(q.columns, col)
-	val := q.setArg(column, column)
-	q.values = append(q.values, fmt.Sprintf(":%s", val))
+	placeholder := q.setArg(column, value)
+	q.values = append(q.values, fmt.Sprintf(":%s", placeholder))
 
 }
 

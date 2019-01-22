@@ -1,48 +1,13 @@
 type User {
-    id: ID! @unique
-    name: String!
-    # roles: [RoleObject!]!
-    materials: [Material!]!
-    orders: [Order!]!
-    posts: [Post!]!
+		id: ID! @unique
+		name: String!
+		materials: [Material!]!
+    # orders: [Order!]!
+    # trips: [Trip!]!
 }
-
-# type RoleObject {
-#     id: ID! @unique
-#     object: String!
-#     access: RoleAccess!
-# }
 
 type Material {
-    id: ID! @unique
-    name: String!
-    author: User!
-}
-
-type Order {
-  id: ID! @unique
-  count: Int!
-  owner: User!
-}
-
-type Post {
-  id: ID! @unique
-  text: String!
-  writer: User!
-}
-
-"""
-Уровни доступа
-"""
-enum RoleAccess {
-    """
-    Создание
-    """
-    CREATE
-    """
-    Чтение
-    """
-    READ
-    UPDATE
-    DELETE
+		id: ID! @unique
+		title: String!
+		user: User!
 }

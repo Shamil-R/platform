@@ -1,22 +1,28 @@
 {{- define "mutation" }}
 type Mutation {
 {{- range . }}
-    create{{ .Name }}(data: {{ .Name }}CreateInput!): {{ .Name }}!
-    upsert{{ .Name }}(where: {{ .Name }}WhereUniqueInput!, create: {{ .Name }}CreateInput!, update: {{ .Name }}UpdateInput!): {{ .Name }}
-    update{{ .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
-    updateMany{{ plural .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereInput): BatchPayload!
-    forceDelete{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
-    forceDeleteMany{{ plural .Name }}(where: {{ .Name }}WhereInput): BatchPayload!
-    {{- $name := .Name }}
-    {{- /* Рассматриваем директиву softDelete */}}
+	create{{ .Name }}(data: {{ .Name }}CreateInput!): {{ .Name }}!
+	{{- template "copy_directive" .Directives.Table }}
+	upsert{{ .Name }}(where: {{ .Name }}WhereUniqueInput!, create: {{ .Name }}CreateInput!, update: {{ .Name }}UpdateInput!): {{ .Name }}
+	{{- template "copy_directive" .Directives.Table }}
+	update{{ .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
+	{{- template "copy_directive" .Directives.Table }}
+	updateMany{{ plural .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereInput): BatchPayload!
+	{{- template "copy_directive" .Directives.Table }}
+	forceDelete{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
+	{{- template "copy_directive" .Directives.Table }}
+	forceDeleteMany{{ plural .Name }}(where: {{ .Name }}WhereInput): BatchPayload!
+	{{- template "copy_directive" .Directives.Table }}
+	{{- $type := . }}
+	{{- /* Рассматриваем директиву softDelete */}}
 	{{- with .Directives.ByName "softDelete" }}
 		{{- /* Проверяем не запрещена ли директива */}}
 		{{- with .Arguments.ByName `disable` }}
 			{{- if ne .Value.Raw "true" }}
-			{{- template "soft_delete_mutation" $name }}
+			{{- template "soft_delete_mutation" $type }}
 			{{- end }}
 		{{- else }}
-		{{- template "soft_delete_mutation" $name }}
+		{{- template "soft_delete_mutation" $type }}
 		{{- end }}
 	{{- end }}
 {{- end }}

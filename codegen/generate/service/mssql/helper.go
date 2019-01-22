@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/joomcode/errorx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
+
+	"github.com/joomcode/errorx"
 
 	"github.com/99designs/gqlgen/graphql"
 )
@@ -47,29 +48,6 @@ func extractArgument(ctx context.Context, name string) (*schema.Value, error) {
 	return argument.Value(), nil
 }
 
-func fillTable(ctx context.Context, query query.Table) error {
-	field, err := extractField(ctx)
-	if err != nil {
-		return err
-	}
-
-	sels := field.SelectionSet().Fields()
-	if len(sels) == 0 {
-		return SelectionDoesNotExist
-	}
-
-	def := sels[0].ObjectDefinition()
-
-	table := def.Directives().Table()
-	if table == nil {
-		return DirectiveDoesNotExist.New("table")
-	}
-
-	query.SetTable(table.ArgName())
-
-	return nil
-}
-
 func fillSoftDeleteFieldName(ctx context.Context, query query.Trasher) error {
 	field, err := extractField(ctx)
 	if err != nil {
@@ -104,25 +82,6 @@ func fillTableCondition(ctx context.Context, query query.Table) error {
 	return nil
 }
 
-func fillColumns(ctx context.Context, query query.Columns) error {
-	field, err := extractField(ctx)
-	if err != nil {
-		return err
-	}
-
-	for _, sel := range field.SelectionSet().Fields() {
-		directives := sel.Definition().Directives()
-		relation := directives.Relation()
-		if relation == nil {
-			field := directives.Field().ArgName()
-			query.AddColumn(field, sel.Name)
-		} else {
-		}
-	}
-
-	return nil
-}
-
 func fillValues(ctx context.Context, query query.Values, f ArgName) error {
 	data, err := extractArgument(ctx, f())
 	if err != nil {
@@ -153,29 +112,6 @@ func getDefaultValues(ctx context.Context, dirName string, argName string) (stri
 	arg := dir.Arguments.ForName(argName)
 
 	return arg.Value.Raw, nil
-}
-
-func useTable(query query.Table, value *schema.Value) error {
-	def := value.Definition()
-
-	table := def.Directives().Table()
-	if table == nil {
-		return DirectiveDoesNotExist.New("table")
-	}
-
-	query.SetTable(table.ArgName())
-
-	return nil
-}
-
-func useColumns(query query.Columns, value *schema.Value) error {
-	def := value.Definition()
-	for _, child := range value.Children() {
-		fieldDef := def.Fields().ByName(child.Name)
-		col := fieldDef.Directives().Field().ArgName()
-		query.AddColumn(col, child.Name)
-	}
-	return nil
 }
 
 func getPrimaryColumn(ctx context.Context) (string, error) {
