@@ -63,7 +63,8 @@ func fillSoftDeleteFieldName(ctx context.Context, query query.Trasher) error {
 
 	softDelete := def.Directives().SoftDelete()
 	if softDelete == nil {
-		return DirectiveDoesNotExist.New("softDelete")
+		return nil
+		//return DirectiveDoesNotExist.New("softDelete")
 	}
 
 	query.SetTrashedFieldName(softDelete.ArgDeleteField())

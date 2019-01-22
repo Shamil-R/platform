@@ -347,7 +347,7 @@ func isTimestampDirective(directive *Directive) bool {
 }
 
 func isSoftDeleteDirective(directive *Directive) bool {
-	return directive.Name == DirectiveSoftDelete
+	return directive.Name == DirectiveSoftDelete && directive.Arguments().Disable().Value().Raw == "false"
 }
 
 func byNameDirective(name string) directiveFilter {

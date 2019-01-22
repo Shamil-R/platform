@@ -64,3 +64,7 @@ func (l ArgumentList) Data() *Argument {
 func (l ArgumentList) Where() *Argument {
 	return l.ByName("where")
 }
+
+func (l ArgumentList) Disable() *Argument {
+	return l.ByName("disable")
+}
