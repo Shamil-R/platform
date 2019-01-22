@@ -18,16 +18,20 @@ func Create(ctx context.Context, result interface{}, f ArgName) error {
 func create(ctx context.Context, result interface{}, f ArgName) error {
 	query := query.NewInsert()
 
-	if err := build.TableFromField(ctx, query); err != nil {
-		return err
-	}
-
 	data, err := build.ExtractArgument(ctx, "data")
 	if err != nil {
 		return err
 	}
 
+	if err := build.TableFromValue(data, query); err != nil {
+		return err
+	}
+
 	if err := build.Value(data, query); err != nil {
+		return err
+	}
+
+	if err := build.DefaulValues(data, query); err != nil {
 		return err
 	}
 
