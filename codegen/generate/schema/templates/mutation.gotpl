@@ -2,17 +2,11 @@
 type Mutation {
 {{- range . }}
 	create{{ .Name }}(data: {{ .Name }}CreateInput!): {{ .Name }}!
-	{{- template "copy_directive" .Directives.Table }}
 	upsert{{ .Name }}(where: {{ .Name }}WhereUniqueInput!, create: {{ .Name }}CreateInput!, update: {{ .Name }}UpdateInput!): {{ .Name }}
-	{{- template "copy_directive" .Directives.Table }}
 	update{{ .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
-	{{- template "copy_directive" .Directives.Table }}
-	updateMany{{ plural .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereInput): BatchPayload!
-	{{- template "copy_directive" .Directives.Table }}
+	updateMany{{ plural .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereInput): [{{ .Name }}]
 	forceDelete{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
-	{{- template "copy_directive" .Directives.Table }}
-	forceDeleteMany{{ plural .Name }}(where: {{ .Name }}WhereInput): BatchPayload!
-	{{- template "copy_directive" .Directives.Table }}
+	forceDeleteMany{{ plural .Name }}(where: {{ .Name }}WhereInput): [{{ .Name }}]
 	{{- $type := . }}
 	{{- /* Рассматриваем директиву softDelete */}}
 	{{- with .Directives.ByName "softDelete" }}

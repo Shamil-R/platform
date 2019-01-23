@@ -1,6 +1,7 @@
 package build
 
 import (
+	"context"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
 	"time"
@@ -29,6 +30,47 @@ func Timestamp(value *schema.Value, q query.Values) (error) {
 	timestamp := value.Definition().Directives().Timestamp()
 	if timestamp != nil && !timestamp.IsDisable() {
 		q.AddValue(timestamp.ArgCreateField(), time.Now())
+		q.AddValue(timestamp.ArgUpdateField(), time.Now())
+	}
+
+	return nil
+}
+
+
+func SoftDeleteFromDirective(ctx context.Context, q query.Values) error {
+	def, err := extractDefinitionFromSelection(ctx)
+	if err != nil {
+		return err
+	}
+
+	if softDelete := def.Directives().SoftDelete(); softDelete != nil && !softDelete.IsDisable() {
+		q.AddValue(softDelete.ArgDeleteField(), time.Now())
+	}
+
+	return nil
+}
+
+func TimestampFromDirective(ctx context.Context, q query.Values) error {
+	def, err := extractDefinitionFromSelection(ctx)
+	if err != nil {
+		return err
+	}
+	timestamp := def.Directives().Timestamp()
+	if timestamp != nil && !timestamp.IsDisable() {
+		q.AddValue(timestamp.ArgCreateField(), time.Now())
+		q.AddValue(timestamp.ArgUpdateField(), time.Now())
+	}
+
+	return nil
+}
+
+func UpdatedFromDirective(ctx context.Context, q query.Values) error {
+	def, err := extractDefinitionFromSelection(ctx)
+	if err != nil {
+		return err
+	}
+	timestamp := def.Directives().Timestamp()
+	if timestamp != nil && !timestamp.IsDisable() {
 		q.AddValue(timestamp.ArgUpdateField(), time.Now())
 	}
 

@@ -22,7 +22,7 @@ func Delete(ctx context.Context, result interface{}) error {
 		return err
 	}
 
-	if err := build.Conditions(ctx, query); err != nil {
+	if err := build.ConditionsFromValue(data, query); err != nil {
 		return err
 	}
 

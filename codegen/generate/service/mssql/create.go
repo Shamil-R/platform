@@ -18,12 +18,12 @@ func Create(ctx context.Context, result interface{}, f ArgName) error {
 func create(ctx context.Context, result interface{}, f ArgName) error {
 	query := query.NewInsert()
 
-	data, err := build.ExtractArgument(ctx, "data")
-	if err != nil {
+	if err := build.TableFromSelection(ctx, query); err != nil {
 		return err
 	}
 
-	if err := build.TableFromValue(data, query); err != nil {
+	data, err := build.ExtractArgument(ctx, "data")
+	if err != nil {
 		return err
 	}
 
@@ -31,7 +31,7 @@ func create(ctx context.Context, result interface{}, f ArgName) error {
 		return err
 	}
 
-	if err := build.Timestamp(data, query); err != nil {
+	if err := build.TimestampFromDirective(ctx, query); err != nil {
 		return err
 	}
 
@@ -134,7 +134,7 @@ func createOne(ctx context.Context, v *schema.Value) (int64, error) {
 		return 0, err
 	}
 
-	if err := build.Timestamp(v, query); err != nil {
+	if err := build.TimestampFromDirective(ctx, query); err != nil {
 		return 0, err
 	}
 
@@ -171,7 +171,7 @@ func createMany(ctx context.Context, v *schema.Value,
 			return err
 		}
 
-		if err := build.Timestamp(child.Value(), query); err != nil {
+		if err := build.TimestampFromDirective(ctx, query); err != nil {
 			return err
 		}
 
