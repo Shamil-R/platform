@@ -160,6 +160,10 @@ func (d *TimestampDirective) ArgDisable() string {
 	return directiveArgument(&d.argDisableCache, d, "disable")
 }
 
+func (d *TimestampDirective) IsDisable() bool {
+	return directiveArgument(&d.argDisableCache, d, "disable") == "true"
+}
+
 func (d *TimestampDirective) ArgCreateField() string {
 	return directiveArgument(&d.argCreateFieldCache, d, "createField")
 }
@@ -176,6 +180,10 @@ type SoftDeleteDirective struct {
 
 func (d *SoftDeleteDirective) ArgDisable() string {
 	return directiveArgument(&d.argDisable, d, "disable")
+}
+
+func (d *SoftDeleteDirective) IsDisable() bool {
+	return directiveArgument(&d.argDisable, d, "disable") == "true"
 }
 
 func (d *SoftDeleteDirective) ArgDeleteField() string {
