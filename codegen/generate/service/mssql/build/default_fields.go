@@ -7,15 +7,29 @@ import (
 )
 
 
-func DefaulValues(value *schema.Value, q query.Values) (error) {
-	t := time.Now()
-
-	if softDelete := value.Definition().Directives().SoftDelete(); softDelete != nil && !softDelete.IsDisable() {
-		q.AddValue(softDelete.ArgDeleteField(), t)
+func DefaultValues(value *schema.Value, q query.Values) (error) {
+	if err := SoftDelete(value, q); err != nil {
+		return err
 	}
-	if timestamp := value.Definition().Directives().Timestamp(); timestamp != nil && !timestamp.IsDisable() {
-		q.AddValue(timestamp.ArgCreateField(), t)
-		q.AddValue(timestamp.ArgUpdateField(), t)
+	if err := Timestamp(value, q); err != nil {
+		return err
+	}
+	return nil
+}
+
+func SoftDelete(value *schema.Value, q query.Values) (error) {
+	if softDelete := value.Definition().Directives().SoftDelete(); softDelete != nil && !softDelete.IsDisable() {
+		q.AddValue(softDelete.ArgDeleteField(), time.Now())
+	}
+
+	return nil
+}
+
+func Timestamp(value *schema.Value, q query.Values) (error) {
+	timestamp := value.Definition().Directives().Timestamp()
+	if timestamp != nil && !timestamp.IsDisable() {
+		q.AddValue(timestamp.ArgCreateField(), time.Now())
+		q.AddValue(timestamp.ArgUpdateField(), time.Now())
 	}
 
 	return nil

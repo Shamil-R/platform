@@ -31,7 +31,7 @@ func create(ctx context.Context, result interface{}, f ArgName) error {
 		return err
 	}
 
-	if err := build.DefaulValues(data, query); err != nil {
+	if err := build.Timestamp(data, query); err != nil {
 		return err
 	}
 
@@ -134,6 +134,10 @@ func createOne(ctx context.Context, v *schema.Value) (int64, error) {
 		return 0, err
 	}
 
+	if err := build.Timestamp(v, query); err != nil {
+		return 0, err
+	}
+
 	logQuery(query)
 
 	tx, err := Begin(ctx)
@@ -164,6 +168,10 @@ func createMany(ctx context.Context, v *schema.Value,
 		}
 
 		if err := build.Value(child.Value(), query); err != nil {
+			return err
+		}
+
+		if err := build.Timestamp(child.Value(), query); err != nil {
 			return err
 		}
 
