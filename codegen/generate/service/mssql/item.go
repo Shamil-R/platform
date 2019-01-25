@@ -9,7 +9,7 @@ import (
 func Item(ctx context.Context, result interface{}) error {
 	query := query.NewSelect()
 
-	if err := build.TableFromSelection(ctx, query); err != nil {
+	if err := build.TableFromSchema(ctx, query); err != nil {
 		return err
 	}
 

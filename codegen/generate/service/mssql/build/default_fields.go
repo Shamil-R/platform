@@ -3,31 +3,47 @@ package build
 import (
 	"context"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
-	"gitlab/nefco/platform/codegen/schema"
+	_schema "gitlab/nefco/platform/service/schema"
 	"time"
 )
 
 
-func DefaultValues(value *schema.Value, q query.Values) (error) {
-	if err := SoftDelete(value, q); err != nil {
+func DefaultValues(ctx context.Context, q query.Values) (error) {
+	if err := SoftDelete(ctx, q); err != nil {
 		return err
 	}
-	if err := Timestamp(value, q); err != nil {
+	if err := Timestamp(ctx, q); err != nil {
 		return err
 	}
 	return nil
 }
 
-func SoftDelete(value *schema.Value, q query.Values) (error) {
-	if softDelete := value.Definition().Directives().SoftDelete(); softDelete != nil && !softDelete.IsDisable() {
+func SoftDelete(ctx context.Context, q query.Values) (error) {
+	field, err := extractField(ctx)
+	if err != nil {
+		return err
+	}
+	objectName := field.Definition().Directives().Object().ArgName()
+
+	schemaCtx := _schema.GetContext(ctx)
+
+	if softDelete := schemaCtx.Types().ByName(objectName).Directives().SoftDelete(); softDelete != nil && !softDelete.IsDisable() {
 		q.AddValue(softDelete.ArgDeleteField(), time.Now())
 	}
 
 	return nil
 }
 
-func Timestamp(value *schema.Value, q query.Values) (error) {
-	timestamp := value.Definition().Directives().Timestamp()
+func Timestamp(ctx context.Context, q query.Values) (error) {
+	field, err := extractField(ctx)
+	if err != nil {
+		return err
+	}
+	objectName := field.Definition().Directives().Object().ArgName()
+
+	schemaCtx := _schema.GetContext(ctx)
+
+	timestamp := schemaCtx.Types().ByName(objectName).Directives().Timestamp()
 	if timestamp != nil && !timestamp.IsDisable() {
 		q.AddValue(timestamp.ArgCreateField(), time.Now())
 		q.AddValue(timestamp.ArgUpdateField(), time.Now())

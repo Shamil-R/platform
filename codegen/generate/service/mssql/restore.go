@@ -10,7 +10,7 @@ import (
 func Restore(ctx context.Context, result interface{}) error {
 	query := query.NewUpdate()
 
-	if err := build.TableFromField(ctx, query); err != nil {
+	if err := build.TableFromSchema(ctx, query); err != nil {
 		return err
 	}
 

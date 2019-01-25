@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
 
@@ -64,7 +65,6 @@ func fillSoftDeleteFieldName(ctx context.Context, query query.Trasher) error {
 	softDelete := def.Directives().SoftDelete()
 	if softDelete == nil {
 		return nil
-		//return DirectiveDoesNotExist.New("softDelete")
 	}
 
 	query.SetTrashedFieldName(softDelete.ArgDeleteField())
@@ -73,12 +73,21 @@ func fillSoftDeleteFieldName(ctx context.Context, query query.Trasher) error {
 }
 
 func fillTableCondition(ctx context.Context, query query.Table) error {
-	where, err := extractArgument(ctx, "where")
+	data, err := build.ExtractArgument(ctx, "where")
+	if err != nil {
+		return err
+	}
+
+	if err := build.TableFromInput(ctx, data, query); err != nil {
+		return err
+	}
+
+	/*where, err := extractArgument(ctx, "where")
 	if err != nil {
 		return err
 	}
 	tableName := where.Definition().Directives().ByName("table").Arguments().ByName("name").Value().Raw
-	query.SetTable(tableName)
+	query.SetTable(tableName)*/
 
 	return nil
 }
@@ -136,7 +145,14 @@ func getRelationColumn(ctx context.Context) (string, error) {
 	if relation == nil {
 		return "", errors.New("relation directive in field does not exist")
 	}
-	col := relation.ArgForeignKey()
+	var col string
+	if relation.ArgType() == "one_to_many" {
+		col = relation.ArgForeignKey()
+	} else if relation.ArgType() == "many_to_one" {
+		col = relation.ArgOwnerKey()
+	} else {
+		return "", errors.New("localKey directive in field does not exist")
+	}
 	return col, nil
 }
 

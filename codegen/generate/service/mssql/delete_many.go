@@ -15,10 +15,10 @@ func DeleteMany(ctx context.Context, result interface{}) (error) {
 		return err
 	}
 
-	if err := build.TableFromValue(data, query); err != nil {
+	if err := build.TableFromInput(ctx, data, query); err != nil {
 		return err
 	}
-	if err := build.SoftDelete(data, query); err != nil {
+	if err := build.SoftDelete(ctx, query); err != nil {
 		return err
 	}
 

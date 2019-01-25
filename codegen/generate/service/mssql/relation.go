@@ -9,21 +9,27 @@ import (
 )
 
 func Relation(ctx context.Context, objID int, result interface{}) error {
-	query := query.NewSelect()
+	//todo make select parent object
+	//parent := query.NewSelect()
 
-	if err := build.TableFromSelection(ctx, query); err != nil {
+
+
+
+	q := query.NewSelect()
+
+	if err := build.TableFromSelection(ctx, q); err != nil {
 		return err
 	}
 
-	if err := build.ColumnsFromSelection(ctx, query); err != nil {
+	if err := build.ColumnsFromSelection(ctx, q); err != nil {
 		return err
 	}
 
-	if err := build.Conditions(ctx, query); err != nil {
+	if err := build.Conditions(ctx, q); err != nil {
 		return err
 	}
 
-	if err := build.Pagination(ctx, query); err != nil {
+	if err := build.Pagination(ctx, q); err != nil {
 		return err
 	}
 
@@ -32,16 +38,16 @@ func Relation(ctx context.Context, objID int, result interface{}) error {
 		return err
 	}
 
-	query.AddСondition(col, "eq", objID)
+	q.AddСondition(col, "eq", objID)
 
-	logQuery(query)
+	logQuery(q)
 
 	tx, err := Begin(ctx)
 	if err != nil {
 		return err
 	}
 
-	_query, args, err := sqlx.Named(query.Query(), query.Arg())
+	_query, args, err := sqlx.Named(q.Query(), q.Arg())
 	if err != nil {
 		return err
 	}

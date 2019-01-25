@@ -9,20 +9,15 @@ import (
 func Delete(ctx context.Context, result interface{}) error {
 	query := query.NewUpdate()
 
-	data, err := build.ExtractArgument(ctx, "where")
-	if err != nil {
+	if err := fillTableCondition(ctx, query); err != nil {
 		return err
 	}
 
-	if err := build.TableFromValue(data, query); err != nil {
+	if err := build.SoftDelete(ctx, query); err != nil {
 		return err
 	}
 
-	if err := build.SoftDelete(data, query); err != nil {
-		return err
-	}
-
-	if err := build.ConditionsFromValue(data, query); err != nil {
+	if err := build.Conditions(ctx, query); err != nil {
 		return err
 	}
 

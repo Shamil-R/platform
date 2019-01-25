@@ -2,11 +2,17 @@
 type Mutation {
 {{- range . }}
 	create{{ .Name }}(data: {{ .Name }}CreateInput!): {{ .Name }}!
+	@object(name: "{{ .Name }}")
 	upsert{{ .Name }}(where: {{ .Name }}WhereUniqueInput!, create: {{ .Name }}CreateInput!, update: {{ .Name }}UpdateInput!): {{ .Name }}
+	@object(name: "{{ .Name }}")
 	update{{ .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
+	@object(name: "{{ .Name }}")
 	updateMany{{ plural .Name }}(data: {{ .Name }}UpdateInput!, where: {{ .Name }}WhereInput): [{{ .Name }}]
+	@object(name: "{{ .Name }}")
 	forceDelete{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
+	@object(name: "{{ .Name }}")
 	forceDeleteMany{{ plural .Name }}(where: {{ .Name }}WhereInput): [{{ .Name }}]
+	@object(name: "{{ .Name }}")
 	{{- $type := . }}
 	{{- /* Рассматриваем директиву softDelete */}}
 	{{- with .Directives.ByName "softDelete" }}

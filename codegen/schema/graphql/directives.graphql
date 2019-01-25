@@ -49,3 +49,7 @@ directive @condition(
 directive @order(
   type: String!
 ) on INPUT_FIELD_DEFINITION
+
+directive @object(
+  name: String!
+) on OBJECT

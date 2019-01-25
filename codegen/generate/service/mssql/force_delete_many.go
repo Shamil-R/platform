@@ -10,6 +10,7 @@ import (
 func ForceDeleteMany(ctx context.Context, result interface{}) (error) {
 	query := query.NewForceDelete()
 
+
 	if err := fillTableCondition(ctx, query); err != nil {
 		return err
 	}

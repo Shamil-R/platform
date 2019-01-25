@@ -16,6 +16,7 @@ const (
 	DirectiveCondition  = "condition"
 	DirectiveOrder      = "order"
 	DirectiveTimestamp  = "timestamp"
+	DirectiveObject     = "object"
 	DirectiveSoftDelete = "softDelete"
 
 	InputDirectiveCreateOneWithout  = "create_one_without"
@@ -110,6 +111,8 @@ type RelationDirective struct {
 	argForeignKey string
 	argTable 	  string
 	argOwnerKey	  string
+	argType	  	  string
+	argLocalKey	  string
 }
 
 func (d *RelationDirective) ArgObject() string {
@@ -132,6 +135,14 @@ func (d *RelationDirective) ArgOwnerKey() string {
 	return directiveArgument(&d.argOwnerKey, d, "ownerKey")
 }
 
+func (d *RelationDirective) ArgType() string {
+	return directiveArgument(&d.argType, d, "type")
+}
+
+func (d *RelationDirective) ArgLocalKey() string {
+	return directiveArgument(&d.argLocalKey, d, "localKey")
+}
+
 type InputDirective struct {
 	*Directive
 	argNameCache string
@@ -147,6 +158,15 @@ func (d *InputDirective) IsCreateOneWithout() bool {
 
 func (d *InputDirective) IsCreateManyWithout() bool {
 	return d.ArgName() == InputDirectiveCreateManyWithout
+}
+
+type ObjectDirective struct {
+	*Directive
+	argName     string
+}
+
+func (d *ObjectDirective) ArgName() string {
+	return directiveArgument(&d.argName, d, "name")
 }
 
 type TimestampDirective struct {
@@ -272,6 +292,14 @@ func (l DirectiveList) SoftDelete() *SoftDeleteDirective {
 	return &SoftDeleteDirective{Directive: directive}
 }
 
+func (l DirectiveList) Object() *ObjectDirective {
+	directive := firstDirective(l, isObjectDirective)
+	if directive == nil {
+		return nil
+	}
+	return &ObjectDirective{Directive: directive}
+}
+
 func (l DirectiveList) Relation() *RelationDirective {
 	directive := firstDirective(l, isRelationDirective)
 	if directive == nil {
@@ -352,6 +380,10 @@ func isOrderDirective(directive *Directive) bool {
 
 func isTimestampDirective(directive *Directive) bool {
 	return directive.Name == DirectiveTimestamp
+}
+
+func isObjectDirective(directive *Directive) bool {
+	return directive.Name == DirectiveObject
 }
 
 func isSoftDeleteDirective(directive *Directive) bool {

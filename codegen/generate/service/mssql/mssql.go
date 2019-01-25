@@ -3,6 +3,7 @@ package mssql
 import (
 	"bytes"
 	"fmt"
+	"github.com/vektah/gqlparser/ast"
 	"gitlab/nefco/platform/codegen/helper"
 	"gitlab/nefco/platform/codegen/schema"
 	"go.uber.org/zap"
@@ -70,7 +71,7 @@ func (s *mssql) connection(v *viper.Viper) (*sqlx.DB, error) {
 	return db, nil
 }
 
-func (s *mssql) Middleware(v *viper.Viper) (handler.Option, error) {
+func (s *mssql) Middleware(v *viper.Viper, schema *ast.Schema) (handler.Option, error) {
 	db, err := s.connection(v)
 	if err != nil {
 		return nil, err

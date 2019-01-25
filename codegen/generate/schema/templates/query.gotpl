@@ -2,6 +2,7 @@
 type Query {
 {{- range . }}
 	{{ untitle .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
+	@object(name: "{{ .Name }}")
 	{{- /* Рассматриваем директиву softDelete */}}
 	{{- $trashed := "" }}
 	{{- with .Directives.ByName "softDelete" }}
@@ -15,6 +16,7 @@ type Query {
 		{{- end }}
 	{{- end }}
 	{{ untitle .Name | plural }}(where: {{ .Name }}WhereInput, orderBy: {{ .Name }}OrderByInput, skip: Int, first: Int, last: Int{{print $trashed}}): [{{ .Name }}]!
+	@object(name: "{{ .Name }}")
 {{- end }}
 }
 {{- end }}
