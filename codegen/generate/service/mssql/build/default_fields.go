@@ -19,7 +19,7 @@ func DefaultValues(ctx context.Context, q query.Values) (error) {
 }
 
 func SoftDelete(ctx context.Context, q query.Values) (error) {
-	field, err := extractField(ctx)
+	field, err := ExtractField(ctx)
 	if err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func SoftDelete(ctx context.Context, q query.Values) (error) {
 }
 
 func Timestamp(ctx context.Context, q query.Values) (error) {
-	field, err := extractField(ctx)
+	field, err := ExtractField(ctx)
 	if err != nil {
 		return err
 	}

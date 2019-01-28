@@ -2,34 +2,28 @@ package mssql
 
 import (
 	"context"
+	"github.com/jmoiron/sqlx"
+
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
-
-	"github.com/jmoiron/sqlx"
 )
 
-func Relation(ctx context.Context, objID int, result interface{}) error {
-	//todo make select parent object
-	//parent := query.NewSelect()
+func RelationItem(ctx context.Context, objID int, result interface{}) error {
+	child := query.NewSelect()
 
-
-
-
-	q := query.NewSelect()
-
-	if err := build.TableFromSelection(ctx, q); err != nil {
+	if err := build.TableFromSelection(ctx, child); err != nil {
 		return err
 	}
 
-	if err := build.ColumnsFromSelection(ctx, q); err != nil {
+	if err := build.ColumnsFromSelection(ctx, child); err != nil {
 		return err
 	}
 
-	if err := build.Conditions(ctx, q); err != nil {
+	if err := build.Conditions(ctx, child); err != nil {
 		return err
 	}
 
-	if err := build.Pagination(ctx, q); err != nil {
+	if err := build.Pagination(ctx, child); err != nil {
 		return err
 	}
 
@@ -38,16 +32,16 @@ func Relation(ctx context.Context, objID int, result interface{}) error {
 		return err
 	}
 
-	q.AddСondition(col, "eq", objID)
+	child.AddСondition(col, "eq", objID)
 
-	logQuery(q)
+	logQuery(child)
 
 	tx, err := Begin(ctx)
 	if err != nil {
 		return err
 	}
 
-	_query, args, err := sqlx.Named(q.Query(), q.Arg())
+	_query, args, err := sqlx.Named(child.Query(), child.Arg())
 	if err != nil {
 		return err
 	}
