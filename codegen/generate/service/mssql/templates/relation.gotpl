@@ -2,14 +2,13 @@
 	res := {{ template "new" .Type }}
 
 	{{- $funcName := "RelationCollection" }}
-	{{- if eq .Directives.Relation.ArgType "many_to_one" }}
-		{{- $funcName := "RelationItem" }}
+	{{- if eq .Directives.Relation.ArgType "one_to_many" }}
+		{{- $funcName = "RelationItem" }}
 	{{- end }}
 
 	if err := mssql.{{$funcName}}(ctx, obj.ID, &res); err != nil {
 		return res, err
 	}
-
 
 	return res, nil
 {{- end }}
