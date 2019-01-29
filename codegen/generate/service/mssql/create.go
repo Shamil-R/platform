@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
 )
 
@@ -16,7 +16,7 @@ func Create(ctx context.Context, result interface{}, f ArgName) error {
 }
 
 func create(ctx context.Context, result interface{}, f ArgName) error {
-	query := query.NewInsert()
+	query := _query.NewInsert()
 
 	if err := build.TableFromSchema(ctx, query); err != nil {
 		return err
@@ -124,7 +124,7 @@ func createManyWithout(ctx context.Context, v *schema.Value,
 }
 
 func createOne(ctx context.Context, v *schema.Value) (int64, error) {
-	query := query.NewInsert()
+	query := _query.NewInsert()
 
 	if err := build.TableFromInput(ctx, v, query); err != nil {
 		return 0, err
@@ -161,7 +161,7 @@ func createOne(ctx context.Context, v *schema.Value) (int64, error) {
 func createMany(ctx context.Context, v *schema.Value,
 	foreignKey string, id int64) error {
 	for _, child := range v.Children() {
-		query := query.NewInsert()
+		query := _query.NewInsert()
 
 		if err := build.TableFromInput(ctx, child.Value(), query); err != nil {
 			return err
@@ -210,7 +210,7 @@ func connectMany(ctx context.Context, v *schema.Value) error {
 }
 
 func createResult(ctx context.Context, id int64, result interface{}) error {
-	q := query.NewSelect()
+	q := _query.NewSelect()
 
 
 	if err := build.TableFromSchema(ctx, q); err != nil {

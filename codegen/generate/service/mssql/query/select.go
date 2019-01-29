@@ -8,16 +8,17 @@ import (
 type zelect struct {
 	*tableBlock
 	*conditionsBlock
-	columns []string
-	aliases []string
-	skip int
-	first int
-	last int
-	orderField string
-	orderIndex string
-	withTrashed bool
-	onlyTrashed bool
-	trashedFieldName string
+	query 				string
+	columns 			[]string
+	aliases 			[]string
+	skip 				int
+	first 				int
+	last 				int
+	orderField 			string
+	orderIndex 			string
+	withTrashed 		bool
+	onlyTrashed 		bool
+	trashedFieldName	string
 }
 
 func NewSelect() *zelect {
@@ -34,6 +35,9 @@ func (q *zelect) AddColumn(column, alias string) {
 }
 
 func (q *zelect) Query() string {
+	if q.query != "" {
+		return q.query
+	}
 	overfield := "(select null)"
 	overindex := " "
 
@@ -83,6 +87,7 @@ func (q *zelect) Query() string {
 		where(paginationCondition),//todo вынести формирование в отдельный файл
 		order(q.orderField, q.orderIndex),
 	)
+	q.query = query
 	return query
 }
 

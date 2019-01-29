@@ -2,14 +2,13 @@ package mssql
 
 import (
 	"context"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
-
 	"github.com/jmoiron/sqlx"
+	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
 func Collection(ctx context.Context, result interface{}) error {
-	query := query.NewSelect()
+	query := _query.NewSelect()
 
 	if err := build.TableFromSchema(ctx, query); err != nil {
 		return err
@@ -35,10 +34,6 @@ func Collection(ctx context.Context, result interface{}) error {
 		return err
 	}
 
-	if err := fillSoftDeleteFieldName(ctx, query); err != nil {
-		return err
-	}
-
 	logQuery(query)
 
 	tx, err := Begin(ctx)
@@ -46,17 +41,17 @@ func Collection(ctx context.Context, result interface{}) error {
 		return err
 	}
 
-	_query, args, err := sqlx.Named(query.Query(), query.Arg())
+	sqlxQuery, args, err := sqlx.Named(query.Query(), query.Arg())
 	if err != nil {
 		return err
 	}
 
-	_query, args, err = sqlx.In(_query, args...)
+	sqlxQuery, args, err = sqlx.In(sqlxQuery, args...)
 	if err != nil {
 		return err
 	}
-	_query = tx.Rebind(_query)
-	if err := tx.Select(result, _query, args...); err != nil {
+	sqlxQuery = tx.Rebind(sqlxQuery)
+	if err := tx.Select(result, sqlxQuery, args...); err != nil {
 		return err
 	}
 

@@ -3,13 +3,17 @@ package mssql
 import (
 	"context"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
 func Delete(ctx context.Context, result interface{}) error {
-	query := query.NewUpdate()
+	if err := Item(ctx, result); err != nil {
+		return err
+	}
 
-	if err := fillTableCondition(ctx, query); err != nil {
+	query := _query.NewUpdate()
+
+	if err := build.TableFromSchema(ctx, query); err != nil {
 		return err
 	}
 
@@ -29,10 +33,6 @@ func Delete(ctx context.Context, result interface{}) error {
 	}
 
 	if _, err := tx.NamedExec(query.Query(), query.Arg()); err != nil {
-		return err
-	}
-
-	if err := Item(ctx, result); err != nil {
 		return err
 	}
 

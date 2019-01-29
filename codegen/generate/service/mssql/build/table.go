@@ -12,8 +12,7 @@ func TableFromSchemaParent(ctx context.Context, q query.Table) error {
 	if err != nil {
 		return err
 	}
-	//spew.Dump(field)
-	//return nil
+
 	objectName := field.Definition().Directives().Object().ArgName()
 
 	schemaCtx := _schema.GetContext(ctx)

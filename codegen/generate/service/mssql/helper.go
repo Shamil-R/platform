@@ -49,7 +49,7 @@ func extractArgument(ctx context.Context, name string) (*schema.Value, error) {
 	return argument.Value(), nil
 }
 
-func fillSoftDeleteFieldName(ctx context.Context, query query.Trasher) error {
+/*func fillSoftDeleteFieldName(ctx context.Context, query query.Trasher) error {
 	field, err := extractField(ctx)
 	if err != nil {
 		return err
@@ -70,7 +70,7 @@ func fillSoftDeleteFieldName(ctx context.Context, query query.Trasher) error {
 	query.SetTrashedFieldName(softDelete.ArgDeleteField())
 
 	return nil
-}
+}*/
 
 func fillTableCondition(ctx context.Context, query query.Table) error {
 	data, err := build.ExtractArgument(ctx, "where")
@@ -81,13 +81,6 @@ func fillTableCondition(ctx context.Context, query query.Table) error {
 	if err := build.TableFromInput(ctx, data, query); err != nil {
 		return err
 	}
-
-	/*where, err := extractArgument(ctx, "where")
-	if err != nil {
-		return err
-	}
-	tableName := where.Definition().Directives().ByName("table").Arguments().ByName("name").Value().Raw
-	query.SetTable(tableName)*/
 
 	return nil
 }

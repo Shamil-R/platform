@@ -1,7 +1,7 @@
 {{- define "forceDeleteMany" }}
 	res := {{ template "new" .Type }}
 
-	if err := mssql.ForceDeleteMany(ctx, res); err != nil {
+	if err := mssql.ForceDeleteMany(ctx, &res); err != nil {
 		return res, err
 	}
 

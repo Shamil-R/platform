@@ -2,7 +2,7 @@
 	res := {{ template "new" .Type }}
 
 	var f mssql.ArgName = func() string {return "data"}
-	if err := mssql.UpdateMany(ctx, res, f); err != nil {
+	if err := mssql.UpdateMany(ctx, &res, f); err != nil {
 		return res, err
 	}
 
