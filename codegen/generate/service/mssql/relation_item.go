@@ -8,6 +8,7 @@ import (
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
+//todo deleted_at is null
 func RelationItem(ctx context.Context, objID int, result interface{}) error {
 	child := query.NewSelect()
 

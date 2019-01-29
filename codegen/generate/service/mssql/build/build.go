@@ -21,7 +21,7 @@ var (
 
 func ExtractParentField(ctx context.Context) (*schema.Field, error) {
 	resCtx := graphql.GetResolverContext(ctx)
-	if resCtx.Field.Field == nil {
+	if resCtx.Parent.Field.Field == nil {
 		return nil, DoesNotExist.New("field does not exist in context")
 	}
 
