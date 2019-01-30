@@ -4,17 +4,26 @@ import (
 	"context"
 	"github.com/jmoiron/sqlx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
 func UpdateMany(ctx context.Context, result interface{}, f ArgName) (error) {
-	query := query.NewUpdate()
+	query := _query.NewUpdate()
 
 	if err := fillTableCondition(ctx, query); err != nil {
 		return err
 	}
 
-	if err := fillValues(ctx, query, f); err != nil {
+	data, err := build.ExtractArgument(ctx, "data")
+	if err != nil {
+		return err
+	}
+
+	if err := build.Value(data, query); err != nil {
+		return err
+	}
+
+	if err := build.Updated(ctx, query); err != nil {
 		return err
 	}
 
@@ -29,27 +38,26 @@ func UpdateMany(ctx context.Context, result interface{}, f ArgName) (error) {
 		return err
 	}
 
-	_query, args, err := sqlx.Named(query.Query(), query.Arg())
+	sqlxQuery, args, err := sqlx.Named(query.Query(), query.Arg())
 	if err != nil {
 		return err
 	}
 
-	_query, args, err = sqlx.In(_query, args...)
+	sqlxQuery, args, err = sqlx.In(sqlxQuery, args...)
 	if err != nil {
 		return err
 	}
 
-	_query = tx.Rebind(_query)
+	sqlxQuery = tx.Rebind(sqlxQuery)
 
-	_, err = tx.Exec(_query, args...)
+	_, err = tx.Exec(sqlxQuery, args...)
 	if err != nil {
 		return err
 	}
 
-	//result, err := rows.RowsAffected()
-	//if err != nil {
-	//	return 0, err
-	//}
+	if err := Collection(ctx, result); err != nil {
+		return err
+	}
 
 	return nil
 }
