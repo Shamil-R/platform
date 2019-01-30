@@ -3,7 +3,7 @@ package mssql
 import (
 	"context"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
 func ForceDelete(ctx context.Context, result interface{}) error {
@@ -11,7 +11,7 @@ func ForceDelete(ctx context.Context, result interface{}) error {
 		return err
 	}
 
-	query := query.NewForceDelete()
+	query := _query.NewForceDelete()
 
 	if err := build.TableFromSchema(ctx, query); err != nil {
 		return err

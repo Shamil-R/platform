@@ -55,6 +55,5 @@ func RelationItem(ctx context.Context, objID int, result interface{}) error {
 	if err := tx.Select(result, _query, args...); err != nil {
 		return err
 	}
-
 	return nil
 }

@@ -4,14 +4,17 @@ import (
 	"context"
 	"github.com/jmoiron/sqlx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
 func ForceDeleteMany(ctx context.Context, result interface{}) (error) {
-	query := query.NewForceDelete()
+	if err := Collection(ctx, result); err != nil {
+		return err
+	}
 
+	query := _query.NewForceDelete()
 
-	if err := fillTableCondition(ctx, query); err != nil {
+	if err := build.TableFromSchema(ctx, query); err != nil {
 		return err
 	}
 
@@ -26,24 +29,19 @@ func ForceDeleteMany(ctx context.Context, result interface{}) (error) {
 		return err
 	}
 
-	_query, args, err := sqlx.Named(query.Query(), query.Arg())
+	sqlxQuery, args, err := sqlx.Named(query.Query(), query.Arg())
 	if err != nil {
 		return err
 	}
 
-	_query, args, err = sqlx.In(_query, args...)
+	sqlxQuery, args, err = sqlx.In(sqlxQuery, args...)
 	if err != nil {
 		return err
 	}
 
-	_query = tx.Rebind(_query)
+	sqlxQuery = tx.Rebind(sqlxQuery)
 
-	rows, err := tx.Exec(_query, args...)
-	if err != nil {
-		return err
-	}
-
-	_, err = rows.RowsAffected()
+	_, err = tx.Exec(sqlxQuery, args...)
 	if err != nil {
 		return err
 	}

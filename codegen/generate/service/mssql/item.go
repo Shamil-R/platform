@@ -3,11 +3,11 @@ package mssql
 import (
 	"context"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
 func Item(ctx context.Context, result interface{}) error {
-	query := query.NewSelect()
+	query := _query.NewSelect()
 
 	if err := build.TableFromSchema(ctx, query); err != nil {
 		return err
