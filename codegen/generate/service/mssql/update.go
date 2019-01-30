@@ -13,7 +13,7 @@ func Update(ctx context.Context, result interface{}) error {
 		return err
 	}
 
-	data, err := build.ExtractArgument(ctx, "data")
+	data, err := build.ExtractArgument(ctx, "update")
 	if err != nil {
 		return err
 	}

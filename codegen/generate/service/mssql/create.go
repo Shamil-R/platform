@@ -22,7 +22,7 @@ func create(ctx context.Context, result interface{}) error {
 		return err
 	}
 
-	data, err := build.ExtractArgument(ctx, "data")
+	data, err := build.ExtractArgument(ctx, "create")
 	if err != nil {
 		return err
 	}

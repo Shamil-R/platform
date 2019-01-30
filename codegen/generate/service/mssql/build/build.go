@@ -17,7 +17,6 @@ var (
 
 	ArgumentDoesNotExist  = DoesNotExist.NewSubtype("argument")
 	DirectiveDoesNotExist = DoesNotExist.NewSubtype("directive")
-	SelectionDoesNotExist = DoesNotExist.New("selection")
 )
 
 func ExtractParentField(ctx context.Context) (*schema.Field, error) {
