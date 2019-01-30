@@ -6,7 +6,7 @@ import (
 	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
-func Update(ctx context.Context, result interface{}, f ArgName) error {
+func Update(ctx context.Context, result interface{}) error {
 	query := _query.NewUpdate()
 
 	if err := build.TableFromSchema(ctx, query); err != nil {

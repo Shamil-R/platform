@@ -8,14 +8,14 @@ import (
 	"gitlab/nefco/platform/codegen/schema"
 )
 
-func Create(ctx context.Context, result interface{}, f ArgName) error {
-	if err := create(ctx, result, f); err != nil {
+func Create(ctx context.Context, result interface{}) error {
+	if err := create(ctx, result); err != nil {
 		return err
 	}
 	return nil
 }
 
-func create(ctx context.Context, result interface{}, f ArgName) error {
+func create(ctx context.Context, result interface{}) error {
 	query := _query.NewInsert()
 
 	if err := build.TableFromSchema(ctx, query); err != nil {

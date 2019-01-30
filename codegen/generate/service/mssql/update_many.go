@@ -7,7 +7,7 @@ import (
 	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
-func UpdateMany(ctx context.Context, result interface{}, f ArgName) (error) {
+func UpdateMany(ctx context.Context, result interface{}) (error) {
 	query := _query.NewUpdate()
 
 	if err := fillTableCondition(ctx, query); err != nil {
