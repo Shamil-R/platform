@@ -3,14 +3,13 @@ package mssql
 import (
 	"context"
 	"github.com/jmoiron/sqlx"
-
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
 //todo deleted_at is null
 func RelationItem(ctx context.Context, objID int, result interface{}) error {
-	child := query.NewSelect()
+	child := _query.NewSelect()
 
 	if err := build.TableFromSelection(ctx, child); err != nil {
 		return err
@@ -42,17 +41,17 @@ func RelationItem(ctx context.Context, objID int, result interface{}) error {
 		return err
 	}
 
-	_query, args, err := sqlx.Named(child.Query(), child.Arg())
+	sqlxQuery, args, err := sqlx.Named(child.Query(), child.Arg())
 	if err != nil {
 		return err
 	}
 
-	_query, args, err = sqlx.In(_query, args...)
+	sqlxQuery, args, err = sqlx.In(sqlxQuery, args...)
 	if err != nil {
 		return err
 	}
-	_query = tx.Rebind(_query)
-	if err := tx.Select(result, _query, args...); err != nil {
+	sqlxQuery = tx.Rebind(sqlxQuery)
+	if err := tx.Select(result, sqlxQuery, args...); err != nil {
 		return err
 	}
 	return nil

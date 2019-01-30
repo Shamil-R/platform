@@ -3,7 +3,7 @@ package mssql
 import (
 	"context"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
 //todo deleted_at is null
@@ -13,7 +13,7 @@ func RelationCollection(ctx context.Context, objID int, result interface{}) erro
 		return err
 	}
 
-	parent := query.NewSelect()
+	parent := _query.NewSelect()
 	parent.SetTable(field.ObjectDefinition().Directives().Table().ArgName())
 	parent.AddСondition(field.Definition().Directives().Relation().ArgOwnerKey(), "eq", objID)
 	parent.AddColumn(field.Definition().Directives().Relation().ArgForeignKey(), field.Definition().Directives().Relation().ArgForeignKey())
@@ -35,7 +35,7 @@ func RelationCollection(ctx context.Context, objID int, result interface{}) erro
 		return err
 	}
 
-	child := query.NewSelect()
+	child := _query.NewSelect()
 
 	if err := build.TableFromSelection(ctx, child); err != nil {
 		return err

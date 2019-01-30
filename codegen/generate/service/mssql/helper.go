@@ -21,8 +21,6 @@ var (
 	DoesNotExist = IllegalState.NewSubtype("does_not_exist")
 
 	FieldDoesNotExist     = DoesNotExist.New("field")
-	SelectionDoesNotExist = DoesNotExist.New("selection")
-	DirectiveDoesNotExist = DoesNotExist.NewSubtype("directive")
 	ArgumentDoesNotExist  = DoesNotExist.NewSubtype("argument")
 )
 
@@ -48,29 +46,6 @@ func extractArgument(ctx context.Context, name string) (*schema.Value, error) {
 	}
 	return argument.Value(), nil
 }
-
-/*func fillSoftDeleteFieldName(ctx context.Context, query query.Trasher) error {
-	field, err := extractField(ctx)
-	if err != nil {
-		return err
-	}
-
-	sels := field.SelectionSet().Fields()
-	if len(sels) == 0 {
-		return SelectionDoesNotExist
-	}
-
-	def := sels[0].ObjectDefinition()
-
-	softDelete := def.Directives().SoftDelete()
-	if softDelete == nil {
-		return nil
-	}
-
-	query.SetTrashedFieldName(softDelete.ArgDeleteField())
-
-	return nil
-}*/
 
 func fillTableCondition(ctx context.Context, query query.Table) error {
 	data, err := build.ExtractArgument(ctx, "where")
