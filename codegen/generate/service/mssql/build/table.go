@@ -7,21 +7,6 @@ import (
 	_schema "gitlab/nefco/platform/service/schema"
 )
 
-func TableFromSchemaParent(ctx context.Context, q query.Table) error {
-	field, err := ExtractParentField(ctx)
-	if err != nil {
-		return err
-	}
-
-	objectName := field.Definition().Directives().Object().ArgName()
-
-	schemaCtx := _schema.GetContext(ctx)
-
-	q.SetTable(schemaCtx.Types().ByName(objectName).Directives().Table().ArgName())
-
-	return nil
-}
-
 func TableFromSchema(ctx context.Context, q query.Table) error {
 	field, err := ExtractField(ctx)
 	if err != nil {

@@ -27,12 +27,9 @@ func RelationItem(ctx context.Context, objID int, result interface{}) error {
 		return err
 	}
 
-	col, err := getRelationColumn(ctx)
-	if err != nil {
+	if err := build.RelationCondition(ctx, child, objID); err != nil {
 		return err
 	}
-
-	child.AddСondition(col, "eq", objID)
 
 	logQuery(child)
 

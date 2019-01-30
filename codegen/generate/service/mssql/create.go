@@ -221,12 +221,9 @@ func createResult(ctx context.Context, id int64, result interface{}) error {
 		return err
 	}
 
-	col, err := getPrimaryColumn(ctx)
-	if err != nil {
+	if err := build.PrimaryCondition(ctx, q, id); err != nil {
 		return err
 	}
-
-	q.AddСondition(col, "eq", id)
 
 	logQuery(q)
 

@@ -19,17 +19,6 @@ var (
 	DirectiveDoesNotExist = DoesNotExist.NewSubtype("directive")
 )
 
-func ExtractParentField(ctx context.Context) (*schema.Field, error) {
-	resCtx := graphql.GetResolverContext(ctx)
-	if resCtx.Parent.Field.Field == nil {
-		return nil, DoesNotExist.New("field does not exist in context")
-	}
-
-	field := &schema.Field{Field: resCtx.Parent.Field.Field}
-
-	return field, nil
-}
-
 func ExtractField(ctx context.Context) (*schema.Field, error) {
 	resCtx := graphql.GetResolverContext(ctx)
 	if resCtx.Field.Field == nil {

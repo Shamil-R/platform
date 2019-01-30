@@ -53,12 +53,9 @@ func RelationCollection(ctx context.Context, objID int, result interface{}) erro
 		return err
 	}
 
-	col, err := getRelationColumn(ctx)
-	if err != nil {
+	if err := build.RelationCondition(ctx, child, objID); err != nil {
 		return err
 	}
-
-	child.AddСondition(col, "eq", childID)
 
 	logQuery(child)
 
