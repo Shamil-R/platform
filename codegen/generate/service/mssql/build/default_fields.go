@@ -2,6 +2,7 @@ package build
 
 import (
 	"context"
+	"database/sql"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	_schema "gitlab/nefco/platform/service/schema"
 	"time"
@@ -19,6 +20,14 @@ func DefaultValues(ctx context.Context, q query.Values) (error) {
 }
 
 func SoftDelete(ctx context.Context, q query.Values) (error) {
+	return setSoftDelete(ctx, q, time.Now())
+}
+
+func Restore(ctx context.Context, q query.Values) (error) {
+	return setSoftDelete(ctx, q, sql.NullString{})
+}
+
+func setSoftDelete(ctx context.Context, q query.Values, value interface{}) (error) {
 	field, err := ExtractField(ctx)
 	if err != nil {
 		return err
@@ -28,7 +37,7 @@ func SoftDelete(ctx context.Context, q query.Values) (error) {
 	schemaCtx := _schema.GetContext(ctx)
 
 	if softDelete := schemaCtx.Types().ByName(objectName).Directives().SoftDelete(); softDelete != nil && !softDelete.IsDisable() {
-		q.AddValue(softDelete.ArgDeleteField(), time.Now())
+		q.AddValue(softDelete.ArgDeleteField(), value)
 	}
 
 	return nil

@@ -2,25 +2,20 @@ package mssql
 
 import (
 	"context"
-	"database/sql"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
 func Restore(ctx context.Context, result interface{}) error {
-	query := query.NewUpdate()
+	query := _query.NewUpdate()
 
 	if err := build.TableFromSchema(ctx, query); err != nil {
 		return err
 	}
 
-	dirName := "softDelete"
-	argName := "deleteField"
-	fieldName, err := getDefaultValues(ctx, dirName, argName)
-	if err != nil {
+	if err := build.Restore(ctx, query); err != nil {
 		return err
 	}
-	query.AddValue(fieldName, sql.NullString{})
 
 	if err := build.Conditions(ctx, query); err != nil {
 		return err
