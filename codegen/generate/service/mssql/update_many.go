@@ -10,7 +10,7 @@ import (
 func UpdateMany(ctx context.Context, result interface{}) (error) {
 	query := _query.NewUpdate()
 
-	if err := fillTableCondition(ctx, query); err != nil {
+	if err := build.TableFromSchema(ctx, query); err != nil {
 		return err
 	}
 
