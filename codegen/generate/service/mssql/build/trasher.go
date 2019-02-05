@@ -44,7 +44,7 @@ func Trasher(ctx context.Context, query query.Trasher) error {
 
 	schemaCtx := _schema.GetContext(ctx)
 
-	if schemaCtx.Types().ByName(objectName).Directives().SoftDelete().ArgDisable() == "false" {
+	if !schemaCtx.Types().ByName(objectName).Directives().SoftDelete().IsDisable() {
 		query.SetTrashedFieldName(schemaCtx.Types().ByName(objectName).Directives().SoftDelete().ArgDeleteField())
 	}
 

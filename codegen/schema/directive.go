@@ -387,7 +387,7 @@ func isObjectDirective(directive *Directive) bool {
 }
 
 func isSoftDeleteDirective(directive *Directive) bool {
-	return directive.Name == DirectiveSoftDelete && directive.Arguments().Disable().Value().Raw == "false"
+	return directive.Name == DirectiveSoftDelete
 }
 
 func byNameDirective(name string) directiveFilter {
