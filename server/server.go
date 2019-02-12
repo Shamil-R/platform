@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"gitlab/nefco/platform/service"
+	"gitlab/nefco/platform/service/auth"
 	"net/http"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -39,11 +40,21 @@ func Run(v *viper.Viper, exec graphql.ExecutableSchema) error {
 		}
 		options = append(options, o)
 	}
-
+	// вывод Playground
 	http.Handle("/", handler.Playground("Platform", "/query"))
-	// http.Handle("/login", auth.MiddlewareLogin())
-	// http.Handle("/query", auth.MiddlewareAuth(handler.GraphQL(exec, options...)))
-	http.Handle("/query", handler.GraphQL(exec, options...))
+
+	// аутентификация+авторизация
+	http.Handle("/login", auth.MiddlewareLogin())
+
+	// регистрация
+	http.Handle("/registration", auth.MiddlewareRegistration(v))
+
+	// регистрация
+	http.Handle("/confirm", auth.MiddlewareConfirm())
+
+	// graphql запросы+авторизация
+	http.Handle("/query", auth.MiddlewareAuth(handler.GraphQL(exec, options...)))
+	//http.Handle("/query", handler.GraphQL(exec, options...))
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), nil)
 }
