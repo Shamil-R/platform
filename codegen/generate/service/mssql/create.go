@@ -3,6 +3,7 @@ package mssql
 import (
 	"context"
 	"errors"
+	"github.com/jmoiron/sqlx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
@@ -109,9 +110,8 @@ func createManyWithout(ctx context.Context, v *schema.Value,
 			return err
 		}
 	}
-
 	if connect := v.Children().Connect(); connect != nil {
-		if err := connectMany(ctx, connect.Value()); err != nil {
+		if err := connectMany(ctx, connect.Value(), foreignKey, id); err != nil {
 			return err
 		}
 	}
@@ -192,8 +192,46 @@ func connectOne(ctx context.Context, v *schema.Value) (int64, error) {
 	return 0, errors.New("failed connect one")
 }
 
-func connectMany(ctx context.Context, v *schema.Value) error {
-	// TODO: issue-2509 реализовать connectMany
+func connectMany(ctx context.Context, v *schema.Value,
+	foreignKey string, id int64) error {
+	for _, child := range v.Children() {
+		queryObj := query.NewUpdate()
+
+		if err := build.TableFromValue(child.Value(), queryObj); err != nil {
+			return err
+		}
+
+		queryObj.AddValue(foreignKey, id)
+
+		if err := build.ConditionsFromValue(child.Value(), queryObj); err != nil {
+			return err
+		}
+		logQuery(queryObj)
+
+
+		tx, err := Begin(ctx)
+		if err != nil {
+			return err
+		}
+
+		_query, args, err := sqlx.Named(queryObj.Query(), queryObj.Arg())
+		if err != nil {
+			return err
+		}
+
+		_query, args, err = sqlx.In(_query, args...)
+		if err != nil {
+			return err
+		}
+
+		_query = tx.Rebind(_query)
+
+		_, err = tx.Exec(_query, args...)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
