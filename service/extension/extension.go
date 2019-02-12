@@ -5,6 +5,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/spf13/viper"
+	"github.com/vektah/gqlparser/ast"
 	"strings"
 )
 
@@ -37,7 +38,7 @@ func GetContext(ctx context.Context) *ExtensionContext {
 	return val.(*ExtensionContext)
 }
 
-func (s service) Middleware(v *viper.Viper) (handler.Option, error) {
+func (s service) Middleware(v *viper.Viper, schema *ast.Schema) (handler.Option, error) {
 	return handler.ResolverMiddleware(middleware()), nil
 }
 

@@ -1,3 +1,4 @@
+prod: false
 app:
   port: 8080
   service:

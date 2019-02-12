@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"fmt"
+	"github.com/spf13/viper"
 	"gitlab/nefco/platform/codegen/helper"
 	"gitlab/nefco/platform/codegen/schema"
 	"gitlab/nefco/platform/service"
@@ -14,6 +15,7 @@ import (
 
 type Generator interface {
 	Box() packr.Box
+	Init(string, *viper.Viper) error
 }
 
 func generator(name string) (Generator, error) {
@@ -75,6 +77,20 @@ func Generate(cfg Config) error {
 		if err := helper.WriteFile(filename, buf); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func Init(cfg Config, v *viper.Viper) error {
+	m, err := generator(defaultGenerator)
+	if err != nil {
+		return err
+	}
+
+	err = m.Init(cfg.Schema.Path, v)
+	if err != nil {
+		return err
 	}
 
 	return nil

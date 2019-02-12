@@ -3,17 +3,26 @@ package mssql
 import (
 	"context"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
-func Update(ctx context.Context, result interface{}, f ArgName) error {
-	query := query.NewUpdate()
+func Update(ctx context.Context, result interface{}) error {
+	query := _query.NewUpdate()
 
-	if err := build.TableFromField(ctx, query); err != nil {
+	if err := build.TableFromSchema(ctx, query); err != nil {
 		return err
 	}
 
-	if err := fillValues(ctx, query, f); err != nil {
+	data, err := build.ExtractArgument(ctx, "update")
+	if err != nil {
+		return err
+	}
+
+	if err := build.Value(data, query); err != nil {
+		return err
+	}
+
+	if err := build.Updated(ctx, query); err != nil {
 		return err
 	}
 

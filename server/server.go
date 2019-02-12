@@ -34,11 +34,12 @@ func Run(v *viper.Viper, exec graphql.ExecutableSchema) error {
 	options := make([]handler.Option, 0, len(middlewares))
 
 	for _, m := range middlewares {
-		o, err := m.Middleware(v)
+		o, err := m.Middleware(v, exec.Schema())
 		if err != nil {
 			return err
 		}
 		options = append(options, o)
+		logger.Info("Service added to handle", zap.String("name", m.Name()))
 	}
 	// вывод Playground
 	http.Handle("/", handler.Playground("Platform", "/query"))

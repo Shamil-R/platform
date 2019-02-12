@@ -2,61 +2,53 @@ package mssql
 
 import (
 	"context"
-	"fmt"
 	"github.com/jmoiron/sqlx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
-	"time"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 )
 
-func DeleteMany(ctx context.Context) (int, error) {
-	query := query.NewUpdate()
-	fmt.Println("table")
-	if err := fillTableCondition(ctx, query); err != nil {
-		return 0, err
+func DeleteMany(ctx context.Context, result interface{}) (error) {
+	if err := Collection(ctx, result); err != nil {
+		return err
 	}
 
-	dirName := "softDelete"
-	argName := "deleteField"
-	fieldName, err := getDefaultValues(ctx, dirName, argName)
-	if err != nil {
-		return 0, err
+	query := _query.NewUpdate()
+
+	if err := build.TableFromSchema(ctx, query); err != nil {
+		return err
 	}
-	fmt.Println(fieldName)
-	query.AddValue(fieldName, time.Now())
+
+	if err := build.SoftDelete(ctx, query); err != nil {
+		return err
+	}
 
 	if err := build.Conditions(ctx, query); err != nil {
-		return 0, err
+		return err
 	}
 
 	logQuery(query)
 
 	tx, err := Begin(ctx)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	_query, args, err := sqlx.Named(query.Query(), query.Arg())
+	sqlxQuery, args, err := sqlx.Named(query.Query(), query.Arg())
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	_query, args, err = sqlx.In(_query, args...)
+	sqlxQuery, args, err = sqlx.In(sqlxQuery, args...)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	_query = tx.Rebind(_query)
+	sqlxQuery = tx.Rebind(sqlxQuery)
 
-	rows, err := tx.Exec(_query, args...)
+	_, err = tx.Exec(sqlxQuery, args...)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	result, err := rows.RowsAffected()
-	if err != nil {
-		return 0, err
-	}
-
-	return int(result), nil
+	return nil
 }

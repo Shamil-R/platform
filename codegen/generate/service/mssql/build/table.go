@@ -4,14 +4,20 @@ import (
 	"context"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
+	_schema "gitlab/nefco/platform/service/schema"
 )
 
-func TableFromField(ctx context.Context, q query.Table) error {
-	field, err := extractField(ctx)
+func TableFromSchema(ctx context.Context, q query.Table) error {
+	field, err := ExtractField(ctx)
 	if err != nil {
 		return err
 	}
-	q.SetTable(field.Definition().Directives().Table().ArgName())
+	objectName := field.Definition().Directives().Object().ArgName()
+
+	schemaCtx := _schema.GetContext(ctx)
+
+	q.SetTable(schemaCtx.Types().ByName(objectName).Directives().Table().ArgName())
+
 	return nil
 }
 
@@ -23,8 +29,10 @@ func TableFromSelection(ctx context.Context, q query.Table) error {
 	return tableFromDirective(def, q)
 }
 
-func TableFromValue(value *schema.Value, q query.Table) error {
-	return tableFromDirective(value.Definition(), q)
+func TableFromInput(ctx context.Context, value *schema.Value, q query.Table) error {
+	objectName := value.Definition().Directives().Object().ArgName()
+	schemaCtx := _schema.GetContext(ctx)
+	return tableFromDirective(schemaCtx.Types().ByName(objectName), q)
 }
 
 func tableFromDirective(def *schema.Definition, q query.Table) error {

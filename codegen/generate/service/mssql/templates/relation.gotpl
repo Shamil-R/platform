@@ -1,7 +1,12 @@
 {{- define "relation" }}
 	res := {{ template "new" .Type }}
 
-	if err := mssql.Relation(ctx, obj.ID, &res); err != nil {
+	{{- $funcName := "RelationCollection" }}
+	{{- if eq .Directives.Relation.ArgType "one_to_many" }}
+		{{- $funcName = "RelationItem" }}
+	{{- end }}
+
+	if err := mssql.{{$funcName}}(ctx, obj.ID, &res); err != nil {
 		return res, err
 	}
 

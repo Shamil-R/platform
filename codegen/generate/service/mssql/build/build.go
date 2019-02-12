@@ -19,7 +19,7 @@ var (
 	DirectiveDoesNotExist = DoesNotExist.NewSubtype("directive")
 )
 
-func extractField(ctx context.Context) (*schema.Field, error) {
+func ExtractField(ctx context.Context) (*schema.Field, error) {
 	resCtx := graphql.GetResolverContext(ctx)
 	if resCtx.Field.Field == nil {
 		return nil, DoesNotExist.New("field does not exist in context")
@@ -31,7 +31,7 @@ func extractField(ctx context.Context) (*schema.Field, error) {
 }
 
 func extractFieldsFromSelection(ctx context.Context) (schema.FieldList, error) {
-	field, err := extractField(ctx)
+	field, err := ExtractField(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func ExtractArgument(ctx context.Context, name string) (*schema.Value, error) {
 }
 
 func extractArgument(ctx context.Context, name string) (*schema.Value, error) {
-	field, err := extractField(ctx)
+	field, err := ExtractField(ctx)
 	if err != nil {
 		return nil, err
 	}
