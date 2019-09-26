@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/joomcode/errorx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	_schema "gitlab/nefco/platform/service/schema"
 	"strconv"
 )
 
@@ -32,6 +33,20 @@ func Trasher(ctx context.Context, query query.Trasher) error {
 	}
 
 	query.SetTrashed(bwithTrashed, bonlyTrashed)
+
+	// get column name of softDelete
+	field, err := ExtractField(ctx)
+	if err != nil {
+		return err
+	}
+
+	objectName := field.Definition().Directives().Object().ArgName()
+
+	schemaCtx := _schema.GetContext(ctx)
+
+	if !schemaCtx.Types().ByName(objectName).Directives().SoftDelete().IsDisable() {
+		query.SetTrashedFieldName(schemaCtx.Types().ByName(objectName).Directives().SoftDelete().ArgDeleteField())
+	}
 
 	return nil
 }

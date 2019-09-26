@@ -3,44 +3,50 @@ package mssql
 import (
 	"context"
 	"errors"
+	"github.com/jmoiron/sqlx"
 	"gitlab/nefco/platform/codegen/generate/service/mssql/build"
-	"gitlab/nefco/platform/codegen/generate/service/mssql/query"
+	_query "gitlab/nefco/platform/codegen/generate/service/mssql/query"
 	"gitlab/nefco/platform/codegen/schema"
 )
 
-func Create(ctx context.Context, result interface{}, f ArgName) error {
-	if err := create(ctx, result, f); err != nil {
+func Create(ctx context.Context, result interface{}) error {
+	if err := create(ctx, result); err != nil {
 		return err
 	}
 	return nil
 }
 
-func create(ctx context.Context, result interface{}, f ArgName) error {
-	query := query.NewInsert()
+func create(ctx context.Context, result interface{}) error {
+	query := _query.NewInsert()
 
-	if err := fillTable(ctx, query); err != nil {
+	if err := build.TableFromSchema(ctx, query); err != nil {
 		return err
 	}
 
-	data, err := extractArgument(ctx, f())
+	data, err := build.ExtractArgument(ctx, "create")
 	if err != nil {
 		return err
 	}
 
+	if err := build.Value(data, query); err != nil {
+		return err
+	}
+
+	if err := build.Timestamp(ctx, query); err != nil {
+		return err
+	}
+
+	// create one without
 	for _, child := range data.Children() {
-		fieldDef := data.Definition().Fields().ByName(child.Name)
-
-		field := fieldDef.Directives().Field().ArgName()
-
 		input := child.Value().Definition().Directives().Input()
 		if input != nil && input.IsCreateOneWithout() {
 			id, err := createOneWithout(ctx, child.Value())
 			if err != nil {
 				return err
 			}
+			fieldDef := data.Definition().Fields().ByName(child.Name)
+			field := fieldDef.Directives().Field().ArgName()
 			query.AddValue(field, id)
-		} else {
-			query.AddValue(field, child.Value().Conv())
 		}
 	}
 
@@ -61,6 +67,19 @@ func create(ctx context.Context, result interface{}, f ArgName) error {
 		return err
 	}
 
+	// create many without
+	for _, child := range data.Children() {
+		input := child.Value().Definition().Directives().Input()
+		if input != nil && input.IsCreateManyWithout() {
+			fieldDef := data.Definition().Fields().ByName(child.Name)
+			field := fieldDef.Directives().Relation().ArgForeignKey()
+			err := createManyWithout(ctx, child.Value(), field, id)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	if err := createResult(ctx, id, result); err != nil {
 		return err
 	}
@@ -69,28 +88,53 @@ func create(ctx context.Context, result interface{}, f ArgName) error {
 }
 
 func createOneWithout(ctx context.Context, v *schema.Value) (int64, error) {
-	if connect := v.Children().Connect(); connect != nil {
-		id, err := connectOne(ctx, connect.Value())
+	if create := v.Children().Create(); create != nil {
+		id, err := createOne(ctx, create.Value())
 		if err != nil {
 			return 0, err
 		}
 		return id, nil
 	}
+
+	if connect := v.Children().Connect(); connect != nil {
+		id, err := connectOne(connect.Value())
+		if err != nil {
+			return 0, err
+		}
+		return id, nil
+	}
+
 	return 0, errors.New("create one failed")
 }
 
-func connectOne(ctx context.Context, v *schema.Value) (int64, error) {
-	query := query.NewSelect()
+func createManyWithout(ctx context.Context, v *schema.Value,
+	foreignKey string, id int64) error {
+	if create := v.Children().Create(); create != nil {
+		if err := createMany(ctx, create.Value(), foreignKey, id); err != nil {
+			return err
+		}
+	}
+	if connect := v.Children().Connect(); connect != nil {
+		if err := connectMany(ctx, connect.Value(), foreignKey, id); err != nil {
+			return err
+		}
+	}
 
-	if err := useTable(query, v); err != nil {
+	return nil
+}
+
+func createOne(ctx context.Context, v *schema.Value) (int64, error) {
+	query := _query.NewInsert()
+
+	if err := build.TableFromInput(ctx, v, query); err != nil {
 		return 0, err
 	}
 
-	if err := useColumns(query, v); err != nil {
+	if err := build.Value(v, query); err != nil {
 		return 0, err
 	}
 
-	if err := build.ConditionsFromValue(v, query); err != nil {
+	if err := build.TimestampFromDirective(ctx, query); err != nil {
 		return 0, err
 	}
 
@@ -101,50 +145,137 @@ func connectOne(ctx context.Context, v *schema.Value) (int64, error) {
 		return 0, err
 	}
 
-	stmt, err := tx.PrepareNamed(query.Query())
+	res, err := tx.NamedExec(query.Query(), query.Arg())
 	if err != nil {
 		return 0, err
 	}
 
-	var id int64
-	if err := stmt.Get(&id, query.Arg()); err != nil {
+	id, err := res.LastInsertId()
+	if err != nil {
 		return 0, err
 	}
 
 	return id, nil
 }
 
+func createMany(ctx context.Context, v *schema.Value,
+	foreignKey string, id int64) error {
+	for _, child := range v.Children() {
+		query := _query.NewInsert()
+
+		if err := build.TableFromInput(ctx, child.Value(), query); err != nil {
+			return err
+		}
+
+		if err := build.Value(child.Value(), query); err != nil {
+			return err
+		}
+
+		if err := build.TimestampFromDirective(ctx, query); err != nil {
+			return err
+		}
+
+		query.AddValue(foreignKey, id)
+
+		logQuery(query)
+
+		tx, err := Begin(ctx)
+		if err != nil {
+			return err
+		}
+
+		if _, err := tx.NamedExec(query.Query(), query.Arg()); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func connectOne(v *schema.Value) (int64, error) {
+	for _, child := range v.Children() {
+		id, ok := child.Value().Conv().(int64)
+		if !ok {
+			return 0, errors.New("failed cast in connect one")
+		}
+		return id, nil
+	}
+
+	return 0, errors.New("failed connect one")
+}
+
+func connectMany(ctx context.Context, v *schema.Value,
+	foreignKey string, id int64) error {
+	for _, child := range v.Children() {
+		queryObj := query.NewUpdate()
+
+		if err := build.TableFromValue(child.Value(), queryObj); err != nil {
+			return err
+		}
+
+		queryObj.AddValue(foreignKey, id)
+
+		if err := build.ConditionsFromValue(child.Value(), queryObj); err != nil {
+			return err
+		}
+		logQuery(queryObj)
+
+
+		tx, err := Begin(ctx)
+		if err != nil {
+			return err
+		}
+
+		_query, args, err := sqlx.Named(queryObj.Query(), queryObj.Arg())
+		if err != nil {
+			return err
+		}
+
+		_query, args, err = sqlx.In(_query, args...)
+		if err != nil {
+			return err
+		}
+
+		_query = tx.Rebind(_query)
+
+		_, err = tx.Exec(_query, args...)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func createResult(ctx context.Context, id int64, result interface{}) error {
-	query := query.NewSelect()
+	q := _query.NewSelect()
 
-	if err := fillTable(ctx, query); err != nil {
+
+	if err := build.TableFromSchema(ctx, q); err != nil {
 		return err
 	}
 
-	if err := fillColumns(ctx, query); err != nil {
+	if err := build.ColumnsFromSelection(ctx, q); err != nil {
 		return err
 	}
 
-	col, err := getPrimaryColumn(ctx)
-	if err != nil {
+	if err := build.PrimaryCondition(ctx, q, id); err != nil {
 		return err
 	}
 
-	query.AddСondition(col, "eq", id)
-
-	logQuery(query)
+	logQuery(q)
 
 	tx, err := Begin(ctx)
 	if err != nil {
 		return err
 	}
 
-	stmt, err := tx.PrepareNamed(query.Query())
+	stmt, err := tx.PrepareNamed(q.Query())
 	if err != nil {
 		return err
 	}
 
-	if err := stmt.Get(result, query.Arg()); err != nil {
+	if err := stmt.Get(result, q.Arg()); err != nil {
 		return err
 	}
 

@@ -1,8 +1,8 @@
 {{- define "input_update" }}
 input {{ .Name }}UpdateInput
-    {{- template "copy_directive" .Directives.Table }} {
+    @object(name: "{{ .Name }}") {
 	{{- range .Fields.NotRelations }}
-	{{- if not .Directives.HasIndentity }}
+	{{- if not .Directives.HasPrimary }}
 	{{ template "field" . }}
 	{{- template "copy_directive" .Directives.Validate }}
 	{{- template "copy_directive" .Directives.Field }}

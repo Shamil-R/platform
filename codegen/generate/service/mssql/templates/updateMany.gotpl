@@ -1,11 +1,9 @@
 {{- define "updateMany" }}
 	res := {{ template "new" .Type }}
 
-	var f mssql.ArgName = func() string {return "data"}
-	rowNumber, err := mssql.UpdateMany(ctx, f)
-	if err != nil {
+	if err := mssql.UpdateMany(ctx, &res); err != nil {
 		return res, err
 	}
-	res.Count = rowNumber
+
 	return res, nil
 {{- end }}

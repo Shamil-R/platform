@@ -12,7 +12,6 @@ type {{ .Name }}
 	{{- end }}
 	{{- range .Fields.RelationsManyToOne }}
 	{{ template "field" . }}
-	{{- template "copy_directive" .Directives.Field }}
 	{{ template "directive_relation_many_to_one" . }}
 	{{- end }}
 }

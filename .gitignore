@@ -2,6 +2,7 @@ node_modules
 vendor
 .idea/
 go_build_main_go
+runcodegen
 graphql.config.json
 graphql.schema.json
 test.txt

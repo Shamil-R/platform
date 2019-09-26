@@ -1,0 +1,11 @@
+{{- define "migration/relation" }}
+	{{ range .}}
+		{{$tablename := .Directives.Table.ArgName}}
+
+		{{- range .Fields.RelationsManyToOne }}
+			ALTER TABLE [{{$tablename}}]
+			ADD CONSTRAINT {{$tablename}}_fk_{{ .Directives.Field.ArgName }}
+			FOREIGN KEY ([{{ .Directives.Field.ArgName }}]) REFERENCES [{{ .Directives.Relation.ArgTable }}] ([{{ .Directives.Relation.ArgOwnerKey }}]);
+		{{- end }}
+	{{- end }}
+{{- end }}

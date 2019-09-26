@@ -21,7 +21,7 @@ func (s service) Name() string {
 	return "validate"
 }
 
-func (s service) Middleware(v *viper.Viper) (handler.Option, error) {
+func (s service) Middleware(v *viper.Viper, schema *ast.Schema) (handler.Option, error) {
 	return handler.ResolverMiddleware(middleware(&validate{})), nil
 }
 

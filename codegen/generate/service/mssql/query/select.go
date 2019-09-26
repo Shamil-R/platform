@@ -8,15 +8,17 @@ import (
 type zelect struct {
 	*tableBlock
 	*conditionsBlock
-	columns []string
-	skip int
-	first int
-	last int
-	orderField string
-	orderIndex string
-	withTrashed bool
-	onlyTrashed bool
-	trashedFieldName string
+	query 				string
+	columns 			[]string
+	aliases 			[]string
+	skip 				int
+	first 				int
+	last 				int
+	orderField 			string
+	orderIndex 			string
+	withTrashed 		bool
+	onlyTrashed 		bool
+	trashedFieldName	string
 }
 
 func NewSelect() *zelect {
@@ -29,13 +31,15 @@ func NewSelect() *zelect {
 func (q *zelect) AddColumn(column, alias string) {
 	col := fmt.Sprintf("[%s] AS %s", column, alias)
 	q.columns = append(q.columns, col)
+	q.aliases = append(q.aliases, alias)
 }
 
 func (q *zelect) Query() string {
-	overorderby := "order by %s %s"
-	orderby := ""
+	if q.query != "" {
+		return q.query
+	}
 	overfield := "(select null)"
-	overindex := ""
+	overindex := " "
 
 	// Определяем столбец и направление сортировки
 	if q.orderIndex == "ASC" {
@@ -46,14 +50,14 @@ func (q *zelect) Query() string {
 		overindex = q.orderIndex
 	}
 
-	paginationCondition := fmt.Sprintf("and __num > %v", q.skip)
+	paginationCondition := fmt.Sprintf("__num > %v", q.skip)
 
 	if q.first > 0 {
-		paginationCondition = fmt.Sprintf("%s and __num < %v", paginationCondition, q.skip + q.first + 1)
+		paginationCondition = fmt.Sprintf("__num < %v and %s", q.skip + q.first + 1, paginationCondition)
 	} else if q.last > 0 {
 		// при выводе last по умолчанию сортируют в обратном порядке, но если уже была определа сортировка,
 		// то сортируем в противополжном ей направлению
-		paginationCondition = fmt.Sprintf("%s and __num < %v", paginationCondition, q.skip + q.last + 1)
+		paginationCondition = fmt.Sprintf("__num < %v and %s", q.skip + q.last + 1, paginationCondition)
 		overindex = "DESC"
 		if overfield == "" {
 			overfield = "id"
@@ -62,12 +66,6 @@ func (q *zelect) Query() string {
 			overindex = "ASC"
 		}
 	}
-
-	if q.orderField != "" {
-		orderby = fmt.Sprintf("order by %s %s", q.orderField, q.orderIndex)
-	}
-	overorderby = fmt.Sprintf("order by %s %s", overfield, overindex)
-
 
 	if q.trashedFieldName != "" {
 		if q.onlyTrashed {
@@ -80,15 +78,16 @@ func (q *zelect) Query() string {
 
 
 	query := fmt.Sprintf(
-		"SELECT %s from (SELECT ROW_NUMBER() over (%s) as __num, %s FROM %s %s ) a where 1=1  %s %s",
-		strings.Join(q.columns, ", "),
-		overorderby,
+		"SELECT %s from (SELECT ROW_NUMBER() over (%s) as __num, %s FROM %s %s ) a %s %s",
+		strings.Join(q.aliases, ", "),
+		order(overfield, overindex),//todo вынести формирование в отдельный файл
 		strings.Join(q.columns, ", "),
 		q.table,
 		where(q.conditionsBlock.block()),
-		paginationCondition,
-		orderby,
+		where(paginationCondition),//todo вынести формирование в отдельный файл
+		order(q.orderField, q.orderIndex),
 	)
+	q.query = query
 	return query
 }
 

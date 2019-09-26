@@ -2,13 +2,20 @@
 {{- range .Types.Objects }}
 type {{ .Name }}
 	{{ template "object_directives" . }} {
-	{{- range .Fields }}
+	{{- range .Fields.NotRelations }}
 	{{ template "field" . }}
 	{{- template "copy_directive" .Directives.Primary }}
 	{{- template "copy_directive" .Directives.Unique }}
 	{{- template "copy_directive" .Directives.Identity }}
 	{{- template "copy_directive" .Directives.Validate }}
 	{{ template "directive_field" . }}
+	{{- end }}
+	{{- range .Fields.Relations }}
+	{{ template "field" . }}
+	{{- template "copy_directive" .Directives.Primary }}
+	{{- template "copy_directive" .Directives.Unique }}
+	{{- template "copy_directive" .Directives.Identity }}
+	{{- template "copy_directive" .Directives.Validate }}
 	{{- end }}
 }
 {{- end }}

@@ -1,14 +1,16 @@
 package service
 
 import (
-	"gitlab/nefco/platform/codegen/generate/service/mssql"
-
 	"github.com/99designs/gqlgen/handler"
 	"github.com/spf13/viper"
+	"github.com/vektah/gqlparser/ast"
+	"gitlab/nefco/platform/codegen/generate/service/mssql"
+	"gitlab/nefco/platform/service/schema"
 )
 
 func init() {
 	services = []Service{
+		schema.New(),
 		// validate.New(),
 		// role.New(),
 		// log.New(),
@@ -23,7 +25,7 @@ type Service interface {
 
 type Middleware interface {
 	Service
-	Middleware(v *viper.Viper) (handler.Option, error)
+	Middleware(*viper.Viper, *ast.Schema) (handler.Option, error)
 }
 
 var services []Service

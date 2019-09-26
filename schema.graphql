@@ -1,4 +1,4 @@
-type User {
+type User @softDelete(disable: true) {
 		id: Int! @primary
 		name: String!
 		materials: [Material!]!
@@ -6,29 +6,29 @@ type User {
     # trips: [Trip!]!
 }
 
-type Material {
+type Material @softDelete(disable: false) {
 		id: Int! @primary
 		title: String!
 		user: User!
 }
 
-type Order {
-  id: Int! @primary
-  date: String!
-  # user: User!
-  # items: [Item!]!
-}
+# type Order {
+#   id: Int! @primary
+#   date: String!
+#   user: User!
+#   items: [Item!]!
+# }
 
-type Item {
-  id: Int! @primary
-  count: Int!
-  # order: Order!
-  # material: Material!
-}
+# type Item {
+#   id: Int! @primary
+#   count: Int!
+#   order: Order!
+#   material: Material!
+# }
 
-type Trip {
-  id: Int! @primary
-  city: String!
-  # user: User!
-  # orders: [Order!]!
-}
+# type Trip {
+#   id: Int! @primary
+#   city: String!
+#   user: User!
+#   orders: [Order!]!
+# }

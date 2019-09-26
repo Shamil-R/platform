@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"gitlab/nefco/platform/service"
+	"gitlab/nefco/platform/service/auth"
 	"net/http"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -33,17 +34,28 @@ func Run(v *viper.Viper, exec graphql.ExecutableSchema) error {
 	options := make([]handler.Option, 0, len(middlewares))
 
 	for _, m := range middlewares {
-		o, err := m.Middleware(v)
+		o, err := m.Middleware(v, exec.Schema())
 		if err != nil {
 			return err
 		}
 		options = append(options, o)
+		logger.Info("Service added to handle", zap.String("name", m.Name()))
 	}
-
+	// вывод Playground
 	http.Handle("/", handler.Playground("Platform", "/query"))
-	// http.Handle("/login", auth.MiddlewareLogin())
-	// http.Handle("/query", auth.MiddlewareAuth(handler.GraphQL(exec, options...)))
-	http.Handle("/query", handler.GraphQL(exec, options...))
+
+	// аутентификация+авторизация
+	http.Handle("/login", auth.MiddlewareLogin())
+
+	// регистрация
+	http.Handle("/registration", auth.MiddlewareRegistration(v))
+
+	// регистрация
+	http.Handle("/confirm", auth.MiddlewareConfirm())
+
+	// graphql запросы+авторизация
+	http.Handle("/query", auth.MiddlewareAuth(handler.GraphQL(exec, options...)))
+	//http.Handle("/query", handler.GraphQL(exec, options...))
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), nil)
 }

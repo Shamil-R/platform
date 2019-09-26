@@ -15,10 +15,11 @@ var (
 
 	DoesNotExist = IllegalState.NewSubtype("does_not_exist")
 
-	ArgumentDoesNotExist = DoesNotExist.NewSubtype("argument")
+	ArgumentDoesNotExist  = DoesNotExist.NewSubtype("argument")
+	DirectiveDoesNotExist = DoesNotExist.NewSubtype("directive")
 )
 
-func extractField(ctx context.Context) (*schema.Field, error) {
+func ExtractField(ctx context.Context) (*schema.Field, error) {
 	resCtx := graphql.GetResolverContext(ctx)
 	if resCtx.Field.Field == nil {
 		return nil, DoesNotExist.New("field does not exist in context")
@@ -29,8 +30,35 @@ func extractField(ctx context.Context) (*schema.Field, error) {
 	return field, nil
 }
 
+func extractFieldsFromSelection(ctx context.Context) (schema.FieldList, error) {
+	field, err := ExtractField(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return field.SelectionSet().Fields(), nil
+}
+
+func extractDefinitionFromSelection(ctx context.Context) (*schema.Definition, error) {
+	fields, err := extractFieldsFromSelection(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(fields) == 0 {
+		return nil, DoesNotExist.New("definition does not exist in selection")
+	}
+
+	def := fields[0].ObjectDefinition()
+
+	return def, nil
+}
+
+func ExtractArgument(ctx context.Context, name string) (*schema.Value, error) {
+	return extractArgument(ctx, name)
+}
+
 func extractArgument(ctx context.Context, name string) (*schema.Value, error) {
-	field, err := extractField(ctx)
+	field, err := ExtractField(ctx)
 	if err != nil {
 		return nil, err
 	}

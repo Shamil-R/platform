@@ -1,10 +1,10 @@
 {{- define "input_create_without" }}
-{{- range .Fields.RelationsOneToMany }}
+{{- range .Fields.Relations }}
 input {{ $.Name }}CreateWithout{{ firstRuneToUpper .Name }}Input
-	{{- template "directive_input" "create_without" }}
-	{{- template "copy_directive" $.Directives.Table }} {
+	@object(name: "{{ $.Name }}")
+	{{- template "directive_input" "create_without" }} {
 	{{- range $.Fields.NotRelations }}
-	{{- if not .Directives.HasIndentity }}
+	{{- if not .Directives.HasPrimary }}
 	{{ template "field" . }}
 	{{- template "copy_directive" .Directives.Validate }}
 	{{- template "copy_directive" .Directives.Field }}

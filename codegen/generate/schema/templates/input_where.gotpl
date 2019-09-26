@@ -7,8 +7,7 @@
 {{- $in := list "Int" "String" "Number" }}
 
 input {{ .Name }}WhereInput
-	{{ template "default_directives" . }}
-	{{- template "copy_directive" .Directives.Table }} {
+	@object(name: "{{ .Name }}") {
 	AND: [{{ .Name }}WhereInput!]
 	OR: [{{ .Name }}WhereInput!]
 	NOT: [{{ .Name }}WhereInput!]

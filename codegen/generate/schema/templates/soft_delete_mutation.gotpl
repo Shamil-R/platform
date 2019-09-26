@@ -1,6 +1,10 @@
 {{- define "soft_delete_mutation" }}
-    delete{{ . }}(where: {{ . }}WhereUniqueInput!): {{ . }}
-    deleteMany{{ plural . }}(where: {{ . }}WhereInput): BatchPayload!
-    restore{{ . }}(where: {{ . }}WhereUniqueInput!): {{ . }}
-    restoreMany{{ plural . }}(where: {{ . }}WhereInput): BatchPayload!
+	delete{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
+	@object(name: "{{ .Name }}")
+	deleteMany{{ plural .Name }}(where: {{ .Name }}WhereInput): [{{ .Name }}]
+	@object(name: "{{ .Name }}")
+	restore{{ .Name }}(where: {{ .Name }}WhereUniqueInput!): {{ .Name }}
+	@object(name: "{{ .Name }}")
+	restoreMany{{ plural .Name }}(where: {{ .Name }}WhereInput): [{{ .Name }}]
+	@object(name: "{{ .Name }}")
 {{- end }}

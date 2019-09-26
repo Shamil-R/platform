@@ -3,6 +3,7 @@ package log
 import (
 	"context"
 	"fmt"
+	"github.com/vektah/gqlparser/ast"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -20,7 +21,7 @@ func (s service) Name() string {
 	return "log"
 }
 
-func (s service) Middleware(v *viper.Viper) (handler.Option, error) {
+func (s service) Middleware(v *viper.Viper, schema *ast.Schema) (handler.Option, error) {
 	return handler.ResolverMiddleware(middleware(&log{})), nil
 }
 

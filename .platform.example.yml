@@ -1,4 +1,6 @@
+prod: false
 app:
+  host: localhost
   port: 8080
   service:
     mssql:

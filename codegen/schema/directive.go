@@ -5,20 +5,22 @@ import (
 )
 
 const (
-	DirectivePrimary   = "primary"
-	DirectiveUnique    = "unique"
-	DirectiveIdentity  = "identity"
-	DirectiveValidate  = "validate"
-	DirectiveTable     = "table"
-	DirectiveField     = "field"
-	DirectiveRelation  = "relation"
-	DirectiveInput     = "input"
-	DirectiveCondition = "condition"
-	DirectiveOrder 	   = "order"
-	DirectiveTimestamp = "timestamp"
-	DirectiveSoftDelete= "softDelete"
+	DirectivePrimary    = "primary"
+	DirectiveUnique     = "unique"
+	DirectiveIdentity   = "identity"
+	DirectiveValidate   = "validate"
+	DirectiveTable      = "table"
+	DirectiveField      = "field"
+	DirectiveRelation   = "relation"
+	DirectiveInput      = "input"
+	DirectiveCondition  = "condition"
+	DirectiveOrder      = "order"
+	DirectiveTimestamp  = "timestamp"
+	DirectiveObject     = "object"
+	DirectiveSoftDelete = "softDelete"
 
-	InputDirectiveCreateOneWithout = "create_one_without"
+	InputDirectiveCreateOneWithout  = "create_one_without"
+	InputDirectiveCreateManyWithout = "create_many_without"
 )
 
 type Directives interface {
@@ -77,6 +79,11 @@ func (f *Directive) Arguments() ArgumentList {
 
 type ValidateDirective struct {
 	*Directive
+	argMax string
+}
+
+func (d *ValidateDirective) ArgMax() string {
+	return directiveArgument(&d.argMax, d, "max")
 }
 
 type TableDirective struct {
@@ -102,6 +109,10 @@ type RelationDirective struct {
 	argObject     string
 	argField      string
 	argForeignKey string
+	argTable 	  string
+	argOwnerKey	  string
+	argType	  	  string
+	argLocalKey	  string
 }
 
 func (d *RelationDirective) ArgObject() string {
@@ -116,31 +127,69 @@ func (d *RelationDirective) ArgForeignKey() string {
 	return directiveArgument(&d.argForeignKey, d, "foreignKey")
 }
 
+func (d *RelationDirective) ArgTable() string {
+	return directiveArgument(&d.argTable, d, "table")
+}
+
+func (d *RelationDirective) ArgOwnerKey() string {
+	return directiveArgument(&d.argOwnerKey, d, "ownerKey")
+}
+
+func (d *RelationDirective) ArgType() string {
+	return directiveArgument(&d.argType, d, "type")
+}
+
+func (d *RelationDirective) ArgLocalKey() string {
+	return directiveArgument(&d.argLocalKey, d, "localKey")
+}
+
 type InputDirective struct {
 	*Directive
+	argNameCache string
+}
+
+func (d *InputDirective) ArgName() string {
+	return directiveArgument(&d.argNameCache, d, "name")
 }
 
 func (d *InputDirective) IsCreateOneWithout() bool {
-	return d.Arguments().ByName("name").Value().Raw == InputDirectiveCreateOneWithout
+	return d.ArgName() == InputDirectiveCreateOneWithout
+}
+
+func (d *InputDirective) IsCreateManyWithout() bool {
+	return d.ArgName() == InputDirectiveCreateManyWithout
+}
+
+type ObjectDirective struct {
+	*Directive
+	argName     string
+}
+
+func (d *ObjectDirective) ArgName() string {
+	return directiveArgument(&d.argName, d, "name")
 }
 
 type TimestampDirective struct {
 	*Directive
-	argDisable     string
-	argCreateField string
-	argUpdateField string
+	argDisableCache     string
+	argCreateFieldCache string
+	argUpdateFieldCache string
 }
 
 func (d *TimestampDirective) ArgDisable() string {
-	return directiveArgument(&d.argDisable, d, "disable")
+	return directiveArgument(&d.argDisableCache, d, "disable")
+}
+
+func (d *TimestampDirective) IsDisable() bool {
+	return directiveArgument(&d.argDisableCache, d, "disable") == "true"
 }
 
 func (d *TimestampDirective) ArgCreateField() string {
-	return directiveArgument(&d.argCreateField, d, "createField")
+	return directiveArgument(&d.argCreateFieldCache, d, "createField")
 }
 
 func (d *TimestampDirective) ArgUpdateField() string {
-	return directiveArgument(&d.argUpdateField, d, "updateField")
+	return directiveArgument(&d.argUpdateFieldCache, d, "updateField")
 }
 
 type SoftDeleteDirective struct {
@@ -151,6 +200,10 @@ type SoftDeleteDirective struct {
 
 func (d *SoftDeleteDirective) ArgDisable() string {
 	return directiveArgument(&d.argDisable, d, "disable")
+}
+
+func (d *SoftDeleteDirective) IsDisable() bool {
+	return directiveArgument(&d.argDisable, d, "disable") == "true"
 }
 
 func (d *SoftDeleteDirective) ArgDeleteField() string {
@@ -181,6 +234,10 @@ func (l DirectiveList) HasTable() bool {
 
 func (l DirectiveList) HasField() bool {
 	return hasDirective(l, isFieldDirective)
+}
+
+func (l DirectiveList) HasRelation() bool {
+	return hasDirective(l, isRelationDirective)
 }
 
 func (l DirectiveList) Primary() *Directive {
@@ -233,6 +290,14 @@ func (l DirectiveList) SoftDelete() *SoftDeleteDirective {
 		return nil
 	}
 	return &SoftDeleteDirective{Directive: directive}
+}
+
+func (l DirectiveList) Object() *ObjectDirective {
+	directive := firstDirective(l, isObjectDirective)
+	if directive == nil {
+		return nil
+	}
+	return &ObjectDirective{Directive: directive}
 }
 
 func (l DirectiveList) Relation() *RelationDirective {
@@ -315,6 +380,10 @@ func isOrderDirective(directive *Directive) bool {
 
 func isTimestampDirective(directive *Directive) bool {
 	return directive.Name == DirectiveTimestamp
+}
+
+func isObjectDirective(directive *Directive) bool {
+	return directive.Name == DirectiveObject
 }
 
 func isSoftDeleteDirective(directive *Directive) bool {
